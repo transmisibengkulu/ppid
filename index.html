@@ -788,20 +788,25 @@
             <div class="bitem corner"></div>
         </footer>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.7.3/dist/hls.min.js"></script>
     <script src="./config.js"></script>
     <script>
         // TVRI GitHub Pages: jadwal CSV dari Drive dan foto dari Apps Script JSONP; video HANYA dari videos.json di repo GitHub.
         const PHOTO_MS = 8000;
         const MAX_PHOTOS = 15;
         const DISPLAY_CACHE_KEY = 'tvriDisplayDataCacheV1';
-        // Video display source: ONLY the GitHub repository manifest.
-        // The Apps Script/Google Drive video folder is not used by the public display.
+        // Developer configuration: ubah hanya VIDEO_SOURCE_MODE untuk memilih sumber video.
+        // 'repo' = video dari videos.json pada repositori GitHub.
+        // 'live' = siaran OTT TVRI Bengkulu melalui HLS.
+        // Tidak ada tombol pilihan sumber pada tampilan publik.
+        const VIDEO_SOURCE_MODE = 'live';
+        const LIVE_STREAM_URL = 'https://ott.tvri.co.id/Content/HLS/Live/Channel(TVRIBengkulu)/index.m3u8';
         const VIDEO_MANIFEST_URL = './videos.json';
         const state = {
             programs: [], photos: [], videos: [],
             videoIndex: 0, videoSignature: '', photoSignature: '', photoIndex: 0,
             photoTimer: null, videoLoadToken: 0, dataScript: null,
-            dataLoading: false, videosLoading: false
+            dataLoading: false, videosLoading: false, hls: null
         };
         const $ = id => document.getElementById(id);
         const pad = n => String(n).padStart(2, '0');
@@ -1118,6 +1123,88 @@
             setTimeout(onReady, 500);
         }
 
+        function stopLiveHls() {
+            if (state.hls) {
+                try { state.hls.destroy(); } catch (error) { console.warn('Gagal menghentikan HLS:', error); }
+                state.hls = null;
+            }
+        }
+
+        function playLiveStream() {
+            const video = $('broadcastVideo');
+            const token = ++state.videoLoadToken;
+            stopLiveHls();
+            state.videos = [];
+            state.videoIndex = 0;
+            state.videoSignature = '';
+            video.pause();
+            video.removeAttribute('src');
+            video.removeAttribute('controls');
+            video.loop = true;
+            video.muted = true;
+            video.defaultMuted = true;
+            video.autoplay = true;
+            video.playsInline = true;
+            video.setAttribute('muted', '');
+            video.setAttribute('autoplay', '');
+            video.setAttribute('playsinline', '');
+            video.setAttribute('webkit-playsinline', '');
+            video.load();
+
+            if (!LIVE_STREAM_URL || !/^https:\/\//i.test(LIVE_STREAM_URL)) {
+                console.error('LIVE_STREAM_URL harus menggunakan HTTPS pada halaman GitHub Pages.');
+                return;
+            }
+
+            // Safari dan browser tertentu dapat memutar HLS secara native.
+            if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = LIVE_STREAM_URL;
+                video.load();
+                const tryPlay = () => requestVideoPlay(video, token);
+                video.addEventListener('canplay', tryPlay, { once: true });
+                setTimeout(tryPlay, 700);
+                return;
+            }
+
+            // Chrome/Edge menggunakan HLS.js. Server OTT harus mengizinkan CORS.
+            if (window.Hls && window.Hls.isSupported()) {
+                const hls = new window.Hls({
+                    enableWorker: true,
+                    lowLatencyMode: true,
+                    liveSyncDurationCount: 3
+                });
+                state.hls = hls;
+                hls.loadSource(LIVE_STREAM_URL);
+                hls.attachMedia(video);
+                hls.on(window.Hls.Events.MANIFEST_PARSED, () => requestVideoPlay(video, token));
+                hls.on(window.Hls.Events.ERROR, (_event, data) => {
+                    if (!data || !data.fatal || state.hls !== hls) return;
+                    console.error('Gangguan siaran OTT TVRI Bengkulu:', data.type, data.details);
+                    if (data.type === window.Hls.ErrorTypes.NETWORK_ERROR) {
+                        hls.startLoad();
+                    } else if (data.type === window.Hls.ErrorTypes.MEDIA_ERROR) {
+                        hls.recoverMediaError();
+                    } else {
+                        stopLiveHls();
+                    }
+                });
+                return;
+            }
+
+            console.error('Browser ini tidak mendukung HLS. Pastikan HLS.js berhasil dimuat atau gunakan browser dengan dukungan HLS native.');
+        }
+
+        function initializeVideoSource() {
+            if (VIDEO_SOURCE_MODE === 'live') {
+                playLiveStream();
+            } else if (VIDEO_SOURCE_MODE === 'repo') {
+                loadVideoManifest();
+            } else {
+                console.error('VIDEO_SOURCE_MODE tidak valid. Gunakan "repo" atau "live".');
+                loadVideoManifest();
+            }
+        }
+
         function setVideoPlaylist(entries) {
             const next = (Array.isArray(entries) ? entries : [])
                 .filter(item => !!videoSource(item));
@@ -1157,13 +1244,13 @@
         }
 
         $('broadcastVideo').addEventListener('ended', () => {
-            if (state.videos.length > 1) {
+            if (VIDEO_SOURCE_MODE === 'repo' && state.videos.length > 1) {
                 playVideo((state.videoIndex + 1) % state.videos.length);
             }
         });
         $('broadcastVideo').addEventListener('error', () => {
             const video = $('broadcastVideo');
-            console.error('Video lokal gagal dimuat:', video.error && video.error.code, video.currentSrc);
+            console.error('Media video gagal dimuat:', video.error && video.error.code, video.currentSrc);
         });
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) requestVideoPlay($('broadcastVideo'), state.videoLoadToken);
@@ -1267,7 +1354,7 @@
             renderProgram();
         }, 1000);
         loadData();
-        loadVideoManifest();
+        initializeVideoSource();
     </script>
 </body>
 
