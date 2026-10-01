@@ -1,0 +1,12 @@
+{
+  "videos": [
+    {
+      "src": "videos/ldr.mp4",
+      "name": "Lensa di Raflesia"
+    },
+    {
+      "src": "videos/PU.mp4",
+      "name": "Kegiatan"
+    }
+  ]
+}

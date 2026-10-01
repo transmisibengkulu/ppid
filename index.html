@@ -1,0 +1,1106 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <title>TVRI Bengkulu — Modern Broadcast</title>
+    <style>
+        :root {
+            --blue: #075cae;
+            --blue2: #168de0;
+            --navy: #06366c;
+            --red: #ee2029;
+            --paper: #f3f8fd;
+            --ink: #092f59;
+            --drive-background-image: none
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden
+        }
+
+        body {
+            font-family: Arial, Segoe UI, sans-serif;
+            background: radial-gradient(ellipse at 18% 18%, rgba(22,141,224,.13), transparent 38%),
+                        linear-gradient(135deg, #f8fbff 0%, #edf6fd 55%, #dcecf9 100%);
+            color: var(--ink)
+        }
+
+        .screen {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            min-height: 260px;
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(ellipse at 82% 24%, rgba(22,141,224,.16), transparent 35%),
+                linear-gradient(rgba(249,252,255,.72), rgba(249,252,255,.72)),
+                var(--drive-background-image, none),
+                linear-gradient(135deg, #f8fbff 0%, #eef7ff 58%, #dcecf9 100%);
+            background-size: auto, auto, cover, auto;
+            background-position: center, center, center, center;
+            background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+        }
+
+        .batik {
+            position: absolute;
+            inset: 0;
+            opacity: .10;
+            background-image: repeating-linear-gradient(135deg, transparent 0 18px, rgba(7,92,174,.18) 19px 20px);
+            background-size: 420px 420px;
+            background-position: left bottom;
+            pointer-events: none
+        }
+
+        .batik:after {
+            content: "";
+            position: absolute;
+            right: -10vw;
+            bottom: -25vw;
+            width: 48vw;
+            height: 48vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, transparent 0 25%, var(--blue) 26% 28%, transparent 29% 37%, var(--blue) 38% 40%, transparent 41%);
+            opacity: .25
+        }
+
+        .header {
+            position: absolute;
+            left: 3.4vw;
+            right: 3.4vw;
+            top: 3.2vh;
+            height: 10vh;
+            display: flex;
+            align-items: center;
+            z-index: 5
+        }
+
+        .logo {
+            width: clamp(170px, 18vw, 300px);
+            max-height: 9vh;
+            object-fit: contain;
+            object-position: left center
+        }
+
+        .live-status {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--blue);
+            font-weight: 800;
+            font-size: clamp(10px, .8vw, 14px);
+            letter-spacing: .8px
+        }
+
+        .pulse {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--red);
+            box-shadow: 0 0 0 5px rgba(238, 32, 41, .10);
+            animation: pulse 1.5s infinite
+        }
+
+        @keyframes pulse {
+            50% {
+                transform: scale(.65);
+                opacity: .45
+            }
+        }
+
+        .main {
+            position: absolute;
+            left: 3.4vw;
+            right: 3.4vw;
+            top: 15vh;
+            bottom: 23vh;
+            display: grid;
+            grid-template-columns: 1.05fr .95fr;
+            gap: 2vw;
+            min-height: 0
+        }
+
+        .card {
+            position: relative;
+            min-width: 0;
+            min-height: 0;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 14px 38px rgba(6, 54, 108, .16);
+            border: 1px solid rgba(255, 255, 255, .9)
+        }
+
+        .video-card {
+            background: #052f5d
+        }
+
+        .video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+            background: #052f5d;
+            object-fit: contain;
+            pointer-events: none
+        }
+
+        .video-shade {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(3, 33, 64, .02) 45%, rgba(3, 28, 57, .8))
+        }
+
+        .live {
+            position: absolute;
+            left: 18px;
+            top: 17px;
+            background: var(--red);
+            color: white;
+            padding: 7px 11px;
+            border-radius: 999px;
+            font-size: clamp(9px, .75vw, 13px);
+            font-weight: 900;
+            z-index: 2
+        }
+
+        .live i {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background: #fff;
+            border-radius: 50%;
+            margin-right: 6px
+        }
+
+        /* .vinfo {
+            position: absolute;
+            left: 22px;
+            right: 22px;
+            bottom: 18px;
+            color: #fff
+        } */
+
+        .vinfo {
+            position: absolute;
+            left: 22px;
+            top: 18px;
+            /* <--- Diumbahkan ke atas */
+            bottom: auto;
+            /* <--- Menghapus posisi bawah */
+            color: #fff;
+            z-index: 3;
+            /* <--- Agar berada di atas lapisan video-shade */
+        }
+
+        .vinfo small {
+            font-size: clamp(8px, .65vw, 12px);
+            font-weight: 800;
+            letter-spacing: 1.4px;
+            opacity: .85
+        }
+
+        .vinfo h1 {
+            font-size: clamp(17px, 1.9vw, 32px);
+            line-height: 1.05;
+            margin: 5px 0 4px
+        }
+
+        .vinfo span {
+            font-size: clamp(8px, .7vw, 12px);
+            opacity: .8
+        }
+
+        .news {
+            background: #fff
+        }
+
+        /* .news-head {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 31%;
+            padding: 18px 20px;
+            background: linear-gradient(135deg, #fff, #eaf6ff);
+            z-index: 2
+        } */
+
+        .eyebrow {
+            font-size: clamp(8px, .65vw, 12px);
+            font-weight: 900;
+            letter-spacing: 1.2px;
+            color: var(--blue2)
+        }
+
+        /* .news-head h2 {
+            font-size: clamp(15px, 1.45vw, 25px);
+            line-height: 1.08;
+            margin: 7px 0 0
+        } */
+
+        .meta {
+            font-size: clamp(8px, .58vw, 11px);
+            color: #6c89a4;
+            margin-top: 6px
+        }
+
+        .slides {
+            position: absolute;
+            inset: 0 0 0;
+            background: #0b416d
+        }
+
+        .photo-empty {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            color: rgba(255,255,255,.78);
+            font-size: clamp(10px, .9vw, 15px);
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: .4px
+        }
+
+        .photo-empty.hidden { display: none; }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity .65s
+        }
+
+        .slide.active {
+            opacity: 1
+        }
+
+        .caption {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2;
+            padding: 30px 64px 15px 20px;
+            color: #fff;
+            background: linear-gradient(transparent, rgba(0, 28, 57, .9));
+            font-size: clamp(11px, 1vw, 17px);
+            line-height: 1.25;
+            font-weight: 800;
+            text-shadow: 0 1px 3px rgba(0,0,0,.45);
+            pointer-events: none
+        }
+
+        .caption:empty { display: none; }
+
+        .dots {
+            position: absolute;
+            right: 15px;
+            bottom: 12px;
+            display: flex;
+            gap: 5px
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 10px;
+            background: #ffffff77
+        }
+
+        .dot.active {
+            width: 18px;
+            background: #fff
+        }
+
+        .bar {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 20%;
+            min-height: 80px;
+            display: grid;
+            /* grid-template-columns: 10% 16% 32% 20% 1fr; */
+            grid-template-columns: 10% 16% 24% 28% 1fr;
+            align-items: center;
+            gap: 1.2vw;
+            padding: 0 3.4vw;
+            /* background: rgba(249, 252, 255, .95); */
+            background:
+                linear-gradient(135deg, rgba(249,252,255,.88), rgba(229,242,253,.86)),
+                var(--drive-background-image, none);
+            background-size: auto, cover;
+            background-position: center, center;
+            background-repeat: no-repeat, no-repeat;
+            border-top: 1px solid #075cae22;
+            box-shadow: 0 -10px 30px #06366c12;
+            z-index: 4;
+            backdrop-filter: blur(10px)
+        }
+
+        .bar:before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: .055;
+            background-image: repeating-linear-gradient(135deg, transparent 0 13px, rgba(7,92,174,.18) 14px 15px);
+            background-size: 250px 250px
+        }
+
+        .bitem {
+            position: relative;
+            z-index: 1
+        }
+
+        .livebox {
+            background: var(--blue);
+            color: white;
+            font-weight: 900;
+            padding: 8px 11px;
+            border-radius: 6px;
+            font-size: clamp(10px, 1vw, 15px);
+            width: max-content
+        }
+
+        .livebox.is-live { background: var(--red); }
+
+        .tdklivebox {
+            background: var(--blue);
+            color: white;
+            font-weight: 900;
+            padding: 8px 11px;
+            border-radius: 6px;
+            font-size: clamp(10px, 1vw, 15px);
+            width: max-content
+        }
+
+        .time {
+            text-align: center
+        }
+
+        .time small {
+            display: block;
+            color: var(--blue2);
+            font-size: clamp(8px, .7vw, 12px);
+            font-weight: 800
+        }
+
+        .time strong {
+            /* display: block;
+            font-size: clamp(27px, 3vw, 50px);
+            line-height: .9 */
+
+            display: block;
+            /* font-size: clamp(14px, 1.55vw, 26px); */
+            font-size: clamp(16px, 1.8vw, 30px);
+            /* Samakan batas rentangnya dengan .program b */
+            line-height: 1.1;
+            margin: 2px 0;
+        }
+
+        .program {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* Memaksa isi teks tepat berada di tengah secara vertikal */
+            height: 100%;
+            /* Mengambil tinggi penuh dari .bar */
+        }
+
+        .program small,
+        .theme small {
+            display: block;
+            color: var(--blue2);
+            font-size: clamp(8px, .65vw, 12px);
+            font-weight: 900;
+            letter-spacing: .6px
+        }
+
+        .program b {
+            display: block;
+            /* font-size: clamp(14px, 1.55vw, 26px); */
+            font-size: clamp(16px, 1.8vw, 30px);
+            /* line-height: 1.05 */
+            line-height: 1.1;
+            /* Sedikit penyesuaian spasi antar baris */
+            margin: 2px 0;
+            /* Memberi jarak simetris atas-bawah */
+        }
+
+        .program span {
+            font-size: clamp(8px, .65vw, 12px);
+            color: var(--blue2);
+            font-weight: 800
+        }
+
+        .theme b {
+            display: block;
+            font-size: clamp(10px, .95vw, 15px)
+        }
+
+        .corner {
+            height: 100%;
+            position: relative;
+            overflow: hidden
+        }
+
+        .corner:before,
+        .corner:after {
+            content: "";
+            position: absolute;
+            right: -20%;
+            width: 125%;
+            height: 25px;
+            background: var(--navy);
+            transform: skewX(-38deg) rotate(-8deg)
+        }
+
+        .corner:before {
+            top: 28%
+        }
+
+        .corner:after {
+            top: 55%
+        }
+
+        /* portrait mobile: one viewport, no scroll */
+        @media(max-width:700px) and (orientation:portrait) {
+            .header {
+                top: 2vh;
+                left: 4vw;
+                right: 4vw;
+                height: 8vh
+            }
+
+            .logo {
+                width: 45%;
+                max-height: 7vh
+            }
+
+            .live-status {
+                font-size: 8px
+            }
+
+            .pulse {
+                width: 6px;
+                height: 6px
+            }
+
+            .main {
+                left: 4vw;
+                right: 4vw;
+                top: 11vh;
+                bottom: 19vh;
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 1.05fr;
+                gap: 2.2vw
+            }
+
+            .card {
+                border-radius: 14px
+            }
+
+            .live {
+                left: 10px;
+                top: 10px;
+                padding: 5px 8px;
+                font-size: 8px
+            }
+
+            /* .vinfo {
+                left: 12px;
+                right: 12px;
+                bottom: 9px
+            } */
+
+            .vinfo {
+                left: 12px;
+                top: 10px;
+                bottom: auto;
+            }
+
+            .vinfo small {
+                font-size: 6px
+            }
+
+            .vinfo h1 {
+                font-size: 12px;
+                margin: 3px 0
+            }
+
+            .vinfo span {
+                font-size: 6px
+            }
+
+            /* .news-head {
+                height: 35%;
+                padding: 9px 11px
+            } */
+
+            .eyebrow {
+                font-size: 7px
+            }
+
+            /* .news-head h2 {
+                font-size: 11px;
+                margin-top: 3px
+            } */
+
+            .meta {
+                font-size: 6px;
+                margin-top: 3px
+            }
+
+            .slides {
+                inset: 0 0 0
+            }
+
+            .caption {
+                padding: 22px 34px 9px 11px;
+                font-size: 9px
+            }
+
+            .dots {
+                right: 9px;
+                bottom: 8px
+            }
+
+            .dot {
+                width: 5px;
+                height: 5px
+            }
+
+            .dot.active {
+                width: 13px
+            }
+
+            .bar {
+                height: 17%;
+                min-height: 0;
+                padding: 0 4vw;
+                /* grid-template-columns: 20% 28% 52%; */
+                grid-template-columns: 18% 25% 47% 10%;
+                /* Ditambah kolom ke-4 (10%) untuk tempat .corner */
+                gap: 1vw
+            }
+
+            .livebox {
+                font-size: 8px;
+                padding: 5px 7px
+            }
+
+            .tdklivebox {
+                font-size: 8px;
+                padding: 5px 7px
+            }
+
+            .time small {
+                font-size: 6px
+            }
+
+            .time strong {
+                font-size: 21px
+            }
+
+            .program {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                /* Memaksa isi teks berada tepat di tengah secara vertikal */
+                height: 100%;
+                /* Memastikan kontainer mengambil tinggi penuh dari bar */
+            }
+
+            .program small,
+            .theme small {
+                font-size: 6px
+            }
+
+            .program b {
+                font-size: 10px;
+                line-height: 1.1;
+                /* Menyesuaikan jarak antar baris agar lebih simetris */
+                margin: 1px 0;
+            }
+
+            .program span {
+                font-size: 6px
+            }
+
+            .theme {
+                display: none
+            }
+
+            .corner {
+                /* width: 10vw */
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
+        }
+
+        @media(max-width:380px) and (orientation:portrait) {
+            .logo {
+                width: 50%
+            }
+
+            .main {
+                top: 10vh;
+                bottom: 18vh
+            }
+
+            /* .news-head h2 {
+                font-size: 10px
+            } */
+
+            .vinfo h1 {
+                font-size: 11px
+            }
+
+            .time strong {
+                font-size: 18px
+            }
+
+            .program b {
+                font-size: 9px
+            }
+        }
+
+        /* landscape phones/tablets keep the broadcast composition */
+        @media(max-width:900px) and (orientation:landscape) {
+            .main {
+                top: 14vh;
+                bottom: 22vh
+            }
+
+            .header {
+                top: 2vh
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="screen">
+        <div class="batik"></div>
+        <header class="header">
+            <img class="logo" id="brandLogo" alt="Logo TVRI Bengkulu" hidden>
+            <div class="live-status"><i class="pulse"></i>SIARAN TVRI BENGKULU</div>
+        </header>
+        <main class="main">
+            <section class="card video-card">
+                <video id="broadcastVideo" class="video" autoplay muted playsinline webkit-playsinline preload="auto" disablepictureinpicture controlslist="nodownload noplaybackrate noremoteplayback"></video>
+                <div class="video-shade"></div>
+                <div class="vinfo"><h1 id="dateClock">Memuat tanggal dan waktu…</h1></div>
+            </section>
+            <section class="card news">
+                <div class="slides" id="slides">
+                    <div id="photoEmpty" class="photo-empty">Menunggu foto dari Google Drive…</div>
+                    <div class="caption" id="photoCaption"></div>
+                    <div class="dots" id="dots"></div>
+                </div>
+            </section>
+        </main>
+        <footer class="bar">
+            <div class="bitem livebox" id="liveBox">● SIARAN</div>
+            <div class="bitem time"><small id="prevTime"></small>
+                <strong id="currentStart">--:--</strong>
+                <small id="nextTime"></small>
+            </div>
+            <div class="bitem program"><small id="programLabel">PROGRAM</small><b id="programName">Menunggu data program…</b><span id="programStation">TVRI BENGKULU</span></div>
+            <div class="bitem theme"><small>DESKRIPSI PROGRAM</small><b id="programDescription">Informasi program TVRI Bengkulu.</b></div>
+            <div class="bitem corner"></div>
+        </footer>
+    </div>
+    <script src="./config.js"></script>
+    <script>
+        // TVRI GitHub Pages: jadwal CSV dari Drive dan foto dari Apps Script JSONP; video HANYA dari videos.json di repo GitHub.
+        const PHOTO_MS = 4000;
+        // Video display source: ONLY the GitHub repository manifest.
+        // The Apps Script/Google Drive video folder is not used by the public display.
+        const VIDEO_MANIFEST_URL = './videos.json';
+        const state = {
+            programs: [], photos: [], videos: [],
+            videoIndex: 0, videoSignature: '', photoSignature: '', photoIndex: 0,
+            photoTimer: null, videoLoadToken: 0, dataScript: null,
+            dataLoading: false, videosLoading: false, displayDateKey: ''
+        };
+        const $ = id => document.getElementById(id);
+        const pad = n => String(n).padStart(2, '0');
+
+        function localDateKey(d = new Date()) {
+            return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+        }
+        function parseSeconds(v) {
+            const s = String(v ?? '').trim();
+            const m = s.match(/^(\d{1,3}):(\d{2})(?::(\d{2}))?$/);
+            if (m) return Number(m[1])*3600 + Number(m[2])*60 + Number(m[3] || 0);
+            const iso = s.match(/T(\d{2}):(\d{2}):(\d{2})/);
+            return iso ? Number(iso[1])*3600 + Number(iso[2])*60 + Number(iso[3]) : 0;
+        }
+        function programStart(p) {
+            if (!p || !p.date) return null;
+            const a = String(p.date).slice(0,10).split('-').map(Number);
+            if (a.length !== 3 || !a[0]) return null;
+            const sec = parseSeconds(p.start_time);
+            return new Date(a[0], a[1]-1, a[2], Math.floor(sec/3600), Math.floor((sec%3600)/60), sec%60);
+        }
+        function todayPrograms(now = new Date()) {
+            return state.programs.filter(p => String(p.date || '').slice(0,10) === localDateKey(now))
+                .slice().sort((a,b) => (programStart(a)?.getTime() || 0) - (programStart(b)?.getTime() || 0));
+        }
+        function clockText(d) { return `${pad(d.getHours())}.${pad(d.getMinutes())}`; }
+        function renderClock() {
+            const d = new Date();
+            const date = d.toLocaleDateString('id-ID', {weekday:'long', day:'2-digit', month:'long', year:'numeric'}).toUpperCase();
+            $('dateClock').textContent = `${date} | ${pad(d.getHours())}:${pad(d.getMinutes())} WIB`;
+        }
+        function renderProgram() {
+            const now = new Date();
+            const list = todayPrograms(now);
+            if (!list.length) {
+                $('programLabel').textContent = 'PROGRAM';
+                $('programName').textContent = 'Belum ada jadwal hari ini';
+                $('programDescription').textContent = 'Data program hari ini belum tersedia di Google Sheets.';
+                $('programStation').textContent = 'TVRI BENGKULU';
+                $('currentStart').textContent = '--:--';
+                $('prevTime').textContent = '';
+                $('nextTime').textContent = '';
+                $('liveBox').textContent = '● SIARAN';
+                $('liveBox').classList.remove('is-live');
+                return;
+            }
+            let index = -1;
+            for (let i=0; i<list.length; i++) {
+                const start = programStart(list[i]);
+                const end = start ? new Date(start.getTime() + parseSeconds(list[i].duration)*1000) : null;
+                if (start && end && now >= start && now < end) { index = i; break; }
+            }
+            const active = index >= 0;
+            if (!active) {
+                index = list.findIndex(p => (programStart(p)?.getTime() || 0) > now.getTime());
+                if (index < 0) index = list.length - 1;
+            }
+            const p = list[index];
+            const start = programStart(p);
+            const end = start ? new Date(start.getTime() + parseSeconds(p.duration)*1000) : null;
+            const live = p.live === true || ['true','1','yes','live'].includes(String(p.live).toLowerCase());
+            $('programLabel').textContent = active ? 'PROGRAM SAAT INI' : 'PROGRAM BERIKUTNYA';
+            $('programName').textContent = p.name || 'Tanpa judul';
+            $('programDescription').textContent = p.description || 'Tidak ada deskripsi program.';
+            $('programStation').textContent = 'TVRI BENGKULU';
+            $('currentStart').textContent = start ? clockText(start) : '--:--';
+            $('prevTime').textContent = index > 0 ? clockText(programStart(list[index-1])) : '';
+            $('nextTime').textContent = index < list.length-1 ? clockText(programStart(list[index+1])) : '';
+            $('liveBox').textContent = live ? '● LIVE' : '● SIARAN';
+            $('liveBox').classList.toggle('is-live', live);
+        }
+
+        function photoUrl(item) { return String(item.mediaUrl || item.image || '').trim(); }
+        function getPhotoList() {
+            const today = localDateKey();
+            const todayItems = state.photos.filter(p => String(p.date || '').slice(0,10) === today && photoUrl(p));
+            return todayItems.length ? todayItems : state.photos.filter(p => photoUrl(p));
+        }
+        function photoKey(list) { return list.map(p => `${p.id || ''}|${photoUrl(p)}|${String(p.name || '').trim()}`).join('||'); }
+        function renderPhotos() {
+            const list = getPhotoList();
+            const stage = $('slides');
+            const dots = $('dots');
+            stage.querySelectorAll('.slide').forEach(el => el.remove());
+            dots.replaceChildren();
+            clearInterval(state.photoTimer);
+            state.photoTimer = null;
+            state.photoIndex = 0;
+            if (!list.length) {
+                $('photoEmpty').classList.remove('hidden');
+                $('photoCaption').textContent = '';
+                return;
+            }
+            $('photoEmpty').classList.add('hidden');
+            $('photoCaption').textContent = String(list[0].name || '').trim();
+            list.forEach((item, i) => {
+                const img = document.createElement('img');
+                img.className = 'slide' + (i === 0 ? ' active' : '');
+                img.alt = item.name || `Foto berita ${i+1}`;
+                img.loading = i < 2 ? 'eager' : 'lazy';
+                img.src = photoUrl(item);
+                img.onerror = () => img.classList.add('broken');
+                stage.insertBefore(img, dots);
+                const dot = document.createElement('span');
+                dot.className = 'dot' + (i === 0 ? ' active' : '');
+                dots.appendChild(dot);
+            });
+            if (list.length > 1) state.photoTimer = setInterval(nextPhoto, PHOTO_MS);
+        }
+        function nextPhoto() {
+            const slides = [...$('slides').querySelectorAll('.slide')];
+            const dots = [...$('dots').children];
+            if (slides.length < 2) return;
+            slides[state.photoIndex].classList.remove('active');
+            dots[state.photoIndex]?.classList.remove('active');
+            state.photoIndex = (state.photoIndex + 1) % slides.length;
+            slides[state.photoIndex].classList.add('active');
+            dots[state.photoIndex]?.classList.add('active');
+            const list = getPhotoList();
+            $('photoCaption').textContent = String(list[state.photoIndex]?.name || '').trim();
+        }
+
+        // Isi dengan tautan berbagi atau ID file gambar di Google Drive.
+        // Kosongkan sementara jika aset belum diunggah.
+        const DRIVE_ASSETS = {
+            logo: 'https://drive.google.com/file/d/1ojqBsaZ7h2VBY4E5GirNn4Et4elUMRw_/view?usp=drive_link',
+            background: 'https://drive.google.com/file/d/1cLDO3qyzIEs1ewb94WmUw_keUKHZdeWg/view?usp=drive_link'
+        };
+
+        function driveFileId(raw) {
+            const value = String(raw || '').trim();
+            if (!value) return '';
+            const match = value.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) ||
+                value.match(/[?&]id=([a-zA-Z0-9_-]+)/i);
+            if (match) return match[1];
+            return /^[a-zA-Z0-9_-]{20,}$/.test(value) ? value : '';
+        }
+
+        function driveImageUrl(raw) {
+            const value = String(raw || '').trim();
+            if (!value) return '';
+            const id = driveFileId(value);
+            if (!id) return value;
+            const key = value.match(/[?&]resourcekey=([^&#]+)/i);
+            return 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(id) + '&sz=w2000' +
+                (key ? '&resourcekey=' + key[1] : '');
+        }
+
+        function applyDriveAssets() {
+            const logo = $('brandLogo');
+            const logoUrl = driveImageUrl(DRIVE_ASSETS.logo);
+            if (logoUrl) {
+                logo.hidden = false;
+                logo.src = logoUrl;
+                logo.onerror = () => { logo.hidden = true; console.warn('Logo Drive tidak dapat dimuat. Periksa izin berbagi.'); };
+            } else {
+                logo.hidden = true;
+                logo.removeAttribute('src');
+            }
+
+            const backgroundUrl = driveImageUrl(DRIVE_ASSETS.background);
+            if (backgroundUrl) {
+                document.documentElement.style.setProperty('--drive-background-image', `url(${JSON.stringify(backgroundUrl)})`);
+            }
+        }
+
+        // Video lokal di GitHub Pages: gunakan path relatif agar project Pages
+        // (username.github.io/nama-repo/) dan custom domain sama-sama berfungsi.
+        function videoSource(item) {
+            const raw = typeof item === 'string'
+                ? item
+                : (item && (item.src || item.path || item.url || item.video)) || '';
+            const value = String(raw).trim();
+            if (!value) return '';
+            try { return new URL(value, document.baseURI).href; }
+            catch (e) { return ''; }
+        }
+
+        function videoKey(list) {
+            return list.map(item => `${videoSource(item)}|${typeof item === 'string' ? '' : (item.name || '')}`).join('||');
+        }
+
+        function requestVideoPlay(video, token) {
+            if (token !== state.videoLoadToken || !video.src) return;
+            video.muted = true;
+            video.defaultMuted = true;
+            video.autoplay = true;
+            video.playsInline = true;
+            video.removeAttribute('controls');
+            const result = video.play();
+            if (result && typeof result.catch === 'function') {
+                result.catch(error => {
+                    // Browser/player tertentu dapat menolak autoplay. Tetap coba
+                    // kembali saat media siap atau saat halaman kembali terlihat.
+                    console.warn('Autoplay video ditolak oleh browser:', error && error.name, error && error.message);
+                });
+            }
+        }
+
+        function playVideo(index) {
+            const video = $('broadcastVideo');
+            const list = state.videos;
+            const token = ++state.videoLoadToken;
+            video.pause();
+            video.removeAttribute('src');
+            video.removeAttribute('controls');
+            video.loop = list.length === 1;
+            if (!list.length) {
+                video.load();
+                return;
+            }
+            state.videoIndex = ((index % list.length) + list.length) % list.length;
+            const src = videoSource(list[state.videoIndex]);
+            if (!src) return;
+            video.muted = true;
+            video.defaultMuted = true;
+            video.autoplay = true;
+            video.playsInline = true;
+            video.setAttribute('muted', '');
+            video.setAttribute('autoplay', '');
+            video.setAttribute('playsinline', '');
+            video.setAttribute('webkit-playsinline', '');
+            video.src = src;
+            video.load();
+            const onReady = () => requestVideoPlay(video, token);
+            video.addEventListener('canplay', onReady, { once: true });
+            // Sebagian WebView tidak mengirim canplay tepat waktu; play() juga
+            // dicoba setelah sumber dipasang. Error tetap ditangani di atas.
+            setTimeout(onReady, 500);
+        }
+
+        function setVideoPlaylist(entries) {
+            const next = (Array.isArray(entries) ? entries : [])
+                .filter(item => !!videoSource(item));
+            const newKey = videoKey(next);
+            if (newKey === state.videoSignature) return;
+            const oldCurrent = state.videos[state.videoIndex];
+            const oldSrc = oldCurrent ? videoSource(oldCurrent) : '';
+            const keep = oldSrc ? next.findIndex(item => videoSource(item) === oldSrc) : -1;
+            state.videos = next;
+            state.videoSignature = newKey;
+            if (!next.length) {
+                playVideo(0);
+            } else if (keep >= 0) {
+                state.videoIndex = keep;
+                const video = $('broadcastVideo');
+                video.loop = next.length === 1;
+                if (video.paused) requestVideoPlay(video, state.videoLoadToken);
+            } else {
+                playVideo(0);
+            }
+        }
+
+        async function loadVideoManifest() {
+            if (state.videosLoading) return;
+            state.videosLoading = true;
+            try {
+                const response = await fetch(VIDEO_MANIFEST_URL + '?_=' + Date.now(), { cache: 'no-store' });
+                if (!response.ok) throw new Error('videos.json HTTP ' + response.status);
+                const data = await response.json();
+                const entries = Array.isArray(data) ? data : (Array.isArray(data.videos) ? data.videos : []);
+                setVideoPlaylist(entries);
+            } catch (error) {
+                console.error('Gagal membaca videos.json:', error);
+            } finally {
+                state.videosLoading = false;
+            }
+        }
+
+        $('broadcastVideo').addEventListener('ended', () => {
+            if (state.videos.length > 1) {
+                playVideo((state.videoIndex + 1) % state.videos.length);
+            }
+        });
+        $('broadcastVideo').addEventListener('error', () => {
+            const video = $('broadcastVideo');
+            console.error('Video lokal gagal dimuat:', video.error && video.error.code, video.currentSrc);
+        });
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) requestVideoPlay($('broadcastVideo'), state.videoLoadToken);
+        });
+
+        function updateData(payload) {
+            if (!payload || !payload.success) {
+                console.warn('Data display tidak berhasil diambil:', payload && payload.error);
+                return;
+            }
+            state.programs = Array.isArray(payload.programs) ? payload.programs : [];
+            state.photos = Array.isArray(payload.photos) ? payload.photos : [];
+            if (payload.programCsvError) console.warn('Jadwal CSV tidak dapat dibaca:', payload.programCsvError);
+            // Jangan mengambil video dari Apps Script/Google Drive.
+            // Playlist video tetap sepenuhnya dikendalikan oleh videos.json di repo GitHub.
+            const photosKey = photoKey(getPhotoList());
+            if (photosKey !== state.photoSignature) {
+                state.photoSignature = photosKey;
+                renderPhotos();
+            }
+            renderProgram();
+        }
+
+        // GitHub Pages memakai endpoint JSONP dari Apps Script.
+        // endpoint JSONP hanya untuk data display yang memang boleh ditampilkan publik.
+        const APPS_SCRIPT_URL = (window.TVRI_CONFIG && window.TVRI_CONFIG.APPS_SCRIPT_URL || '').trim();
+        function loadData() {
+            if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('PASTE_WEB_APP_EXEC_URL_HERE')) {
+                console.warn('Isi APPS_SCRIPT_URL pada config.js dengan URL Web App Apps Script.');
+                return;
+            }
+            if (state.dataLoading) return;
+            state.dataLoading = true;
+            const callbackName = '__tvriGithubDisplayCallback';
+            const script = document.createElement('script');
+            let finished = false;
+            const cleanup = () => {
+                if (finished) return;
+                finished = true;
+                state.dataLoading = false;
+                if (state.dataScript === script) state.dataScript = null;
+                script.remove();
+                try { delete window[callbackName]; } catch (_) { window[callbackName] = undefined; }
+            };
+            window[callbackName] = payload => {
+                try { updateData(payload); }
+                finally { cleanup(); }
+            };
+            script.onerror = () => {
+                console.error('Gagal mengambil data dari Apps Script. Periksa URL dan izin Web App.');
+                cleanup();
+            };
+            const url = new URL(APPS_SCRIPT_URL);
+            url.searchParams.set('page', 'data');
+            url.searchParams.set('callback', callbackName);
+            url.searchParams.set('_', String(Date.now()));
+            script.src = url.toString();
+            state.dataScript = script;
+            document.head.appendChild(script);
+            setTimeout(cleanup, 20000);
+        }
+
+        applyDriveAssets();
+        state.displayDateKey = localDateKey();
+        renderClock(); renderProgram();
+        // Hanya hitung waktu secara lokal. Tidak ada polling ke Apps Script/GitHub.
+        // Data jadwal untuk hari ini dan besok sudah dimuat saat halaman dibuka.
+        setInterval(() => {
+            renderClock();
+            const currentDateKey = localDateKey();
+            if (currentDateKey !== state.displayDateKey) {
+                state.displayDateKey = currentDateKey;
+                // Alihkan pilihan foto berdasarkan tanggal tanpa mengambil ulang data.
+                state.photoSignature = '';
+                renderPhotos();
+            }
+            renderProgram();
+        }, 1000);
+        loadData();
+        loadVideoManifest();
+    </script>
+</body>
+
+</html>
