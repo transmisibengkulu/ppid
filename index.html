@@ -309,7 +309,25 @@
             pointer-events: none
         }
 
-        .caption:empty { display: none; }
+        .caption[hidden] { display: none !important; }
+
+        .caption-name {
+            display: block;
+            font-size: clamp(11px, 1vw, 17px);
+            line-height: 1.25;
+            font-weight: 800
+        }
+
+        .caption-date {
+            display: block;
+            margin-top: 4px;
+            font-size: clamp(8px, .65vw, 11px);
+            line-height: 1.2;
+            font-weight: 500;
+            opacity: .92
+        }
+
+        .caption-date:empty { display: none; }
 
         .dots {
             position: absolute;
@@ -579,6 +597,9 @@
                 font-size: 9px
             }
 
+            .caption-name { font-size: 9px; }
+            .caption-date { font-size: 6px; margin-top: 2px; }
+
             .dots {
                 right: 9px;
                 bottom: 8px
@@ -715,7 +736,10 @@
             <section class="card news">
                 <div class="slides" id="slides">
                     <div id="photoEmpty" class="photo-empty">Menunggu foto dari Google Drive…</div>
-                    <div class="caption" id="photoCaption"></div>
+                    <div class="caption" id="photoCaption" hidden>
+                        <div class="caption-name" id="photoCaptionName"></div>
+                        <div class="caption-date" id="photoCaptionDate"></div>
+                    </div>
                     <div class="dots" id="dots"></div>
                 </div>
             </section>
@@ -821,7 +845,37 @@
             const todayItems = state.photos.filter(p => String(p.date || '').slice(0,10) === today && photoUrl(p));
             return todayItems.length ? todayItems : state.photos.filter(p => photoUrl(p));
         }
-        function photoKey(list) { return list.map(p => `${p.id || ''}|${photoUrl(p)}|${String(p.name || '').trim()}`).join('||'); }
+        function photoKey(list) { return list.map(p => `${p.id || ''}|${photoUrl(p)}|${String(p.name || '').trim()}|${String(p.date || '').trim()}`).join('||'); }
+        function setPhotoCaption(item) {
+            const caption = $('photoCaption');
+            const name = String(item && item.name || '').trim();
+            const date = formatPhotoDate(item && item.date);
+            $('photoCaptionName').textContent = name;
+            $('photoCaptionDate').textContent = date;
+            caption.hidden = !(name || date);
+        }
+        function formatPhotoDate(value) {
+            const raw = String(value == null ? '' : value).trim();
+            if (!raw) return '';
+            let year, month, day;
+            let match = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+            if (match) {
+                year = Number(match[1]); month = Number(match[2]); day = Number(match[3]);
+            } else {
+                match = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+                if (match) {
+                    month = Number(match[1]); day = Number(match[2]); year = Number(match[3]);
+                }
+            }
+            if (year && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+                const date = new Date(year, month - 1, day);
+                if (date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day) {
+                    return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+                }
+            }
+            const parsed = new Date(raw);
+            return Number.isNaN(parsed.getTime()) ? raw : parsed.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+        }
         function renderPhotos() {
             const list = getPhotoList();
             const stage = $('slides');
@@ -833,11 +887,11 @@
             state.photoIndex = 0;
             if (!list.length) {
                 $('photoEmpty').classList.remove('hidden');
-                $('photoCaption').textContent = '';
+                setPhotoCaption(null);
                 return;
             }
             $('photoEmpty').classList.add('hidden');
-            $('photoCaption').textContent = String(list[0].name || '').trim();
+            setPhotoCaption(list[0]);
             list.forEach((item, i) => {
                 const img = document.createElement('img');
                 img.className = 'slide' + (i === 0 ? ' active' : '');
@@ -862,7 +916,7 @@
             slides[state.photoIndex].classList.add('active');
             dots[state.photoIndex]?.classList.add('active');
             const list = getPhotoList();
-            $('photoCaption').textContent = String(list[state.photoIndex]?.name || '').trim();
+            setPhotoCaption(list[state.photoIndex]);
         }
 
         // Isi dengan tautan berbagi atau ID file gambar di Google Drive.
