@@ -770,10 +770,29 @@
         };
         const $ = id => document.getElementById(id);
         const pad = n => String(n).padStart(2, '0');
+        const DISPLAY_TIME_ZONE = 'Asia/Jakarta';
 
-        function localDateKey(d = new Date()) {
-            return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+        // Waktu program harus mengikuti WIB meskipun timezone komputer atau
+        // spreadsheet berbeda. Ini hanya membaca jam lokal; tidak melakukan polling.
+        function jakartaParts(d = new Date()) {
+            const parts = new Intl.DateTimeFormat('en-US', {
+                timeZone: DISPLAY_TIME_ZONE,
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit',
+                hourCycle: 'h23'
+            }).formatToParts(d);
+            const values = {};
+            parts.forEach(part => { if (part.type !== 'literal') values[part.type] = part.value; });
+            const hour = Number(values.hour) % 24;
+            return {
+                dateKey: `${values.year}-${values.month}-${values.day}`,
+                hour,
+                minute: Number(values.minute),
+                second: Number(values.second),
+                seconds: hour * 3600 + Number(values.minute) * 60 + Number(values.second)
+            };
         }
+        function localDateKey(d = new Date()) { return jakartaParts(d).dateKey; }
         function parseSeconds(v) {
             const s = String(v ?? '').trim();
             const m = s.match(/^(\d{1,3}):(\d{2})(?::(\d{2}))?$/);
@@ -781,25 +800,36 @@
             const iso = s.match(/T(\d{2}):(\d{2}):(\d{2})/);
             return iso ? Number(iso[1])*3600 + Number(iso[2])*60 + Number(iso[3]) : 0;
         }
-        function programStart(p) {
-            if (!p || !p.date) return null;
-            const a = String(p.date).slice(0,10).split('-').map(Number);
-            if (a.length !== 3 || !a[0]) return null;
-            const sec = parseSeconds(p.start_time);
-            return new Date(a[0], a[1]-1, a[2], Math.floor(sec/3600), Math.floor((sec%3600)/60), sec%60);
+        function firstText(...values) {
+            for (const value of values) {
+                const text = String(value == null ? '' : value).trim();
+                if (text) return text;
+            }
+            return '';
+        }
+        function programStartSeconds(p) {
+            return parseSeconds(p && (p.start_time ?? p.startTime ?? p['Start time']));
         }
         function todayPrograms(now = new Date()) {
-            return state.programs.filter(p => String(p.date || '').slice(0,10) === localDateKey(now))
-                .slice().sort((a,b) => (programStart(a)?.getTime() || 0) - (programStart(b)?.getTime() || 0));
+            return state.programs.filter(p => String(p.date || p.Date || '').slice(0,10) === localDateKey(now))
+                .slice().sort((a,b) => programStartSeconds(a) - programStartSeconds(b));
         }
-        function clockText(d) { return `${pad(d.getHours())}.${pad(d.getMinutes())}`; }
+        function clockText(value) {
+            const sec = typeof value === 'number' ? value : parseSeconds(value);
+            return `${pad(Math.floor(sec / 3600) % 24)}.${pad(Math.floor((sec % 3600) / 60))}`;
+        }
         function renderClock() {
             const d = new Date();
-            const date = d.toLocaleDateString('id-ID', {weekday:'long', day:'2-digit', month:'long', year:'numeric'}).toUpperCase();
-            $('dateClock').textContent = `${date} | ${pad(d.getHours())}:${pad(d.getMinutes())} WIB`;
+            const parts = jakartaParts(d);
+            const date = d.toLocaleDateString('id-ID', {
+                weekday:'long', day:'2-digit', month:'long', year:'numeric', timeZone:DISPLAY_TIME_ZONE
+            }).toUpperCase();
+            $('dateClock').textContent = `${date} | ${pad(parts.hour)}:${pad(parts.minute)} WIB`;
         }
         function renderProgram() {
             const now = new Date();
+            const nowParts = jakartaParts(now);
+            const nowSeconds = nowParts.seconds;
             const list = todayPrograms(now);
             if (!list.length) {
                 $('programLabel').textContent = 'PROGRAM';
@@ -813,28 +843,40 @@
                 $('liveBox').classList.remove('is-live');
                 return;
             }
+
             let index = -1;
-            for (let i=0; i<list.length; i++) {
-                const start = programStart(list[i]);
-                const end = start ? new Date(start.getTime() + parseSeconds(list[i].duration)*1000) : null;
-                if (start && end && now >= start && now < end) { index = i; break; }
+            for (let i = 0; i < list.length; i++) {
+                const startSec = programStartSeconds(list[i]);
+                const durationSec = parseSeconds(list[i].duration ?? list[i].Duration);
+                const endSec = startSec + durationSec;
+                if (durationSec > 0 && nowSeconds >= startSec && nowSeconds < endSec) {
+                    index = i;
+                    break;
+                }
             }
             const active = index >= 0;
             if (!active) {
-                index = list.findIndex(p => (programStart(p)?.getTime() || 0) > now.getTime());
+                index = list.findIndex(p => programStartSeconds(p) > nowSeconds);
                 if (index < 0) index = list.length - 1;
             }
+
             const p = list[index];
-            const start = programStart(p);
-            const end = start ? new Date(start.getTime() + parseSeconds(p.duration)*1000) : null;
+            const startSec = programStartSeconds(p);
+            const programName = firstText(p.name, p.Name, p.program_name, p.programName, p.title);
+            // Lewati string kosong: Short description yang kosong harus bisa
+            // menggunakan description/Long description sebagai cadangan.
+            const programDescription = firstText(
+                p.short_description, p.shortDescription, p.description,
+                p.long_description, p.longDescription
+            );
             const live = p.live === true || ['true','1','yes','live'].includes(String(p.live).toLowerCase());
             $('programLabel').textContent = active ? 'PROGRAM SAAT INI' : 'PROGRAM BERIKUTNYA';
-            $('programName').textContent = p.name || 'Tanpa judul';
-            $('programDescription').textContent = p.description || 'Tidak ada deskripsi program.';
+            $('programName').textContent = programName || 'Tanpa judul';
+            $('programDescription').textContent = programDescription || 'Tidak ada deskripsi program.';
             $('programStation').textContent = 'TVRI BENGKULU';
-            $('currentStart').textContent = start ? clockText(start) : '--:--';
-            $('prevTime').textContent = index > 0 ? clockText(programStart(list[index-1])) : '';
-            $('nextTime').textContent = index < list.length-1 ? clockText(programStart(list[index+1])) : '';
+            $('currentStart').textContent = clockText(startSec);
+            $('prevTime').textContent = index > 0 ? clockText(programStartSeconds(list[index-1])) : '';
+            $('nextTime').textContent = index < list.length-1 ? clockText(programStartSeconds(list[index+1])) : '';
             $('liveBox').textContent = live ? '● LIVE' : '● SIARAN';
             $('liveBox').classList.toggle('is-live', live);
         }
@@ -1084,7 +1126,15 @@
                 console.warn('Data display tidak berhasil diambil:', payload && payload.error);
                 return;
             }
-            state.programs = Array.isArray(payload.programs) ? payload.programs : [];
+            state.programs = (Array.isArray(payload.programs) ? payload.programs : []).map(p => ({
+                ...p,
+                date: firstText(p.date, p.Date, payload.today).slice(0, 10),
+                start_time: firstText(p.start_time, p.startTime, p['Start time']),
+                duration: firstText(p.duration, p.Duration),
+                name: firstText(p.name, p.Name, p.program_name, p.programName, p.title),
+                short_description: firstText(p.short_description, p.shortDescription),
+                description: firstText(p.short_description, p.shortDescription, p.description, p.long_description, p.longDescription)
+            }));
             state.photos = Array.isArray(payload.photos) ? payload.photos : [];
             if (payload.programCsvError) console.warn('Jadwal CSV tidak dapat dibaca:', payload.programCsvError);
             // Jangan mengambil video dari Apps Script/Google Drive.
