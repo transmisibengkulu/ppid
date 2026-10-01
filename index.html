@@ -793,6 +793,7 @@
         // TVRI GitHub Pages: jadwal CSV dari Drive dan foto dari Apps Script JSONP; video HANYA dari videos.json di repo GitHub.
         const PHOTO_MS = 4000;
         const MAX_PHOTOS = 15;
+        const DISPLAY_CACHE_KEY = 'tvriDisplayDataCacheV1';
         // Video display source: ONLY the GitHub repository manifest.
         // The Apps Script/Google Drive video folder is not used by the public display.
         const VIDEO_MANIFEST_URL = './videos.json';
@@ -869,7 +870,7 @@
                 $('programLabel').textContent = 'PROGRAM';
                 $('programName').textContent = 'Belum ada jadwal hari ini';
                 $('programDescription').textContent = '-';
-                $('programStation').textContent = 'TVRI BENGKULU';
+                $('programStation').textContent = '—';
                 $('currentStart').textContent = '--:--';
                 $('prevTime').textContent = '';
                 $('nextTime').textContent = '';
@@ -904,10 +905,18 @@
                 p.long_description, p.longDescription
             );
             const live = p.live === true || ['true','1','yes','live'].includes(String(p.live).toLowerCase());
-            $('programLabel').textContent = active ? 'PROGRAM SAAT INI' : 'PROGRAM BERIKUTNYA';
+            const previousProgram = index > 0 ? list[index - 1] : null;
+            const nextProgram = index < list.length - 1 ? list[index + 1] : null;
+            const previousProgramName = previousProgram
+                ? firstText(previousProgram.name, previousProgram.Name, previousProgram.program_name, previousProgram.programName, previousProgram.title)
+                : '—';
+            const nextProgramName = nextProgram
+                ? firstText(nextProgram.name, nextProgram.Name, nextProgram.program_name, nextProgram.programName, nextProgram.title)
+                : '—';
+            $('programLabel').textContent = previousProgramName || '—';
             $('programName').textContent = programName || 'Tanpa judul';
             $('programDescription').textContent = programDescription || 'Tidak ada deskripsi program.';
-            $('programStation').textContent = 'TVRI BENGKULU';
+            $('programStation').textContent = nextProgramName || '—';
             $('currentStart').textContent = clockText(startSec);
             $('prevTime').textContent = index > 0 ? clockText(programStartSeconds(list[index-1])) : '';
             $('nextTime').textContent = index < list.length-1 ? clockText(programStartSeconds(list[index+1])) : '';
@@ -976,6 +985,8 @@
                 img.className = 'slide' + (i === 0 ? ' active' : '');
                 img.alt = item.name || `Foto berita ${i+1}`;
                 img.loading = i < 2 ? 'eager' : 'lazy';
+                img.decoding = 'async';
+                if (i === 0) img.setAttribute('fetchpriority', 'high');
                 img.src = photoUrl(item);
                 img.onerror = () => img.classList.add('broken');
                 stage.insertBefore(img, dots);
@@ -1158,7 +1169,7 @@
             if (!document.hidden) requestVideoPlay($('broadcastVideo'), state.videoLoadToken);
         });
 
-        function updateData(payload) {
+        function updateData(payload, persistCache = true) {
             if (!payload || !payload.success) {
                 console.warn('Data display tidak berhasil diambil:', payload && payload.error);
                 return;
@@ -1173,6 +1184,15 @@
                 description: firstText(p.short_description, p.shortDescription, p.description, p.long_description, p.longDescription)
             }));
             state.photos = Array.isArray(payload.photos) ? payload.photos : [];
+            // Simpan hasil terakhir agar foto dan jadwal bisa langsung ditampilkan
+            // pada pembukaan berikutnya, sambil tetap mengambil data terbaru dari server.
+            if (persistCache) {
+                try {
+                    localStorage.setItem(DISPLAY_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), payload }));
+                } catch (cacheError) {
+                    console.warn('Cache data Display tidak dapat disimpan:', cacheError);
+                }
+            }
             if (payload.programCsvError) console.warn('Jadwal CSV tidak dapat dibaca:', payload.programCsvError);
             // Jangan mengambil video dari Apps Script/Google Drive.
             // Playlist video tetap sepenuhnya dikendalikan oleh videos.json di repo GitHub.
@@ -1187,6 +1207,20 @@
         // GitHub Pages memakai endpoint JSONP dari Apps Script.
         // endpoint JSONP hanya untuk data display yang memang boleh ditampilkan publik.
         const APPS_SCRIPT_URL = (window.TVRI_CONFIG && window.TVRI_CONFIG.APPS_SCRIPT_URL || '').trim();
+        function restoreCachedData() {
+            try {
+                const raw = localStorage.getItem(DISPLAY_CACHE_KEY);
+                if (!raw) return false;
+                const cached = JSON.parse(raw);
+                if (!cached || !cached.payload || cached.payload.success !== true) return false;
+                updateData(cached.payload, false);
+                return true;
+            } catch (error) {
+                console.warn('Cache data Display tidak dapat dibaca:', error);
+                return false;
+            }
+        }
+
         function loadData() {
             if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('PASTE_WEB_APP_EXEC_URL_HERE')) {
                 console.warn('Isi APPS_SCRIPT_URL pada config.js dengan URL Web App Apps Script.');
@@ -1224,6 +1258,7 @@
         }
 
         applyDriveAssets();
+        restoreCachedData();
         renderClock(); renderProgram();
         // Hanya hitung waktu secara lokal. Tidak ada polling ke Apps Script/GitHub.
         // Data jadwal untuk hari ini dan besok sudah dimuat saat halaman dibuka.
