@@ -92,15 +92,35 @@
             object-position: left center
         }
 
-        .live-status {
+        .header-right {
             margin-left: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 4px;
+            min-width: 0
+        }
+
+        .date-clock {
+            color: var(--navy);
+            font-size: clamp(10px, .82vw, 14px);
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: .25px;
+            text-align: right;
+            white-space: nowrap
+        }
+
+        .live-status {
             display: flex;
             align-items: center;
             gap: 8px;
             color: var(--blue);
             font-weight: 800;
             font-size: clamp(10px, .8vw, 14px);
-            letter-spacing: .8px
+            letter-spacing: .8px;
+            white-space: nowrap
         }
 
         .pulse {
@@ -135,7 +155,7 @@
             position: relative;
             min-width: 0;
             min-height: 0;
-            border-radius: 22px;
+            border-radius: 0;
             overflow: hidden;
             box-shadow: 0 14px 38px rgba(6, 54, 108, .16);
             border: 1px solid rgba(255, 255, 255, .9)
@@ -153,7 +173,7 @@
             border: 0;
             display: block;
             background: #052f5d;
-            object-fit: contain;
+            object-fit: cover;
             pointer-events: none
         }
 
@@ -514,8 +534,19 @@
                 max-height: 7vh
             }
 
+            .header-right {
+                gap: 2px
+            }
+
+            .date-clock {
+                font-size: 7px;
+                letter-spacing: 0
+            }
+
             .live-status {
-                font-size: 8px
+                font-size: 8px;
+                letter-spacing: .25px;
+                gap: 5px
             }
 
             .pulse {
@@ -534,7 +565,7 @@
             }
 
             .card {
-                border-radius: 14px
+                border-radius: 0
             }
 
             .live {
@@ -725,13 +756,15 @@
         <div class="batik"></div>
         <header class="header">
             <img class="logo" id="brandLogo" alt="Logo TVRI Bengkulu" hidden>
-            <div class="live-status"><i class="pulse"></i>SIARAN TVRI BENGKULU</div>
+            <div class="header-right">
+                <div class="date-clock" id="dateClock">Memuat tanggal dan waktu…</div>
+                <div class="live-status"><i class="pulse"></i>SIARAN TVRI BENGKULU</div>
+            </div>
         </header>
         <main class="main">
             <section class="card video-card">
                 <video id="broadcastVideo" class="video" autoplay muted playsinline webkit-playsinline preload="auto" disablepictureinpicture controlslist="nodownload noplaybackrate noremoteplayback"></video>
                 <div class="video-shade"></div>
-                <div class="vinfo"><h1 id="dateClock">Memuat tanggal dan waktu…</h1></div>
             </section>
             <section class="card news">
                 <div class="slides" id="slides">
