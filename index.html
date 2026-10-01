@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-    <title>TVRI Bengkulu PPID</title>
+    <title>TVRI Bengkulu — Modern Broadcast</title>
     <style>
         :root {
             --blue: #075cae;
@@ -304,7 +304,7 @@
             inset: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             opacity: 0;
             transition: opacity .65s
         }
@@ -319,10 +319,10 @@
             right: 0;
             bottom: 0;
             z-index: 2;
-            padding: 30px 64px 15px 20px;
+            padding: 32px 64px 16px 20px;
             color: #fff;
             background: linear-gradient(transparent, rgba(0, 28, 57, .9));
-            font-size: clamp(15px, 3vw, 20px);
+            font-size: clamp(16px, 1.35vw, 24px);
             line-height: 1.25;
             font-weight: 800;
             text-shadow: 0 1px 3px rgba(0,0,0,.45);
@@ -333,15 +333,15 @@
 
         .caption-name {
             display: block;
-            font-size: clamp(11px, 1vw, 17px);
+            font-size: clamp(16px, 1.35vw, 24px);
             line-height: 1.25;
             font-weight: 800
         }
 
         .caption-date {
             display: block;
-            margin-top: 4px;
-            font-size: clamp(8px, .65vw, 11px);
+            margin-top: 5px;
+            font-size: clamp(12px, .95vw, 16px);
             line-height: 1.2;
             font-weight: 500;
             opacity: .92
@@ -415,7 +415,7 @@
             font-weight: 900;
             padding: 8px 11px;
             border-radius: 6px;
-            font-size: clamp(10px, 1vw, 15px);
+            font-size: clamp(14px, 1.25vw, 20px);
             width: max-content
         }
 
@@ -427,7 +427,7 @@
             font-weight: 900;
             padding: 8px 11px;
             border-radius: 6px;
-            font-size: clamp(10px, 1vw, 15px);
+            font-size: clamp(12px, 1.1vw, 17px);
             width: max-content
         }
 
@@ -438,7 +438,7 @@
         .time small {
             display: block;
             color: var(--blue2);
-            font-size: clamp(8px, .7vw, 12px);
+            font-size: clamp(12px, .95vw, 16px);
             font-weight: 800
         }
 
@@ -449,7 +449,7 @@
 
             display: block;
             /* font-size: clamp(14px, 1.55vw, 26px); */
-            font-size: clamp(16px, 1.8vw, 30px);
+            font-size: clamp(23px, 2.2vw, 40px);
             /* Samakan batas rentangnya dengan .program b */
             line-height: 1.1;
             margin: 2px 0;
@@ -468,7 +468,7 @@
         .theme small {
             display: block;
             color: var(--blue2);
-            font-size: clamp(8px, .65vw, 12px);
+            font-size: clamp(12px, .95vw, 16px);
             font-weight: 900;
             letter-spacing: .6px
         }
@@ -476,7 +476,7 @@
         .program b {
             display: block;
             /* font-size: clamp(14px, 1.55vw, 26px); */
-            font-size: clamp(20px, 3vw, 40px);
+            font-size: clamp(22px, 2.15vw, 38px);
             /* line-height: 1.05 */
             line-height: 1.1;
             /* Sedikit penyesuaian spasi antar baris */
@@ -485,14 +485,14 @@
         }
 
         .program span {
-            font-size: clamp(10px, .65vw, 15px);
+            font-size: clamp(12px, .95vw, 16px);
             color: var(--blue2);
             font-weight: 800
         }
 
         .theme b {
             display: block;
-            font-size: clamp(10px, .95vw, 15px)
+            font-size: clamp(15px, 1.3vw, 22px)
         }
 
         .corner {
@@ -624,12 +624,12 @@
             }
 
             .caption {
-                padding: 22px 34px 9px 11px;
-                font-size: 9px
+                padding: 26px 34px 11px 11px;
+                font-size: 15px
             }
 
-            .caption-name { font-size: 9px; }
-            .caption-date { font-size: 6px; margin-top: 2px; }
+            .caption-name { font-size: 15px; }
+            .caption-date { font-size: 10px; margin-top: 4px; }
 
             .dots {
                 right: 9px;
@@ -656,21 +656,21 @@
             }
 
             .livebox {
-                font-size: 8px;
+                font-size: 12px;
                 padding: 5px 7px
             }
 
             .tdklivebox {
-                font-size: 8px;
+                font-size: 11px;
                 padding: 5px 7px
             }
 
             .time small {
-                font-size: 6px
+                font-size: 9px
             }
 
             .time strong {
-                font-size: 21px
+                font-size: 26px
             }
 
             .program {
@@ -684,18 +684,18 @@
 
             .program small,
             .theme small {
-                font-size: 6px
+                font-size: 10px
             }
 
             .program b {
-                font-size: 10px;
+                font-size: 15px;
                 line-height: 1.1;
                 /* Menyesuaikan jarak antar baris agar lebih simetris */
                 margin: 1px 0;
             }
 
             .program span {
-                font-size: 6px
+                font-size: 10px
             }
 
             .theme {
@@ -729,11 +729,11 @@
             }
 
             .time strong {
-                font-size: 18px
+                font-size: 21px
             }
 
             .program b {
-                font-size: 9px
+                font-size: 14px
             }
         }
 
@@ -792,6 +792,7 @@
     <script>
         // TVRI GitHub Pages: jadwal CSV dari Drive dan foto dari Apps Script JSONP; video HANYA dari videos.json di repo GitHub.
         const PHOTO_MS = 4000;
+        const MAX_PHOTOS = 15;
         // Video display source: ONLY the GitHub repository manifest.
         // The Apps Script/Google Drive video folder is not used by the public display.
         const VIDEO_MANIFEST_URL = './videos.json';
@@ -799,7 +800,7 @@
             programs: [], photos: [], videos: [],
             videoIndex: 0, videoSignature: '', photoSignature: '', photoIndex: 0,
             photoTimer: null, videoLoadToken: 0, dataScript: null,
-            dataLoading: false, videosLoading: false, displayDateKey: ''
+            dataLoading: false, videosLoading: false
         };
         const $ = id => document.getElementById(id);
         const pad = n => String(n).padStart(2, '0');
@@ -916,9 +917,12 @@
 
         function photoUrl(item) { return String(item.mediaUrl || item.image || '').trim(); }
         function getPhotoList() {
-            const today = localDateKey();
-            const todayItems = state.photos.filter(p => String(p.date || '').slice(0,10) === today && photoUrl(p));
-            return todayItems.length ? todayItems : state.photos.filter(p => photoUrl(p));
+            // Urutan data mengikuti baris di Sheet: entri terbaru berada paling akhir.
+            // Tampilkan maksimal 15 foto terbaru, tanpa memfilter atau mengurutkan berdasarkan tanggal.
+            return state.photos
+                .filter(p => !!photoUrl(p))
+                .slice(-MAX_PHOTOS)
+                .reverse();
         }
         function photoKey(list) { return list.map(p => `${p.id || ''}|${photoUrl(p)}|${String(p.name || '').trim()}|${String(p.date || '').trim()}`).join('||'); }
         function setPhotoCaption(item) {
@@ -1220,19 +1224,11 @@
         }
 
         applyDriveAssets();
-        state.displayDateKey = localDateKey();
         renderClock(); renderProgram();
         // Hanya hitung waktu secara lokal. Tidak ada polling ke Apps Script/GitHub.
         // Data jadwal untuk hari ini dan besok sudah dimuat saat halaman dibuka.
         setInterval(() => {
             renderClock();
-            const currentDateKey = localDateKey();
-            if (currentDateKey !== state.displayDateKey) {
-                state.displayDateKey = currentDateKey;
-                // Alihkan pilihan foto berdasarkan tanggal tanpa mengambil ulang data.
-                state.photoSignature = '';
-                renderPhotos();
-            }
             renderProgram();
         }, 1000);
         loadData();
