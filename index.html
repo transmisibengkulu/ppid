@@ -103,8 +103,12 @@
         }
 
         .date-clock {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
             color: var(--navy);
-            font-size: clamp(10px, .82vw, 14px);
+            font-size: clamp(13px, 1vw, 17px);
             font-weight: 800;
             line-height: 1.2;
             letter-spacing: .25px;
@@ -112,15 +116,16 @@
             white-space: nowrap
         }
 
-        .live-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--blue);
-            font-weight: 800;
-            font-size: clamp(10px, .8vw, 14px);
-            letter-spacing: .8px;
-            white-space: nowrap
+        .date-clock::before {
+            content: "";
+            display: inline-block;
+            flex: 0 0 auto;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--red);
+            box-shadow: 0 0 0 5px rgba(238, 32, 41, .10);
+            animation: pulse 1.5s infinite
         }
 
         .pulse {
@@ -411,7 +416,7 @@
 
         .livebox {
             background: var(--blue);
-            color: white;
+            color: #dcecff;
             font-weight: 900;
             padding: 8px 11px;
             border-radius: 6px;
@@ -437,7 +442,7 @@
 
         .time small {
             display: block;
-            color: var(--blue2);
+            color: #82b5df;
             font-size: clamp(12px, .95vw, 16px);
             font-weight: 800
         }
@@ -539,19 +544,15 @@
             }
 
             .date-clock {
-                font-size: 7px;
-                letter-spacing: 0
-            }
-
-            .live-status {
-                font-size: 8px;
-                letter-spacing: .25px;
+                font-size: 9px;
+                letter-spacing: 0;
                 gap: 5px
             }
 
-            .pulse {
-                width: 6px;
-                height: 6px
+            .date-clock::before {
+                width: 7px;
+                height: 7px;
+                box-shadow: 0 0 0 3px rgba(238, 32, 41, .10)
             }
 
             .main {
@@ -758,7 +759,6 @@
             <img class="logo" id="brandLogo" alt="Logo TVRI Bengkulu" hidden>
             <div class="header-right">
                 <div class="date-clock" id="dateClock">Memuat tanggal dan waktu…</div>
-                <div class="live-status"><i class="pulse"></i>SIARAN TVRI BENGKULU</div>
             </div>
         </header>
         <main class="main">
@@ -791,7 +791,7 @@
     <script src="./config.js"></script>
     <script>
         // TVRI GitHub Pages: jadwal CSV dari Drive dan foto dari Apps Script JSONP; video HANYA dari videos.json di repo GitHub.
-        const PHOTO_MS = 4000;
+        const PHOTO_MS = 8000;
         const MAX_PHOTOS = 15;
         const DISPLAY_CACHE_KEY = 'tvriDisplayDataCacheV1';
         // Video display source: ONLY the GitHub repository manifest.
