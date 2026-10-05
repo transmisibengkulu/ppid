@@ -542,6 +542,89 @@
             top: 55%
         }
 
+        /* BMKG weather panel - menggantikan elemen dekoratif sudut kanan bawah */
+        .weather-panel {
+            height: 100%;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+            padding: 0 0 0 8px;
+        }
+
+        .weather-content {
+            min-width: 0;
+            width: 100%;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-items: center;
+            column-gap: 10px;
+            text-align: left;
+        }
+
+        .weather-icon {
+            font-size: clamp(28px, 2.8vw, 48px);
+            line-height: 1;
+            width: 1.15em;
+            text-align: center;
+        }
+
+        .weather-main {
+            min-width: 0;
+        }
+
+        .weather-location {
+            color: var(--blue2);
+            font-size: clamp(8px, .62vw, 12px);
+            font-weight: 900;
+            letter-spacing: .6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .weather-temp {
+            color: var(--navy);
+            font-size: clamp(19px, 2vw, 34px);
+            font-weight: 900;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .weather-desc {
+            color: var(--ink);
+            font-size: clamp(8px, .65vw, 12px);
+            font-weight: 800;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .weather-meta {
+            color: #6c89a4;
+            font-size: clamp(7px, .52vw, 10px);
+            font-weight: 700;
+            margin-top: 2px;
+            white-space: nowrap;
+        }
+
+        .weather-source {
+            position: absolute;
+            right: 0;
+            bottom: 3px;
+            color: #7a96ad;
+            font-size: clamp(6px, .45vw, 8px);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .weather-loading .weather-icon {
+            animation: pulse 1.5s infinite;
+        }
+
         /* portrait mobile: one viewport, no scroll */
         @media(max-width:700px) and (orientation:portrait) {
             .header {
@@ -721,11 +804,40 @@
                 display: none
             }
 
-            .corner {
-                /* width: 10vw */
+            .weather-panel {
                 width: 100%;
                 height: 100%;
-                display: block;
+                padding-left: 2px;
+                justify-content: flex-end;
+            }
+
+            .weather-content {
+                grid-template-columns: auto 1fr;
+                column-gap: 4px;
+            }
+
+            .weather-icon {
+                font-size: 18px;
+            }
+
+            .weather-location {
+                font-size: 6px;
+            }
+
+            .weather-temp {
+                font-size: 14px;
+            }
+
+            .weather-desc {
+                font-size: 6px;
+            }
+
+            .weather-meta {
+                font-size: 5px;
+            }
+
+            .weather-source {
+                display: none;
             }
         }
 
@@ -803,7 +915,18 @@
             </div>
             <div class="bitem program"><small id="programLabel">PROGRAM</small><b id="programName">Menunggu data program…</b><span id="programStation">TVRI BENGKULU</span></div>
             <div class="bitem theme"><small>DESKRIPSI PROGRAM</small><b id="programDescription">Informasi program TVRI Bengkulu.</b></div>
-            <div class="bitem corner"></div>
+            <div class="bitem weather-panel" id="weatherPanel" aria-label="Prakiraan cuaca BMKG">
+                <div class="weather-content">
+                    <div class="weather-icon" id="weatherIcon" aria-hidden="true">☁️</div>
+                    <div class="weather-main">
+                        <div class="weather-location" id="weatherLocation">BENGKULU</div>
+                        <div class="weather-temp" id="weatherTemp">--°C</div>
+                        <div class="weather-desc" id="weatherDesc">Memuat cuaca…</div>
+                        <div class="weather-meta" id="weatherMeta">--% • -- km/jam</div>
+                    </div>
+                </div>
+                <div class="weather-source">Sumber: BMKG</div>
+            </div>
         </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.7.3/dist/hls.min.js"></script>
@@ -829,6 +952,93 @@
         const $ = id => document.getElementById(id);
         const pad = n => String(n).padStart(2, '0');
         const DISPLAY_TIME_ZONE = 'Asia/Jakarta';
+
+        // BMKG: titik TVRI Bengkulu di Jl. Basuki Rahmat No. 05,
+        // Kelurahan Sawah Lebar Baru, Kecamatan Ratu Agung, Kota Bengkulu.
+        // API BMKG menggunakan kode wilayah administrasi tingkat IV.
+        const BMKG_API_URL = 'https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=17.71.06.1007';
+        const BMKG_REFRESH_MS = 30 * 60 * 1000;
+        let bmkgLoading = false;
+
+        function weatherIcon(description) {
+            const d = String(description || '').toLowerCase();
+            if (d.includes('petir') || d.includes('badai')) return '⛈️';
+            if (d.includes('hujan')) return d.includes('lebat') || d.includes('sedang') ? '🌧️' : '🌦️';
+            if (d.includes('kabut') || d.includes('asap')) return '🌫️';
+            if (d.includes('berawan')) return d.includes('tebal') ? '☁️' : '🌤️';
+            if (d.includes('cerah')) return '☀️';
+            return '🌤️';
+        }
+
+        function weatherTimeValue(item) {
+            const raw = firstText(item && item.local_datetime, item && item.datetime);
+            const time = Date.parse(raw);
+            return Number.isNaN(time) ? 0 : time;
+        }
+
+        function flattenBmkgForecast(payload) {
+            const source = payload && Array.isArray(payload.data) ? payload.data : [];
+            const result = [];
+            source.forEach(day => {
+                const groups = Array.isArray(day && day.cuaca) ? day.cuaca : [];
+                groups.forEach(group => {
+                    if (Array.isArray(group)) group.forEach(item => result.push(item));
+                    else if (group && typeof group === 'object') result.push(group);
+                });
+            });
+            return result;
+        }
+
+        async function loadWeather() {
+            if (bmkgLoading) return;
+            bmkgLoading = true;
+            $('weatherPanel').classList.add('weather-loading');
+
+            try {
+                const response = await fetch(BMKG_API_URL + '&_=' + Date.now(), {
+                    cache: 'no-store'
+                });
+                if (!response.ok) throw new Error('BMKG HTTP ' + response.status);
+
+                const payload = await response.json();
+                const forecasts = flattenBmkgForecast(payload);
+                if (!forecasts.length) throw new Error('Data prakiraan BMKG kosong.');
+
+                const now = Date.now();
+                const future = forecasts
+                    .filter(item => weatherTimeValue(item) >= now - 3 * 60 * 60 * 1000)
+                    .sort((a, b) => weatherTimeValue(a) - weatherTimeValue(b));
+                const current = future[0] || forecasts[0];
+
+                const location = payload.lokasi || {};
+                const temp = current.t;
+                const humidity = current.hu;
+                const wind = current.ws;
+                const description = firstText(current.weather_desc, current.weather, current.weather_desc_en, 'Data cuaca tersedia');
+                const city = 'BASUKI RAHMAT';
+
+                $('weatherLocation').textContent = city;
+                $('weatherTemp').textContent = (temp !== undefined && temp !== null && temp !== '') ? `${temp}°C` : '--°C';
+                $('weatherDesc').textContent = description;
+                $('weatherMeta').textContent =
+                    `${humidity !== undefined && humidity !== null ? humidity + '%' : '--%'} • ` +
+                    `${wind !== undefined && wind !== null ? wind + ' km/jam' : '-- km/jam'}`;
+                $('weatherIcon').textContent = weatherIcon(description);
+
+                const updated = current.local_datetime || current.datetime || '';
+                if (updated) $('weatherPanel').title = `Prakiraan BMKG: ${updated}`;
+            } catch (error) {
+                console.warn('Gagal mengambil prakiraan cuaca BMKG:', error);
+                $('weatherLocation').textContent = 'BASUKI RAHMAT';
+                $('weatherTemp').textContent = '--°C';
+                $('weatherDesc').textContent = 'Cuaca tidak tersedia';
+                $('weatherMeta').textContent = 'Sumber: BMKG';
+                $('weatherIcon').textContent = '☁️';
+            } finally {
+                bmkgLoading = false;
+                $('weatherPanel').classList.remove('weather-loading');
+            }
+        }
 
         // Waktu program harus mengikuti WIB meskipun timezone komputer atau
         // spreadsheet berbeda. Ini hanya membaca jam lokal; tidak melakukan polling.
@@ -1377,6 +1587,8 @@
         }, 1000);
         loadData();
         initializeVideoSource();
+        loadWeather();
+        setInterval(loadWeather, BMKG_REFRESH_MS);
     </script>
 </body>
 
