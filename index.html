@@ -546,13 +546,30 @@
         .weather-panel {
             height: 100%;
             min-width: 0;
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             align-items: center;
-            justify-content: flex-end;
+            gap: 1vw;
             position: relative;
             z-index: 2;
             overflow: hidden;
             padding: 0 0 0 8px;
+        }
+
+        .weather-panel .weather-view,
+        .weather-panel .budget-view {
+            min-width: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            column-gap: clamp(8px, 1vw, 14px);
+        }
+
+        .weather-panel .budget-view {
+            border-left: 1px solid rgba(7,92,174,.15);
+            padding-left: 1vw;
         }
 
         .weather-content {
@@ -581,9 +598,10 @@
             font-size: clamp(8px, .62vw, 12px);
             font-weight: 900;
             letter-spacing: .6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+            overflow-wrap: anywhere;
         }
 
         .weather-temp {
@@ -598,9 +616,10 @@
             color: var(--ink);
             font-size: clamp(8px, .65vw, 12px);
             font-weight: 800;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+            overflow-wrap: anywhere;
         }
 
         .weather-meta {
@@ -695,14 +714,25 @@
         }
 
         .ticker-text {
-            width: 100%;
+            width: max-content;
+            min-width: 100%;
             color: var(--navy);
             font-size: clamp(12px, 1.05vw, 19px);
             line-height: 1.15;
             font-weight: 800;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            overflow: visible;
+            text-overflow: clip;
+        }
+
+        .ticker-content.is-scrolling .ticker-text {
+            animation: tickerScroll 14s linear infinite;
+            padding-right: 8vw;
+        }
+
+        @keyframes tickerScroll {
+            0%, 12% { transform: translateX(0); }
+            88%, 100% { transform: translateX(calc(-1 * var(--ticker-overflow, 0px))); }
         }
 
         /* Anggaran dan cuaca berada berdampingan pada area footer.
@@ -719,6 +749,7 @@
 
         .budget-info {
             min-width: 0;
+            overflow: visible;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -729,9 +760,9 @@
             font-size: clamp(8px, .62vw, 12px);
             font-weight: 900;
             letter-spacing: .5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
         }
 
         .budget-amount {
@@ -1114,15 +1145,15 @@
                 </div>
                 <div class="budget-view footer-info-view" id="budgetView" hidden>
                     <div class="budget-info">
-                        <span class="budget-title">REALISASI ANGGARAN</span>
-                        <span class="budget-amount">--</span>
+                        <span class="budget-title" id="budgetTitle">REALISASI ANGGARAN</span>
+                        <span class="budget-amount" id="budgetAmount">--</span>
                     </div>
                     <div class="budget-chart-container" aria-hidden="true">
                         <svg class="budget-svg" viewBox="0 0 36 36">
                             <path class="budget-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                             <path class="budget-circle-progress" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                         </svg>
-                        <div class="budget-center-text">--%</div>
+                        <div class="budget-center-text" id="budgetPercent">--%</div>
                     </div>
                 </div>
             </div>
@@ -1143,7 +1174,7 @@
         const LIVE_STREAM_URL = 'https://ott.tvri.co.id/Content/HLS/Live/Channel(TVRIBengkulu)/index.m3u8';
         const VIDEO_MANIFEST_URL = './videos.json';
         const state = {
-            programs: [], photos: [], videos: [],
+            programs: [], photos: [], videos: [], runningTexts: [], budget: null,
             videoIndex: 0, videoSignature: '', photoSignature: '', photoIndex: 0,
             photoTimer: null, videoLoadToken: 0, dataScript: null,
             dataLoading: false, videosLoading: false, hls: null
@@ -1689,6 +1720,87 @@
             if (!document.hidden) requestVideoPlay($('broadcastVideo'), state.videoLoadToken);
         });
 
+        function normalizeRunningTexts(value) {
+            const list = Array.isArray(value) ? value : (value ? [value] : []);
+            return list.map(item => {
+                if (typeof item === 'string') return item.trim();
+                return firstText(item && item.text, item && item.message, item && item.title, item && item.teks);
+            }).filter(Boolean);
+        }
+
+        function updateTickerOverflow() {
+            const content = document.querySelector('.ticker-content');
+            const text = $('runningTextDisplay');
+            if (!content || !text) return;
+            content.classList.remove('is-scrolling');
+            text.style.setProperty('--ticker-overflow', '0px');
+            requestAnimationFrame(() => {
+                const overflow = Math.max(0, text.scrollWidth - content.clientWidth);
+                if (overflow > 2) {
+                    text.style.setProperty('--ticker-overflow', overflow + 'px');
+                    content.classList.add('is-scrolling');
+                }
+            });
+        }
+
+        let runningTextTimer = null;
+        function renderRunningText() {
+            const el = $('runningTextDisplay');
+            if (!el) return;
+            const list = state.runningTexts.length ? state.runningTexts : ['INFORMASI TVRI BENGKULU'];
+            const index = Number(el.dataset.runningIndex || 0) % list.length;
+            el.textContent = list[index];
+            el.dataset.runningIndex = String(index);
+            updateTickerOverflow();
+        }
+
+        function startRunningText() {
+            clearInterval(runningTextTimer);
+            renderRunningText();
+            if (state.runningTexts.length > 1) {
+                runningTextTimer = setInterval(() => {
+                    const el = $('runningTextDisplay');
+                    if (!el) return;
+                    const next = (Number(el.dataset.runningIndex || 0) + 1) % state.runningTexts.length;
+                    el.dataset.runningIndex = String(next);
+                    el.textContent = state.runningTexts[next];
+                    updateTickerOverflow();
+                }, 10000);
+            }
+        }
+
+        function formatRupiah(value) {
+            const number = Number(value);
+            if (!Number.isFinite(number)) return '--';
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency', currency: 'IDR', maximumFractionDigits: 0
+            }).format(number);
+        }
+
+        function renderBudget() {
+            const budget = state.budget;
+            const title = $('budgetTitle');
+            const amount = $('budgetAmount');
+            const percent = $('budgetPercent');
+            const progress = document.querySelector('.budget-circle-progress');
+            if (!title || !amount || !percent) return;
+
+            if (!budget) {
+                title.textContent = 'REALISASI ANGGARAN';
+                amount.textContent = '--';
+                percent.textContent = '--%';
+                if (progress) progress.style.strokeDashoffset = '100';
+                return;
+            }
+
+            const percentage = Math.max(0, Math.min(100, Number(budget.percentage) || 0));
+            const year = firstText(budget.year);
+            title.textContent = year ? `REALISASI ANGGARAN ${year}` : 'REALISASI ANGGARAN';
+            amount.textContent = formatRupiah(budget.realisasi);
+            percent.textContent = `${percentage.toFixed(percentage % 1 ? 1 : 0)}%`;
+            if (progress) progress.style.strokeDashoffset = String(100 - percentage);
+        }
+
         function updateData(payload, persistCache = true) {
             if (!payload || !payload.success) {
                 console.warn('Data display tidak berhasil diambil:', payload && payload.error);
@@ -1704,6 +1816,10 @@
                 description: firstText(p.short_description, p.shortDescription, p.description, p.long_description, p.longDescription)
             }));
             state.photos = Array.isArray(payload.photos) ? payload.photos : [];
+            state.runningTexts = normalizeRunningTexts(payload.runningTexts);
+            state.budget = payload.budget && typeof payload.budget === 'object' ? payload.budget : null;
+            startRunningText();
+            renderBudget();
             // Simpan hasil terakhir agar foto dan jadwal bisa langsung ditampilkan
             // pada pembukaan berikutnya, sambil tetap mengambil data terbaru dari server.
             if (persistCache) {
@@ -1777,20 +1893,15 @@
             setTimeout(cleanup, 20000);
         }
 
-        // Cuaca dan anggaran bergantian di area footer yang sama.
-        // Nilai anggaran masih placeholder sampai Code.gs mengirim data anggaran.
-        let footerInfoMode = 0;
-        function toggleFooterInfo() {
-            const weather = $('weatherView');
-            const budget = $('budgetView');
-            if (!weather || !budget) return;
-            footerInfoMode = footerInfoMode === 0 ? 1 : 0;
-            weather.hidden = footerInfoMode !== 0;
-            budget.hidden = footerInfoMode !== 1;
-        }
-        setInterval(toggleFooterInfo, 6000);
+        // Cuaca dan anggaran ditampilkan bersamaan.
+        const weatherView = $('weatherView');
+        const budgetView = $('budgetView');
+        if (weatherView) weatherView.hidden = false;
+        if (budgetView) budgetView.hidden = false;
 
         applyDriveAssets();
+        renderRunningText();
+        renderBudget();
         restoreCachedData();
         renderClock(); renderProgram();
         // Hanya hitung waktu secara lokal. Tidak ada polling ke Apps Script/GitHub.
