@@ -1179,7 +1179,7 @@
     92%, 100% { transform: translateX(calc(-1 * var(--ticker-overflow, 0px))); }
 }
 
-/* Final budget/ticker correction */
+/* Final budget overlap fix: text and percentage have separate fixed areas */
 .weather-panel .budget-view {
     position: relative !important;
     display: block !important;
@@ -1188,53 +1188,62 @@
     height: 100% !important;
     padding: 0 !important;
     box-sizing: border-box !important;
-    overflow: visible !important;
+    overflow: hidden !important;
 }
 .weather-panel .budget-info {
+    position: absolute !important;
+    left: clamp(8px, 1vw, 14px) !important;
+    right: clamp(68px, 6.8vw, 88px) !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: auto !important;
+    height: auto !important;
     min-width: 0 !important;
-    width: calc(100% - clamp(72px, 6.5vw, 96px)) !important;
-    height: 100% !important;
-    padding-left: clamp(8px, 1vw, 14px) !important;
-    padding-right: clamp(4px, .5vw, 8px) !important;
+    padding: 0 !important;
+    margin: 0 !important;
     box-sizing: border-box !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    gap: 3px !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: clamp(6px, .8vw, 12px) !important;
+    white-space: nowrap !important;
 }
 .weather-panel .budget-title {
     display: block !important;
-    max-width: 100% !important;
-    white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-    overflow-wrap: normal !important;
-    word-break: normal !important;
-    font-size: clamp(8px, .62vw, 13px) !important;
-    line-height: 1.15 !important;
-}
-.weather-panel .budget-amount {
-    display: block !important;
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
     max-width: 100% !important;
     white-space: nowrap !important;
     overflow: visible !important;
     text-overflow: clip !important;
+    font-size: clamp(8px, .62vw, 13px) !important;
+    line-height: 1 !important;
+}
+.weather-panel .budget-amount {
+    display: block !important;
+    flex: 0 0 auto !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
     font-size: clamp(11px, .9vw, 17px) !important;
-    line-height: 1.1 !important;
+    line-height: 1 !important;
     letter-spacing: -.2px !important;
 }
 .weather-panel .budget-chart-container {
     position: absolute !important;
     right: clamp(4px, .7vw, 10px) !important;
     top: 50% !important;
-    width: clamp(58px, 5.2vw, 76px) !important;
-    height: clamp(58px, 5.2vw, 76px) !important;
+    width: clamp(54px, 4.8vw, 68px) !important;
+    height: clamp(54px, 4.8vw, 68px) !important;
     margin: 0 !important;
     transform: translateY(-50%) !important;
 }
 .weather-panel .budget-center-text {
-    font-size: clamp(9px, .68vw, 13px) !important;
+    font-size: clamp(8px, .62vw, 12px) !important;
     white-space: nowrap !important;
 }
 .news-ticker-container {
@@ -2090,4 +2099,114 @@
     </script>
 </body>
 
-</html>
+</html><style>
+/* Final fix: gunakan seluruh area footer untuk panel cuaca + anggaran */
+.weather-panel {
+    grid-column: span 2 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+}
+.weather-panel .budget-view {
+    min-width: 0 !important;
+    width: 100% !important;
+}
+.weather-panel .budget-info {
+    right: clamp(82px, 7.5vw, 105px) !important;
+}
+.weather-panel .budget-chart-container {
+    right: clamp(8px, 1vw, 16px) !important;
+    width: clamp(58px, 5vw, 76px) !important;
+    height: clamp(58px, 5vw, 76px) !important;
+}
+</style>
+
+<style>
+/* FINAL: tata ulang area footer cuaca + anggaran */
+.bar {
+    grid-template-columns: 9% 13% 20% 20% minmax(0, 1fr) !important;
+}
+.weather-panel {
+    grid-column: 5 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+}
+.weather-panel .weather-view,
+.weather-panel .budget-view {
+    min-width: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
+}
+.weather-panel .weather-view {
+    padding: 0 clamp(10px, 1.2vw, 18px) 0 0 !important;
+}
+.weather-panel .budget-view {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) clamp(62px, 5.2vw, 78px) !important;
+    align-items: center !important;
+    gap: clamp(8px, 1vw, 16px) !important;
+    padding: 0 clamp(8px, 1vw, 16px) !important;
+    border-left: 1px solid rgba(7,92,174,.15) !important;
+    overflow: hidden !important;
+}
+.weather-panel .budget-info {
+    position: static !important;
+    transform: none !important;
+    width: 100% !important;
+    height: auto !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    overflow: visible !important;
+    white-space: normal !important;
+}
+.weather-panel .budget-title {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    font-size: clamp(9px, .72vw, 14px) !important;
+    line-height: 1.15 !important;
+}
+.weather-panel .budget-amount {
+    display: block !important;
+    width: max-content !important;
+    max-width: none !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    font-size: clamp(13px, 1.05vw, 20px) !important;
+    line-height: 1.1 !important;
+    letter-spacing: -.2px !important;
+}
+.weather-panel .budget-chart-container {
+    position: relative !important;
+    right: auto !important;
+    top: auto !important;
+    transform: none !important;
+    width: clamp(62px, 5.2vw, 78px) !important;
+    height: clamp(62px, 5.2vw, 78px) !important;
+    margin: 0 !important;
+    flex: 0 0 auto !important;
+}
+.weather-panel .budget-center-text {
+    white-space: nowrap !important;
+    font-size: clamp(9px, .68vw, 13px) !important;
+}
+</style>
