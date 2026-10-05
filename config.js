@@ -1,5 +1,5 @@
 // Konfigurasi TVRI Display untuk GitHub Pages.
 // Isi dengan URL Web App Apps Script yang berakhiran /exec.
 window.TVRI_CONFIG = {
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzv2T5MtPxAwzLklvYW8Ma8P0ZnQlQhrMw4A_SjVvvXarhknEO4G4e8A_8UHMOxEFPU/exec'
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzXZD02tS0b8wbRCi1YpuhSc-DakBS9CEvSfCBcckN07dg2JxF_n_4aOTqccMNiL2pq/exec'
 };
