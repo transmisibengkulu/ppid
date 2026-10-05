@@ -1097,7 +1097,88 @@
                 top: 2vh
             }
         }
-    </style>
+    
+/* Final layout adjustment: budget uses its full right area; ticker spans edge-to-edge */
+.weather-panel .budget-view {
+    min-width: 0;
+    width: 100%;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(52px, 5vw, 78px);
+    align-items: center;
+    gap: clamp(6px, .8vw, 12px);
+    padding: 0 clamp(8px, 1vw, 16px);
+    box-sizing: border-box;
+}
+.weather-panel .budget-info {
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    overflow: visible;
+}
+.weather-panel .budget-title {
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    font-size: clamp(7px, .55vw, 11px);
+    line-height: 1.15;
+}
+.weather-panel .budget-amount {
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    font-size: clamp(10px, .82vw, 16px);
+    line-height: 1.05;
+    letter-spacing: -.15px;
+}
+.weather-panel .budget-chart-container {
+    position: relative;
+    flex: 0 0 auto;
+    width: clamp(52px, 5vw, 78px);
+    height: clamp(52px, 5vw, 78px);
+}
+.weather-panel .budget-center-text {
+    white-space: nowrap;
+    font-size: clamp(8px, .62vw, 12px);
+    line-height: 1;
+    pointer-events: none;
+}
+.news-ticker-container {
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+}
+.ticker-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    padding-left: clamp(10px, 1.2vw, 20px);
+    padding-right: clamp(10px, 1.2vw, 20px);
+    overflow: hidden;
+}
+.ticker-text {
+    display: block;
+    width: max-content;
+    min-width: max-content;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    will-change: transform;
+}
+.ticker-content.is-scrolling .ticker-text {
+    animation: tickerScroll 16s linear infinite;
+}
+@keyframes tickerScroll {
+    0%, 8% { transform: translateX(0); }
+    92%, 100% { transform: translateX(calc(-1 * var(--ticker-overflow, 0px))); }
+}
+</style>
 </head>
 
 <body>
