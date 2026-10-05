@@ -736,6 +736,21 @@
             padding-right: 8vw;
         }
 
+        .ticker-text.ticker-leave {
+            animation: tickerLeave .8s ease-in forwards !important;
+        }
+        .ticker-text.ticker-enter {
+            animation: tickerEnter .8s ease-out forwards !important;
+        }
+        @keyframes tickerLeave {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-100%); }
+        }
+        @keyframes tickerEnter {
+            0% { opacity: 0; transform: translateY(100%); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
         @keyframes tickerScroll {
             0%, 12% { transform: translateX(0); }
             88%, 100% { transform: translateX(calc(-1 * var(--ticker-overflow, 0px))); }
@@ -1353,6 +1368,25 @@
   height: 100% !important;
   object-fit: cover !important;
   display: block !important;
+}
+</style>
+
+<style id="final-photo-autofill-fix">
+/* FOTO: memenuhi seluruh frame 16:9 tanpa ruang kosong */
+.news, .slides {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+.slide {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover !important;
+  object-position: center center !important;
 }
 </style>
 
@@ -2053,19 +2087,34 @@
             restartTickerAnimation();
         }
 
+        function changeRunningText() {
+            const el = $('runningTextDisplay');
+            if (!el) return;
+            const list = state.runningTexts.length ? state.runningTexts : ['INFORMASI TVRI BENGKULU'];
+            if (list.length < 2) return;
+
+            // Keluar dulu dengan animasi, baru ganti isi setelah animasi selesai.
+            el.classList.remove('ticker-enter', 'ticker-leave');
+            void el.offsetWidth;
+            el.classList.add('ticker-leave');
+
+            setTimeout(() => {
+                const next = (Number(el.dataset.runningIndex || 0) + 1) % list.length;
+                el.dataset.runningIndex = String(next);
+                el.textContent = list[next];
+                updateTickerOverflow();
+
+                el.classList.remove('ticker-leave');
+                void el.offsetWidth;
+                el.classList.add('ticker-enter');
+            }, 850);
+        }
+
         function startRunningText() {
             clearInterval(runningTextTimer);
             renderRunningText();
             if (state.runningTexts.length > 1) {
-                runningTextTimer = setInterval(() => {
-                    const el = $('runningTextDisplay');
-                    if (!el) return;
-                    const next = (Number(el.dataset.runningIndex || 0) + 1) % state.runningTexts.length;
-                    el.dataset.runningIndex = String(next);
-                    el.textContent = state.runningTexts[next];
-                    updateTickerOverflow();
-                    restartTickerAnimation();
-                }, 4000);
+                runningTextTimer = setInterval(changeRunningText, 4000);
             }
         }
 
