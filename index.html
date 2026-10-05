@@ -137,7 +137,7 @@
             left: 3.4vw;
             right: 3.4vw;
             top: 15vh;
-            bottom: 27vh;
+            bottom: 33.2vh;
             display: grid;
             grid-template-columns: 1.05fr .95fr;
             gap: 2vw;
@@ -382,7 +382,7 @@
             position: absolute;
             left: 0;
             right: 0;
-            bottom: 0;
+            bottom: 6.2vh;
             height: 20%;
             min-height: 80px;
             display: grid;
@@ -676,7 +676,7 @@
             position: absolute;
             left: 3.4vw;
             right: 3.4vw;
-            bottom: 20%;
+            bottom: 0;
             height: 6.2vh;
             min-height: 34px;
             display: flex;
@@ -702,6 +702,12 @@
             width: 72%;
             height: 72%;
             object-fit: contain;
+        }
+
+        .ticker-megaphone {
+            font-size: clamp(24px, 2.2vw, 38px);
+            line-height: 1;
+            display: block;
         }
 
         .ticker-content {
@@ -1120,7 +1126,7 @@
             </section>
         </main>
         <div class="news-ticker-container" aria-label="Running text TVRI Bengkulu">
-            <div class="ticker-badge"><img class="ticker-logo" id="tickerLogo" alt="TVRI Bengkulu"></div>
+            <div class="ticker-badge" aria-hidden="true"><span class="ticker-megaphone">📢</span></div>
             <div class="ticker-content"><div class="ticker-text" id="runningTextDisplay">INFORMASI TVRI BENGKULU</div></div>
         </div>
         <footer class="bar">
