@@ -781,7 +781,7 @@
         </header>
         <main class="main">
             <section class="card video-card">
-                <video id="broadcastVideo" class="video" autoplay muted playsinline webkit-playsinline preload="metadata" disablepictureinpicture controlslist="nodownload noplaybackrate noremoteplayback"></video>
+                <video id="broadcastVideo" class="video" autoplay muted playsinline webkit-playsinline disablepictureinpicture controlslist="nodownload noplaybackrate noremoteplayback"></video>
                 <div class="video-shade"></div>
             </section>
             <section class="card news">
@@ -1128,7 +1128,6 @@
             video.defaultMuted = true;
             video.autoplay = true;
             video.playsInline = true;
-            video.preload = 'metadata';
             video.setAttribute('muted', '');
             video.setAttribute('autoplay', '');
             video.setAttribute('playsinline', '');
@@ -1164,7 +1163,6 @@
             video.defaultMuted = true;
             video.autoplay = true;
             video.playsInline = true;
-            video.preload = 'metadata';
             video.setAttribute('muted', '');
             video.setAttribute('autoplay', '');
             video.setAttribute('playsinline', '');
