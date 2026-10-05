@@ -1355,6 +1355,35 @@
   display: block !important;
 }
 </style>
+
+<style id="final-ticker-layout-fix">
+/* FINAL: hanya satu running text, selalu di bawah layar */
+.news-ticker-container {
+  position: fixed !important;
+  left: 0 !important; right: 0 !important; bottom: 0 !important;
+  width: 100vw !important; height: 5vh !important; min-height: 38px !important;
+  margin: 0 !important; z-index: 9999 !important;
+}
+.news-ticker-container + .news-ticker-container { display:none !important; }
+.ticker-content.is-scrolling .ticker-text { animation: swapDissolveUp 4s ease-in-out infinite !important; }
+.ticker-text { animation: swapDissolveUp 4s ease-in-out infinite !important; }
+/* Sisakan ruang ticker pada footer/deskripsi */
+.program { padding-bottom: clamp(44px, 5.5vh, 68px) !important; box-sizing:border-box !important; }
+#programDescription {
+  display:block !important; max-width:100% !important; overflow:hidden !important;
+  white-space:normal !important; overflow-wrap:anywhere !important;
+  line-height:1.12 !important;
+  font-size:clamp(10px, 1vw, 19px) !important;
+  max-height:calc(100% - 8px) !important;
+}
+/* Tanggal foto transparan, bukan kotak solid */
+.slides .caption-date {
+  background:rgba(6,54,108,.20) !important;
+  border:1px solid rgba(6,54,108,.70) !important;
+  box-shadow:0 2px 8px rgba(0,35,90,.45) !important;
+  text-shadow:0 2px 5px rgba(0,35,90,.95) !important;
+}
+</style>
 </head>
 
 <body>
@@ -2185,6 +2214,28 @@
         loadWeather();
         setInterval(loadWeather, BMKG_REFRESH_MS);
     </script>
+
+<script id="final-ticker-single-fix">
+(function(){
+  function keepOneTicker(){
+    const all=document.querySelectorAll('.news-ticker-container');
+    all.forEach((el,i)=>{ if(i>0) el.remove(); });
+  }
+  function fitDescription(){
+    const el=document.getElementById('programDescription');
+    if(!el) return;
+    let size=Math.min(19, Math.max(10, window.innerWidth*0.01));
+    el.style.fontSize=size+'px';
+    while((el.scrollHeight>el.clientHeight || el.scrollWidth>el.clientWidth) && size>10){
+      size-=0.5; el.style.fontSize=size+'px';
+    }
+  }
+  function run(){ keepOneTicker(); fitDescription(); }
+  document.addEventListener('DOMContentLoaded',run);
+  window.addEventListener('resize',fitDescription);
+  setInterval(run,1000);
+})();
+</script>
 </body>
 
 </html><style>
