@@ -1339,6 +1339,21 @@
     .slides .caption { padding: 24px 12px 12px !important; }
 }
 
+
+/* Foto & video: rasio 16:9, memenuhi area tanpa mengubah proporsi media */
+.media-frame, .photo-frame, .video-frame, .media-card, .photo-card, .video-card {
+  aspect-ratio: 16 / 9 !important;
+  width: 100% !important;
+  height: auto !important;
+  overflow: hidden !important;
+}
+.media-frame img, .photo-frame img, .photo-card img, .media-card img,
+.media-frame video, .video-frame video, .video-card video, .media-card video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
 </style>
 </head>
 
@@ -2482,4 +2497,9 @@
 
 <style>
 .ticker-content.is-scrolling .ticker-text { animation: swapDissolveUp 4s ease-in-out infinite !important; }
+</style>
+
+<style id="FINAL-TICKER-BOTTOM-FIX">
+.news-ticker-container { position: fixed !important; left: 0 !important; right: 0 !important; bottom: 0 !important; top: auto !important; width: 100vw !important; height: 5vh !important; min-height: 38px !important; z-index: 9999 !important; }
+.main { padding-bottom: 5vh !important; }
 </style>
