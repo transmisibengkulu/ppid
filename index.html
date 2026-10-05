@@ -1772,9 +1772,7 @@
         function formatRupiah(value) {
             const number = Number(value);
             if (!Number.isFinite(number)) return '--';
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency', currency: 'IDR', maximumFractionDigits: 0
-            }).format(number);
+            return 'Rp ' + Math.round(number).toLocaleString('id-ID');
         }
 
         function renderBudget() {
