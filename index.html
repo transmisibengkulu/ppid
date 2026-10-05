@@ -1274,6 +1274,71 @@
     text-overflow: clip !important;
 }
 
+
+/* === Penyesuaian tampilan terbaru === */
+.card {
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+.video-card, .news {
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+/* Area logo running text dibuat lebih besar */
+.news-ticker-container .ticker-badge {
+    width: clamp(96px, 9vw, 145px) !important;
+    min-width: clamp(96px, 9vw, 145px) !important;
+    padding: 0 18px !important;
+    background: #fff !important;
+}
+.news-ticker-container .ticker-logo {
+    width: 88% !important;
+    height: 88% !important;
+    max-height: none !important;
+    object-fit: contain !important;
+}
+
+/* Caption foto: tanggal di atas judul, keduanya rata tengah */
+.slides .caption {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    text-align: center !important;
+    padding: 32px 24px 18px !important;
+}
+.slides .caption-date {
+    order: 1 !important;
+    display: inline-block !important;
+    width: fit-content !important;
+    margin: 0 0 7px !important;
+    padding: 4px 12px !important;
+    border-radius: 5px !important;
+    background: rgba(6,54,108,.88) !important;
+    color: #fff !important;
+    font-weight: 800 !important;
+    text-shadow: 0 2px 5px rgba(0,35,90,.95) !important;
+    box-shadow: 0 2px 8px rgba(0,35,90,.45) !important;
+}
+.slides .caption-name {
+    order: 2 !important;
+    width: 100% !important;
+    text-align: center !important;
+    text-shadow: 0 2px 5px rgba(0,35,90,.95) !important;
+}
+
+@media (max-width: 700px) {
+    .news-ticker-container .ticker-badge {
+        width: 82px !important;
+        min-width: 82px !important;
+        padding: 0 10px !important;
+    }
+    .slides .caption { padding: 24px 12px 12px !important; }
+}
+
 </style>
 </head>
 
