@@ -1284,6 +1284,16 @@
             <img class="logo" id="brandLogo" alt="Logo TVRI Bengkulu" hidden>
             <div class="header-right">
                 <div class="date-clock" id="dateClock">Memuat tanggal dan waktu…</div>
+                <div class="header-weather" id="weatherHeaderPanel" aria-label="Cuaca BMKG">
+                    <div class="header-weather-icon" id="weatherIcon">☁️</div>
+                    <div class="header-weather-main">
+                        <div class="header-weather-location" id="weatherLocation">BENGKULU</div>
+                        <strong class="header-weather-temp" id="weatherTemp">--°C</strong>
+                        <span class="header-weather-desc" id="weatherDesc">Memuat cuaca…</span>
+                        <span class="header-weather-meta" id="weatherMeta">--% • -- km/jam</span>
+                    </div>
+                    <span class="header-weather-source">BMKG</span>
+                </div>
             </div>
         </header>
         <main class="main">
@@ -1303,7 +1313,9 @@
             </section>
         </main>
         <div class="news-ticker-container" aria-label="Running text TVRI Bengkulu">
-            <div class="ticker-badge" aria-hidden="true"><span class="ticker-megaphone">📢</span></div>
+            <div class="ticker-badge" aria-hidden="true">
+                <img id="tickerLogo" class="ticker-logo" alt="TVRI Bengkulu">
+            </div>
             <div class="ticker-content"><div class="ticker-text" id="runningTextDisplay">INFORMASI TVRI BENGKULU</div></div>
         </div>
         <footer class="bar">
@@ -1314,23 +1326,12 @@
             </div>
             <div class="bitem program"><small id="programLabel">PROGRAM</small><b id="programName">Menunggu data program…</b><span id="programStation">TVRI BENGKULU</span></div>
             <div class="bitem theme"><small>DESKRIPSI PROGRAM</small><b id="programDescription">Informasi program TVRI Bengkulu.</b></div>
-            <div class="bitem weather-panel" id="weatherPanel" aria-label="Cuaca BMKG dan realisasi anggaran">
-                <div class="weather-view footer-info-view" id="weatherView">
-                    <div class="weather-content">
-                        <div class="weather-icon" id="weatherIcon" aria-hidden="true">☁️</div>
-                        <div class="weather-main">
-                            <div class="weather-location" id="weatherLocation">BENGKULU</div>
-                            <div class="weather-temp" id="weatherTemp">--°C</div>
-                            <div class="weather-desc" id="weatherDesc">Memuat cuaca…</div>
-                            <div class="weather-meta" id="weatherMeta">--% • -- km/jam</div>
-                        </div>
-                    </div>
-                    <div class="weather-source">Sumber: BMKG</div>
-                </div>
-                <div class="budget-view footer-info-view" id="budgetView" hidden>
+            <div class="bitem weather-panel" id="weatherPanel" aria-label="Realisasi anggaran">
+                <div class="budget-view footer-info-view" id="budgetView">
                     <div class="budget-info">
                         <span class="budget-title" id="budgetTitle">REALISASI ANGGARAN</span>
                         <span class="budget-amount" id="budgetAmount">--</span>
+                        <span class="budget-pagu" id="budgetPagu">Pagu: --</span>
                     </div>
                     <div class="budget-chart-container" aria-hidden="true">
                         <svg class="budget-svg" viewBox="0 0 36 36">
@@ -1405,7 +1406,7 @@
         async function loadWeather() {
             if (bmkgLoading) return;
             bmkgLoading = true;
-            $('weatherPanel').classList.add('weather-loading');
+            $('weatherHeaderPanel').classList.add('weather-loading');
 
             try {
                 const response = await fetch(BMKG_API_URL + '&_=' + Date.now(), {
@@ -1439,7 +1440,7 @@
                 $('weatherIcon').textContent = weatherIcon(description);
 
                 const updated = current.local_datetime || current.datetime || '';
-                if (updated) $('weatherPanel').title = `Prakiraan BMKG: ${updated}`;
+                if (updated) $('weatherHeaderPanel').title = `Prakiraan BMKG: ${updated}`;
             } catch (error) {
                 console.warn('Gagal mengambil prakiraan cuaca BMKG:', error);
                 $('weatherLocation').textContent = 'BENGKULU';
@@ -1449,7 +1450,7 @@
                 $('weatherIcon').textContent = '☁️';
             } finally {
                 bmkgLoading = false;
-                $('weatherPanel').classList.remove('weather-loading');
+                $('weatherHeaderPanel').classList.remove('weather-loading');
             }
         }
 
@@ -1917,13 +1918,17 @@
             const text = $('runningTextDisplay');
             if (!content || !text) return;
             content.classList.remove('is-scrolling');
-            text.style.setProperty('--ticker-overflow', '0px');
-            requestAnimationFrame(() => {
-                const overflow = Math.max(0, text.scrollWidth - content.clientWidth);
-                if (overflow > 2) {
-                    text.style.setProperty('--ticker-overflow', overflow + 'px');
-                    content.classList.add('is-scrolling');
-                }
+            text.style.removeProperty('--ticker-overflow');
+        }
+
+        function restartTickerAnimation() {
+            const text = $('runningTextDisplay');
+            const logo = $('tickerLogo');
+            [text, logo].forEach(el => {
+                if (!el) return;
+                el.style.animation = 'none';
+                void el.offsetWidth;
+                el.style.animation = '';
             });
         }
 
@@ -1936,6 +1941,7 @@
             el.textContent = list[index];
             el.dataset.runningIndex = String(index);
             updateTickerOverflow();
+            restartTickerAnimation();
         }
 
         function startRunningText() {
@@ -1949,7 +1955,8 @@
                     el.dataset.runningIndex = String(next);
                     el.textContent = state.runningTexts[next];
                     updateTickerOverflow();
-                }, 10000);
+                    restartTickerAnimation();
+                }, 4000);
             }
         }
 
@@ -1964,12 +1971,14 @@
             const title = $('budgetTitle');
             const amount = $('budgetAmount');
             const percent = $('budgetPercent');
+            const pagu = $('budgetPagu');
             const progress = document.querySelector('.budget-circle-progress');
             if (!title || !amount || !percent) return;
 
             if (!budget) {
                 title.textContent = 'REALISASI ANGGARAN';
                 amount.textContent = '--';
+                if (pagu) pagu.textContent = 'Pagu: --';
                 percent.textContent = '--%';
                 if (progress) progress.style.strokeDashoffset = '100';
                 return;
@@ -1979,6 +1988,7 @@
             const year = firstText(budget.year);
             title.textContent = year ? `REALISASI ANGGARAN ${year}` : 'REALISASI ANGGARAN';
             amount.textContent = formatRupiah(budget.realisasi);
+            if (pagu) pagu.textContent = `Pagu: ${formatRupiah(budget.pagu)}`;
             percent.textContent = `${percentage.toFixed(percentage % 1 ? 1 : 0)}%`;
             if (progress) progress.style.strokeDashoffset = String(100 - percentage);
         }
@@ -2076,9 +2086,7 @@
         }
 
         // Cuaca dan anggaran ditampilkan bersamaan.
-        const weatherView = $('weatherView');
         const budgetView = $('budgetView');
-        if (weatherView) weatherView.hidden = false;
         if (budgetView) budgetView.hidden = false;
 
         applyDriveAssets();
@@ -2209,4 +2217,204 @@
     white-space: nowrap !important;
     font-size: clamp(9px, .68vw, 13px) !important;
 }
+</style>
+
+<style>
+/* FINAL LAYOUT: BMKG pindah ke header kanan, footer diperlebar untuk program/deskripsi */
+.header-right {
+    margin-left: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: clamp(14px, 1.6vw, 28px) !important;
+    min-width: 0 !important;
+}
+.header-weather {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: clamp(6px, .6vw, 10px) !important;
+    min-width: 0 !important;
+    padding-left: clamp(10px, 1vw, 16px) !important;
+    border-left: 1px solid rgba(7,92,174,.20) !important;
+    color: var(--navy) !important;
+}
+.header-weather-icon {
+    font-size: clamp(22px, 2vw, 34px) !important;
+    line-height: 1 !important;
+}
+.header-weather-main {
+    display: grid !important;
+    grid-template-columns: auto auto !important;
+    align-items: baseline !important;
+    column-gap: 6px !important;
+    min-width: 0 !important;
+}
+.header-weather-location {
+    grid-column: 1 / -1 !important;
+    color: var(--blue2) !important;
+    font-size: clamp(9px, .65vw, 13px) !important;
+    font-weight: 900 !important;
+    letter-spacing: .4px !important;
+    white-space: nowrap !important;
+}
+.header-weather-temp {
+    font-size: clamp(18px, 1.65vw, 29px) !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+}
+.header-weather-desc,
+.header-weather-meta {
+    font-size: clamp(8px, .55vw, 11px) !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+}
+.header-weather-desc { color: var(--ink) !important; }
+.header-weather-meta { color: #6c89a4 !important; }
+.header-weather-source {
+    align-self: flex-start !important;
+    margin-top: 2px !important;
+    color: #7a96ad !important;
+    font-size: clamp(6px, .42vw, 8px) !important;
+    font-weight: 800 !important;
+}
+.header-weather.weather-loading .header-weather-icon { animation: pulse 1.5s infinite !important; }
+
+/* Footer: BMKG sudah dipindah, sehingga program dan deskripsi lebih lebar. */
+.bar {
+    grid-template-columns: 8% 12% 26% 30% minmax(190px, 24%) !important;
+    gap: 1vw !important;
+}
+.weather-panel {
+    grid-column: 5 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    display: block !important;
+}
+.weather-panel .budget-view {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) clamp(58px, 4.6vw, 72px) !important;
+    align-items: center !important;
+    gap: clamp(8px, .8vw, 14px) !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 0 0 clamp(10px, 1vw, 16px) !important;
+    border-left: 1px solid rgba(7,92,174,.15) !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+.weather-panel .budget-info {
+    min-width: 0 !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    overflow: visible !important;
+}
+.weather-panel .budget-title {
+    width: 100% !important;
+    font-size: clamp(9px, .68vw, 13px) !important;
+    line-height: 1.12 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+}
+.weather-panel .budget-amount {
+    width: max-content !important;
+    font-size: clamp(12px, .95vw, 18px) !important;
+    line-height: 1.08 !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+}
+.weather-panel .budget-pagu {
+    color: #6c89a4 !important;
+    font-size: clamp(7px, .52vw, 10px) !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+}
+.weather-panel .budget-chart-container {
+    position: relative !important;
+    width: clamp(58px, 4.6vw, 72px) !important;
+    height: clamp(58px, 4.6vw, 72px) !important;
+    margin: 0 !important;
+}
+.weather-panel .budget-center-text {
+    font-size: clamp(8px, .62vw, 12px) !important;
+}
+
+/* Running text mengikuti contoh: biru TVRI, badge putih, logo Drive, animasi naik/turun. */
+.news-ticker-container {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 5vh !important;
+    min-height: 38px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: var(--navy) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,.30) !important;
+}
+.ticker-badge {
+    width: clamp(62px, 6vw, 96px) !important;
+    height: 100% !important;
+    padding: 0 14px !important;
+    background: #fff !important;
+    border-top-right-radius: 25px !important;
+    border-bottom-right-radius: 0 !important;
+    box-shadow: 3px 0 10px rgba(0,0,0,.30) !important;
+}
+.ticker-logo {
+    width: auto !important;
+    height: 70% !important;
+    max-height: 32px !important;
+    object-fit: contain !important;
+    animation: swapTickerLogo 4s ease-in-out infinite !important;
+}
+.ticker-content {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    padding: 0 1.5vw !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    text-align: center !important;
+}
+.ticker-text {
+    width: 100% !important;
+    min-width: 0 !important;
+    color: #fff !important;
+    font-size: clamp(14px, 1.3vw, 22px) !important;
+    font-weight: 800 !important;
+    letter-spacing: .8px !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    animation: swapDissolveUp 4s ease-in-out infinite !important;
+}
+@keyframes swapTickerLogo {
+    0% { opacity: 0; transform: translateY(100%); }
+    15% { opacity: 1; transform: translateY(0); }
+    85% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-100%); }
+}
+@keyframes swapDissolveUp {
+    0% { opacity: 0; transform: translateY(100%); }
+    15% { opacity: 1; transform: translateY(0); }
+    85% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-100%); }
+}
+</style>
+
+<style>
+.ticker-content.is-scrolling .ticker-text { animation: swapDissolveUp 4s ease-in-out infinite !important; }
 </style>
