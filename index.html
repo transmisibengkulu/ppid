@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="id">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -12,14 +11,11 @@
             --navy: #06366c;
             --red: #ee2029;
             --paper: #f3f8fd;
-            --ink: #092f59;
-            --drive-background-image: none
+            --ink: #092f59
         }
-
         * {
             box-sizing: border-box
         }
-
         html,
         body {
             margin: 0;
@@ -27,41 +23,32 @@
             height: 100%;
             overflow: hidden
         }
-
         body {
             font-family: Arial, Segoe UI, sans-serif;
-            background: radial-gradient(ellipse at 18% 18%, rgba(22,141,224,.13), transparent 38%),
-                        linear-gradient(135deg, #f8fbff 0%, #edf6fd 55%, #dcecf9 100%);
+            background:
+                linear-gradient(rgba(249, 252, 255, 0.75), rgba(249, 252, 255, 0.75)),
+                url('/tempHome/assets/rafflesia.jpg') center center / cover no-repeat fixed;
             color: var(--ink)
         }
-
         .screen {
             width: 100vw;
-            height: 100vh;
             height: 100dvh;
             min-height: 260px;
             position: relative;
             overflow: hidden;
             background:
-                radial-gradient(ellipse at 82% 24%, rgba(22,141,224,.16), transparent 35%),
-                linear-gradient(rgba(249,252,255,.72), rgba(249,252,255,.72)),
-                var(--drive-background-image, none),
-                linear-gradient(135deg, #f8fbff 0%, #eef7ff 58%, #dcecf9 100%);
-            background-size: auto, auto, cover, auto;
-            background-position: center, center, center, center;
-            background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+                linear-gradient(rgba(249, 252, 255, 0.75), rgba(249, 252, 255, 0.75)),
+                url('/tempHome/assets/rafflesia.jpg') center center / cover no-repeat fixed;
         }
-
         .batik {
             position: absolute;
             inset: 0;
             opacity: .10;
-            background-image: repeating-linear-gradient(135deg, transparent 0 18px, rgba(7,92,174,.18) 19px 20px);
+            background-image: url('assets/pattern.png');
             background-size: 420px 420px;
             background-position: left bottom;
             pointer-events: none
         }
-
         .batik:after {
             content: "";
             position: absolute;
@@ -73,7 +60,6 @@
             background: radial-gradient(circle, transparent 0 25%, var(--blue) 26% 28%, transparent 29% 37%, var(--blue) 38% 40%, transparent 41%);
             opacity: .25
         }
-
         .header {
             position: absolute;
             left: 3.4vw;
@@ -84,1512 +70,1600 @@
             align-items: center;
             z-index: 5
         }
-
         .logo {
             width: clamp(170px, 18vw, 300px);
             max-height: 9vh;
             object-fit: contain;
             object-position: left center
         }
-
-        .header-right {
+        .live-status {
             margin-left: auto;
             display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 4px;
-            min-width: 0
-        }
-
-        .date-clock {
-            display: flex;
             align-items: center;
-            justify-content: flex-end;
             gap: 8px;
-            color: var(--navy);
-            font-size: clamp(13px, 1vw, 17px);
+            color: var(--blue);
             font-weight: 800;
-            line-height: 1.2;
-            letter-spacing: .25px;
-            text-align: right;
-            white-space: nowrap
+            font-size: clamp(16px, 1.3vw, 24px);
+            letter-spacing: .5px;
         }
-
-        .pulse {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: var(--red);
-            box-shadow: 0 0 0 5px rgba(238, 32, 41, .10);
-            animation: pulse 1.5s infinite
+        .live-status h1 {
+            margin: 0;
+            font-size: inherit;
+            font-weight: inherit;
+            white-space: nowrap;
         }
-
-        @keyframes pulse {
-            50% {
-                transform: scale(.65);
-                opacity: .45
-            }
-        }
-
-        .main {
+        /* --- CONTENT WRAPPER --- */
+        .content-area {
             position: absolute;
             left: 3.4vw;
             right: 3.4vw;
-            top: 15vh;
-            bottom: 23vh;
-            display: grid;
-            grid-template-columns: 1.05fr .95fr;
-            gap: 2vw;
-            min-height: 0
+            top: 14vh;
+            bottom: 21vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 5;
         }
-
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.8vw;
+            width: 100%;
+        }
         .card {
             position: relative;
             min-width: 0;
             min-height: 0;
-            border-radius: 0;
             overflow: hidden;
-            box-shadow: 0 14px 38px rgba(6, 54, 108, .16);
-            border: 1px solid rgba(255, 255, 255, .9)
+            border: none;
+            outline: none;
+            box-shadow: 0 14px 38px rgba(6, 54, 108, 0.16);
+            background: #000;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
         .video-card {
-            background: #052f5d
+            background: #000;
         }
-
         .video {
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
-            border: 0;
-            display: block;
-            background: #052f5d;
             object-fit: contain;
-            pointer-events: none
+            background: #000;
+            border: none;
+            outline: none;
         }
-
         .video-shade {
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, rgba(3, 33, 64, .02) 45%, rgba(3, 28, 57, .8))
+            /* background: linear-gradient(180deg, rgba(3, 33, 64, .01) 45%, rgba(3, 28, 57, .3)); */
+            pointer-events: none;
         }
-
-        .video-live-dot {
-            position: absolute;
-            left: 18px;
-            bottom: 18px;
-            width: 11px;
-            height: 11px;
-            border-radius: 50%;
-            background: var(--red);
-            box-shadow: 0 0 0 5px rgba(238, 32, 41, .14), 0 0 14px rgba(238, 32, 41, .55);
-            animation: pulse 1.5s infinite;
-            z-index: 3;
-            pointer-events: none
-        }
-
-        .video-live-dot[hidden] { display: none !important; }
-
-        .live {
-            position: absolute;
-            left: 18px;
-            top: 17px;
-            background: var(--red);
-            color: white;
-            padding: 7px 11px;
-            border-radius: 999px;
-            font-size: clamp(9px, .75vw, 13px);
-            font-weight: 900;
-            z-index: 2
-        }
-
-        .live i {
-            display: inline-block;
-            width: 7px;
-            height: 7px;
-            background: #fff;
-            border-radius: 50%;
-            margin-right: 6px
-        }
-
-        /* .vinfo {
-            position: absolute;
-            left: 22px;
-            right: 22px;
-            bottom: 18px;
-            color: #fff
-        } */
-
-        .vinfo {
-            position: absolute;
-            left: 22px;
-            top: 18px;
-            /* <--- Diumbahkan ke atas */
-            bottom: auto;
-            /* <--- Menghapus posisi bawah */
-            color: #fff;
-            z-index: 3;
-            /* <--- Agar berada di atas lapisan video-shade */
-        }
-
-        .vinfo small {
-            font-size: clamp(8px, .65vw, 12px);
-            font-weight: 800;
-            letter-spacing: 1.4px;
-            opacity: .85
-        }
-
-        .vinfo h1 {
-            font-size: clamp(17px, 1.9vw, 32px);
-            line-height: 1.05;
-            margin: 5px 0 4px
-        }
-
-        .vinfo span {
-            font-size: clamp(8px, .7vw, 12px);
-            opacity: .8
-        }
-
         .news {
-            background: #fff
+            background: #000;
+            position: relative;
         }
-
-        /* .news-head {
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 0;
-            height: 31%;
-            padding: 18px 20px;
-            background: linear-gradient(135deg, #fff, #eaf6ff);
-            z-index: 2
-        } */
-
-        .eyebrow {
-            font-size: clamp(8px, .65vw, 12px);
-            font-weight: 900;
-            letter-spacing: 1.2px;
-            color: var(--blue2)
-        }
-
-        /* .news-head h2 {
-            font-size: clamp(15px, 1.45vw, 25px);
-            line-height: 1.08;
-            margin: 7px 0 0
-        } */
-
-        .meta {
-            font-size: clamp(8px, .58vw, 11px);
-            color: #6c89a4;
-            margin-top: 6px
-        }
-
         .slides {
             position: absolute;
-            inset: 0 0 0;
-            background: #0b416d
+            inset: 0;
+            background: #000;
         }
-
-        .photo-empty {
+        #slides-container {
             position: absolute;
             inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            color: rgba(255,255,255,.78);
-            font-size: clamp(10px, .9vw, 15px);
-            font-weight: 800;
-            text-align: center;
-            letter-spacing: .4px
+            width: 100%;
+            height: 100%;
+            background: #000;
         }
-
-        .photo-empty.hidden { display: none; }
-
-        .slide {
+        #slides-container .slide {
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
             object-fit: contain;
+            background: #000;
+            border: none;
+            outline: none;
             opacity: 0;
-            transition: opacity .65s
+            transition: opacity .65s ease-in-out;
         }
-
-        .slide.active {
-            opacity: 1
+        #slides-container .slide.active {
+            opacity: 1;
         }
-
-        .caption {
+        .caption-container {
             position: absolute;
             left: 0;
             right: 0;
             bottom: 0;
-            z-index: 2;
-            padding: 32px 64px 16px 20px;
+            padding: 3vh 1.5vw 1.5vh;
+            background: linear-gradient(transparent, rgba(6, 54, 108, 0.95));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            z-index: 3;
+            text-align: center;
+        }
+        .date-badge {
+            background: rgba(6, 54, 108, 0.9);
+            color: #ffffff;
+            padding: 4px 16px;
+            border-radius: 0;
+            font-size: clamp(14px, 1.4vw, 24px);
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+        }
+        .caption {
             color: #fff;
-            background: linear-gradient(transparent, rgba(0, 28, 57, .9));
-            font-size: clamp(16px, 1.35vw, 24px);
-            line-height: 1.25;
+            font-size: clamp(14px, 1.4vw, 24px);
             font-weight: 800;
-            text-shadow: 0 1px 3px rgba(0,0,0,.45);
-            pointer-events: none
-        }
-
-        .caption[hidden] { display: none !important; }
-
-        .caption-name {
-            display: block;
-            font-size: clamp(16px, 1.35vw, 24px);
             line-height: 1.25;
-            font-weight: 800
+            margin: 0;
         }
-
-        .caption-date {
-            display: block;
-            margin-top: 5px;
-            font-size: clamp(12px, .95vw, 16px);
-            line-height: 1.2;
-            font-weight: 500;
-            opacity: .92
-        }
-
-        .caption-date:empty { display: none; }
-
         .dots {
             position: absolute;
             right: 15px;
             bottom: 12px;
             display: flex;
-            gap: 5px
+            gap: 5px;
+            z-index: 4;
         }
-
         .dot {
             width: 6px;
             height: 6px;
             border-radius: 10px;
             background: #ffffff77
         }
-
         .dot.active {
             width: 18px;
             background: #fff
         }
-
+        /* --- NEWS TICKER & BADGE --- */
+        .news-ticker-container {
+            width: 100%;
+            height: 5vh;
+            min-height: 38px;
+            /* Warna utama mengikuti warna biru logo TVRI */
+            background: #06366c;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+        .ticker-badge {
+            height: 100%;
+            padding: 0 16px;
+            background: #ffffff;
+            border-top-right-radius: 25px;
+            border-bottom-right-radius: 0px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
+        }
+        .ticker-badge img {
+            height: 70%;
+            max-height: 32px;
+            object-fit: contain;
+        }
+        /* Logo ticker ikut berganti dengan efek naik seperti teks */
+        .ticker-logo {
+            animation: swapTickerLogo 4s ease-in-out infinite;
+        }
+        @keyframes swapTickerLogo {
+            0% {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+            15% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            85% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100%);
+            }
+        }
+        .ticker-content {
+            flex-grow: 1;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding-left: 1.5vw;
+            padding-right: 1.5vw;
+            text-align: center;
+        }
+        .ticker-text {
+            display: block;
+            width: 100%;
+            text-align: center;
+            color: #ffffff;
+            font-size: clamp(14px, 1.3vw, 22px);
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            animation: swapDissolveUp 4s ease-in-out infinite;
+        }
+        @keyframes swapDissolveUp {
+            0% {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+            15% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            85% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100%);
+            }
+        }
+        /* --- FOOTER BAR (PROPORSI PRESISI) --- */
         .bar {
             position: absolute;
             left: 0;
             right: 0;
             bottom: 0;
-            height: 20%;
-            min-height: 80px;
+            height: 21vh;
+            min-height: 95px;
             display: grid;
-            /* grid-template-columns: 10% 16% 32% 20% 1fr; */
-            grid-template-columns: 10% 16% 24% 28% 1fr;
+            grid-template-columns: 7% 13% 25% 31% auto;
             align-items: center;
             gap: 1.2vw;
             padding: 0 3.4vw;
-            /* background: rgba(249, 252, 255, .95); */
             background:
-                linear-gradient(135deg, rgba(249,252,255,.88), rgba(229,242,253,.86)),
-                var(--drive-background-image, none);
-            background-size: auto, cover;
-            background-position: center, center;
-            background-repeat: no-repeat, no-repeat;
-            border-top: 1px solid #075cae22;
+                linear-gradient(rgba(249, 252, 255, 0.85), rgba(249, 252, 255, 0.85)),
+                url('/tempHome/assets/rafflesia.jpg') center center / cover no-repeat fixed;
+            border-top: 2px solid #075cae22;
             box-shadow: 0 -10px 30px #06366c12;
             z-index: 4;
-            backdrop-filter: blur(10px)
+            backdrop-filter: blur(10px);
+            overflow: visible;
         }
-
         .bar:before {
             content: "";
             position: absolute;
             inset: 0;
             opacity: .055;
-            background-image: repeating-linear-gradient(135deg, transparent 0 13px, rgba(7,92,174,.18) 14px 15px);
+            background-image: url('assets/pattern.png');
             background-size: 250px 250px
         }
-
         .bitem {
             position: relative;
             z-index: 1
         }
-
         .livebox {
-            background: var(--blue);
-            color: #dcecff;
-            font-weight: 900;
-            padding: 8px 11px;
-            border-radius: 6px;
-            font-size: clamp(14px, 1.25vw, 20px);
-            width: max-content;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .live-dot-inline {
-            width: 9px;
-            height: 9px;
-            flex: 0 0 9px;
-            border-radius: 50%;
             background: var(--red);
-            box-shadow: 0 0 0 3px rgba(238, 32, 41, .14), 0 0 9px rgba(238, 32, 41, .45);
-            animation: pulse 1.5s infinite;
-        }
-
-        .livebox.is-live { background: var(--red); }
-
-        .tdklivebox {
-            background: var(--blue);
             color: white;
             font-weight: 900;
             padding: 8px 11px;
             border-radius: 6px;
-            font-size: clamp(12px, 1.1vw, 17px);
+            font-size: clamp(16px, 1.5vw, 24px);
             width: max-content
         }
-
         .time {
             text-align: center
         }
-
         .time small {
             display: block;
-            color: #82b5df;
-            font-size: clamp(12px, .95vw, 16px);
+            color: var(--blue2);
+            font-size: clamp(14px, 1.2vw, 20px);
             font-weight: 800
         }
-
         .time strong {
-            /* display: block;
-            font-size: clamp(27px, 3vw, 50px);
-            line-height: .9 */
-
             display: block;
-            /* font-size: clamp(14px, 1.55vw, 26px); */
-            font-size: clamp(23px, 2.2vw, 40px);
-            /* Samakan batas rentangnya dengan .program b */
-            line-height: 1.1;
+            font-size: clamp(24px, 2.6vw, 42px);
+            line-height: 1.05;
             margin: 2px 0;
         }
-
         .program {
             display: flex;
             flex-direction: column;
             justify-content: center;
-            /* Memaksa isi teks tepat berada di tengah secara vertikal */
             height: 100%;
-            /* Mengambil tinggi penuh dari .bar */
+            padding-right: 0.5vw;
         }
-
         .program small,
         .theme small {
             display: block;
             color: var(--blue2);
-            font-size: clamp(12px, .95vw, 16px);
+            font-size: clamp(15px, 1.3vw, 22px);
             font-weight: 900;
             letter-spacing: .6px
         }
-
         .program b {
             display: block;
-            /* font-size: clamp(14px, 1.55vw, 26px); */
-            font-size: clamp(22px, 2.15vw, 38px);
-            /* line-height: 1.05 */
+            font-size: clamp(20px, 2.2vw, 36px);
             line-height: 1.1;
-            /* Sedikit penyesuaian spasi antar baris */
             margin: 2px 0;
-            /* Memberi jarak simetris atas-bawah */
         }
-
         .program span {
-            font-size: clamp(12px, .95vw, 16px);
+            font-size: clamp(14px, 1.2vw, 20px);
             color: var(--blue2);
             font-weight: 800
         }
-
+        .theme {
+            padding-right: 1vw;
+        }
         .theme b {
             display: block;
-            font-size: clamp(15px, 1.3vw, 22px)
+            font-size: clamp(15px, 1.3vw, 22px);
         }
-
-        .corner {
-            height: 100%;
-            position: relative;
-            overflow: hidden
-        }
-
-        .corner:before,
-        .corner:after {
-            content: "";
-            position: absolute;
-            right: -20%;
-            width: 125%;
-            height: 25px;
-            background: var(--navy);
-            transform: skewX(-38deg) rotate(-8deg)
-        }
-
-        .corner:before {
-            top: 28%
-        }
-
-        .corner:after {
-            top: 55%
-        }
-
-        /* BMKG weather panel - menggantikan elemen dekoratif sudut kanan bawah */
-        .weather-panel {
-            height: 100%;
-            min-width: 0;
+        /* --- STYLING WIDGET REALISASI ANGGARAN --- */
+        .budget-widget {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            position: relative;
-            z-index: 2;
-            overflow: hidden;
-            padding: 0 0 0 8px;
+            gap: 14px;
+            background: transparent;
+            padding-left: 1.8vw;
+            border-left: 2px solid rgba(7, 92, 174, 0.2);
+            height: 70%;
+            margin-left: auto;
+            width: max-content;
         }
-
-        .weather-content {
-            min-width: 0;
-            width: 100%;
-            display: grid;
-            grid-template-columns: auto 1fr;
+        .budget-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            column-gap: 10px;
-            text-align: left;
+            text-align: center;
+            gap: 4px;
         }
-
-        .weather-icon {
-            font-size: clamp(28px, 2.8vw, 48px);
-            line-height: 1;
-            width: 1.15em;
+        .budget-title {
+            font-size: clamp(13px, 1.1vw, 18px);
+            font-weight: 900;
+            color: var(--navy);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
             text-align: center;
         }
-
-        .weather-main {
-            min-width: 0;
-        }
-
-        .weather-location {
-            color: var(--blue2);
-            font-size: clamp(8px, .62vw, 12px);
-            font-weight: 900;
-            letter-spacing: .6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .weather-temp {
-            color: var(--navy);
-            font-size: clamp(19px, 2vw, 34px);
-            font-weight: 900;
-            line-height: 1;
-            white-space: nowrap;
-        }
-
-        .weather-desc {
-            color: var(--ink);
-            font-size: clamp(8px, .65vw, 12px);
+        .budget-amount {
+            background: var(--navy);
+            color: #ffffff;
             font-weight: 800;
+            font-size: clamp(15px, 1.25vw, 21px);
+            padding: 4px 14px;
+            border-radius: 6px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(6, 54, 108, 0.25);
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            width: 100%;
         }
-
-        .weather-meta {
-            color: #6c89a4;
-            font-size: clamp(7px, .52vw, 10px);
-            font-weight: 700;
-            margin-top: 2px;
-            white-space: nowrap;
+        .budget-chart-container {
+            position: relative;
+            width: clamp(52px, 4.3vw, 75px);
+            height: clamp(52px, 4.3vw, 75px);
+            flex-shrink: 0;
         }
-
-        .weather-source {
+        .budget-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        .budget-circle-bg {
+            fill: none;
+            stroke: #ee2029;
+            stroke-width: 3.8;
+        }
+        .budget-circle-progress {
+            fill: none;
+            stroke: #168de0;
+            stroke-width: 3.8;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 70;
+            transition: stroke-dashoffset 1s ease-in-out;
+            stroke-linecap: round;
+        }
+        .budget-center-text {
             position: absolute;
-            right: 0;
-            bottom: 3px;
-            color: #7a96ad;
-            font-size: clamp(6px, .45vw, 8px);
-            font-weight: 700;
-            white-space: nowrap;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #232b38;
+            margin: 11%;
+            color: #ffffff;
+            font-weight: 900;
+            font-size: clamp(12px, 1.0vw, 17px);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
         }
-
-        .weather-loading .weather-icon {
-            animation: pulse 1.5s infinite;
+        /* =========================================================
+           RESPONSIVE LAYOUT
+           ---------------------------------------------------------
+           Full HD 1920 x 1080 sengaja TIDAK disentuh.
+           Semua aturan di bawah hanya aktif untuk layar < 1920px.
+           ========================================================= */
+        /* LAPTOP / NOTEBOOK
+           1101px - 1919px
+           Layout utama tetap 2 kolom, hanya dipadatkan agar
+           tidak bertabrakan pada resolusi laptop. */
+        @media (min-width: 1101px) and (max-width: 1919px) {
+            .header {
+                top: 2.5vh;
+                left: 3vw;
+                right: 3vw;
+                height: 9vh;
+            }
+            .logo {
+                width: clamp(155px, 17vw, 255px);
+                max-height: 8vh;
+            }
+            .live-status {
+                font-size: clamp(14px, 1.25vw, 21px);
+            }
+            .content-area {
+                left: 3vw;
+                right: 3vw;
+                top: 12vh;
+                bottom: 20vh;
+            }
+            .main {
+                gap: 1.4vw;
+            }
+            .news-ticker-container {
+                height: 5vh;
+                min-height: 36px;
+            }
+            .ticker-text {
+                font-size: clamp(12px, 1.2vw, 20px);
+            }
+            .bar {
+                height: 20vh;
+                padding: 0 3vw;
+                grid-template-columns: 7% 14% 25% 30% auto;
+                gap: 1vw;
+            }
+            .livebox {
+                font-size: clamp(13px, 1.35vw, 21px);
+                padding: 7px 9px;
+            }
+            .time small {
+                font-size: clamp(12px, 1.1vw, 18px);
+            }
+            .time strong {
+                font-size: clamp(22px, 2.35vw, 36px);
+            }
+            .program small,
+            .theme small {
+                font-size: clamp(13px, 1.15vw, 19px);
+            }
+            .program b {
+                font-size: clamp(18px, 2vw, 31px);
+            }
+            .program span {
+                font-size: clamp(12px, 1.05vw, 18px);
+            }
+            .theme b {
+                font-size: clamp(13px, 1.15vw, 19px);
+            }
+            .budget-widget {
+                gap: 10px;
+                padding-left: 1.2vw;
+            }
+            .budget-title {
+                font-size: clamp(11px, 1vw, 16px);
+            }
+            .budget-amount {
+                font-size: clamp(12px, 1.1vw, 18px);
+                padding: 4px 10px;
+            }
         }
-
-        /* portrait mobile: one viewport, no scroll */
-        @media(max-width:700px) and (orientation:portrait) {
+        /* TABLET LANDSCAPE / SMALL LAPTOP
+           701px - 1100px */
+        @media (min-width: 701px) and (max-width: 1100px) {
+            .header {
+                top: 2vh;
+                left: 3.5vw;
+                right: 3.5vw;
+                height: 8vh;
+            }
+            .logo {
+                width: clamp(145px, 22vw, 210px);
+                max-height: 7vh;
+            }
+            .live-status {
+                font-size: clamp(12px, 1.7vw, 18px);
+            }
+            .content-area {
+                left: 3.5vw;
+                right: 3.5vw;
+                top: 10.5vh;
+                bottom: 24vh;
+            }
+            .main {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5vw;
+            }
+            .news-ticker-container {
+                height: 5vh;
+                min-height: 34px;
+            }
+            .ticker-badge {
+                padding: 0 10px;
+            }
+            .ticker-text {
+                font-size: clamp(10px, 1.55vw, 17px);
+                letter-spacing: .4px;
+            }
+            .bar {
+                height: 24vh;
+                min-height: 0;
+                padding: 0 3.5vw;
+                grid-template-columns: 11% 17% 30% 42%;
+                gap: 1.5vw;
+            }
+            .theme {
+                display: none;
+            }
+            .budget-widget {
+                padding-left: 1vw;
+                gap: 8px;
+            }
+            .budget-title {
+                font-size: clamp(9px, 1.2vw, 14px);
+            }
+            .budget-amount {
+                font-size: clamp(10px, 1.3vw, 16px);
+                padding: 4px 7px;
+            }
+            .budget-chart-container {
+                width: clamp(42px, 5vw, 58px);
+                height: clamp(42px, 5vw, 58px);
+            }
+            .livebox {
+                font-size: clamp(11px, 1.5vw, 17px);
+                padding: 6px 8px;
+            }
+            .time small {
+                font-size: clamp(10px, 1.3vw, 15px);
+            }
+            .time strong {
+                font-size: clamp(20px, 2.8vw, 29px);
+            }
+            .program small {
+                font-size: clamp(10px, 1.35vw, 15px);
+            }
+            .program b {
+                font-size: clamp(15px, 2.2vw, 24px);
+            }
+            .program span {
+                font-size: clamp(9px, 1.25vw, 14px);
+            }
+        }
+        /* TABLET PORTRAIT
+           701px - 1100px, portrait.
+           Media ditumpuk vertikal agar seluruh konten tetap terlihat. */
+        @media (min-width: 701px) and (max-width: 1100px) and (orientation: portrait) {
             .header {
                 top: 2vh;
                 left: 4vw;
                 right: 4vw;
-                height: 8vh
+                height: 8vh;
             }
-
             .logo {
-                width: 45%;
-                max-height: 7vh
+                width: clamp(150px, 36vw, 220px);
             }
-
-            .header-right {
-                gap: 2px
-            }
-
-            .date-clock {
-                font-size: 9px;
-                letter-spacing: 0;
-                gap: 5px
-            }
-
-            .video-live-dot {
-                left: 10px;
-                bottom: 10px;
-                width: 8px;
-                height: 8px
-            }
-
-            .main {
+            .content-area {
                 left: 4vw;
                 right: 4vw;
-                top: 11vh;
-                bottom: 19vh;
-                grid-template-columns: 1fr;
-                grid-template-rows: 1fr 1.05fr;
-                gap: 2.2vw
+                top: 10vh;
+                bottom: 22vh;
             }
-
-            .card {
-                border-radius: 0
-            }
-
-            .live {
-                left: 10px;
-                top: 10px;
-                padding: 5px 8px;
-                font-size: 8px
-            }
-
-            /* .vinfo {
-                left: 12px;
-                right: 12px;
-                bottom: 9px
-            } */
-
-            .vinfo {
-                left: 12px;
-                top: 10px;
-                bottom: auto;
-            }
-
-            .vinfo small {
-                font-size: 6px
-            }
-
-            .vinfo h1 {
-                font-size: 12px;
-                margin: 3px 0
-            }
-
-            .vinfo span {
-                font-size: 6px
-            }
-
-            /* .news-head {
-                height: 35%;
-                padding: 9px 11px
-            } */
-
-            .eyebrow {
-                font-size: 7px
-            }
-
-            /* .news-head h2 {
-                font-size: 11px;
-                margin-top: 3px
-            } */
-
-            .meta {
-                font-size: 6px;
-                margin-top: 3px
-            }
-
-            .slides {
-                inset: 0 0 0
-            }
-
-            .caption {
-                padding: 26px 34px 11px 11px;
-                font-size: 15px
-            }
-
-            .caption-name { font-size: 15px; }
-            .caption-date { font-size: 10px; margin-top: 4px; }
-
-            .dots {
-                right: 9px;
-                bottom: 8px
-            }
-
-            .dot {
-                width: 5px;
-                height: 5px
-            }
-
-            .dot.active {
-                width: 13px
-            }
-
-            .bar {
-                height: 17%;
+            .main {
+                flex: 1;
                 min-height: 0;
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(2, minmax(0, 1fr));
+                gap: 1.8vw;
+            }
+            .card {
+                aspect-ratio: auto;
+                min-height: 0;
+            }
+            .news-ticker-container {
+                flex: 0 0 42px;
+                height: 42px;
+                margin-top: 10px;
+            }
+            .bar {
+                height: 22vh;
+                grid-template-columns: 12% 18% 30% 40%;
                 padding: 0 4vw;
-                /* grid-template-columns: 20% 28% 52%; */
-                grid-template-columns: 18% 25% 47% 10%;
-                /* Ditambah kolom ke-4 (10%) untuk tempat .corner */
-                gap: 1vw
             }
-
-            .livebox {
-                font-size: 12px;
-                padding: 5px 7px
-            }
-
-            .tdklivebox {
-                font-size: 11px;
-                padding: 5px 7px
-            }
-
-            .time small {
-                font-size: 9px
-            }
-
-            .time strong {
-                font-size: 26px
-            }
-
-            .program {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                /* Memaksa isi teks berada tepat di tengah secara vertikal */
-                height: 100%;
-                /* Memastikan kontainer mengambil tinggi penuh dari bar */
-            }
-
-            .program small,
-            .theme small {
-                font-size: 10px
-            }
-
-            .program b {
-                font-size: 15px;
-                line-height: 1.1;
-                /* Menyesuaikan jarak antar baris agar lebih simetris */
-                margin: 1px 0;
-            }
-
-            .program span {
-                font-size: 10px
-            }
-
             .theme {
-                display: none
-            }
-
-            .weather-panel {
-                width: 100%;
-                height: 100%;
-                padding-left: 2px;
-                justify-content: flex-end;
-            }
-
-            .weather-content {
-                grid-template-columns: auto 1fr;
-                column-gap: 4px;
-            }
-
-            .weather-icon {
-                font-size: 18px;
-            }
-
-            .weather-location {
-                font-size: 6px;
-            }
-
-            .weather-temp {
-                font-size: 14px;
-            }
-
-            .weather-desc {
-                font-size: 6px;
-            }
-
-            .weather-meta {
-                font-size: 5px;
-            }
-
-            .weather-source {
                 display: none;
             }
         }
-
-        @media(max-width:380px) and (orientation:portrait) {
+        /* PHONE PORTRAIT
+           700px ke bawah */
+        @media (max-width: 700px) and (orientation: portrait) {
+            .header {
+                top: 1.8vh;
+                left: 4vw;
+                right: 4vw;
+                height: 8vh;
+            }
             .logo {
-                width: 50%
+                width: 40%;
+                max-height: 6.5vh;
             }
-
-            .main {
+            .live-status {
+                max-width: 58%;
+                font-size: clamp(9px, 2.8vw, 13px);
+                gap: 0;
+                text-align: right;
+            }
+            .live-status h1 {
+                white-space: nowrap;
+            }
+            .content-area {
+                left: 4vw;
+                right: 4vw;
                 top: 10vh;
-                bottom: 18vh
+                bottom: 23vh;
             }
-
-            /* .news-head h2 {
-                font-size: 10px
-            } */
-
-            .vinfo h1 {
-                font-size: 11px
+            .main {
+                flex: 1;
+                min-height: 0;
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(2, minmax(0, 1fr));
+                gap: 2.5vw;
             }
-
+            .card {
+                aspect-ratio: auto;
+                min-height: 0;
+            }
+            .caption-container {
+                padding: 2.5vh 2vw 1.2vh;
+                gap: 4px;
+            }
+            .date-badge {
+                padding: 3px 9px;
+                font-size: clamp(9px, 2.5vw, 12px);
+            }
+            .caption {
+                font-size: clamp(9px, 2.7vw, 13px);
+                line-height: 1.15;
+            }
+            .dots {
+                right: 8px;
+                bottom: 7px;
+            }
+            .dot {
+                width: 4px;
+                height: 4px;
+            }
+            .dot.active {
+                width: 12px;
+            }
+            .news-ticker-container {
+                flex: 0 0 34px;
+                height: 34px;
+                min-height: 34px;
+                margin-top: 8px;
+            }
+            .ticker-badge {
+                padding: 0 8px;
+            }
+            .ticker-badge img {
+                max-height: 20px;
+            }
+            .ticker-content {
+                padding-left: 9px;
+            }
+            .ticker-text {
+                font-size: clamp(8px, 2.4vw, 11px);
+                letter-spacing: .2px;
+            }
+            .bar {
+                height: 23vh;
+                min-height: 0;
+                padding: 0 4vw;
+                grid-template-columns: 23% 24% 53%;
+                gap: 0;
+            }
+            .theme,
+            .budget-widget {
+                display: none;
+            }
+            .livebox {
+                font-size: clamp(10px, 3vw, 14px);
+                padding: 6px 7px;
+                border-radius: 5px;
+            }
+            .time {
+                padding: 0 3px;
+            }
+            .time small {
+                font-size: clamp(8px, 2.6vw, 11px);
+            }
             .time strong {
-                font-size: 21px
+                font-size: clamp(20px, 6.2vw, 28px);
             }
-
+            .program {
+                padding-left: 4px;
+                overflow: hidden;
+            }
+            .program small {
+                font-size: clamp(8px, 2.5vw, 11px);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
             .program b {
-                font-size: 14px
+                font-size: clamp(13px, 4.1vw, 18px);
+                line-height: 1.05;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .program span {
+                font-size: clamp(8px, 2.4vw, 11px);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
-
-        /* landscape phones/tablets keep the broadcast composition */
-        @media(max-width:900px) and (orientation:landscape) {
-            .main {
-                top: 14vh;
-                bottom: 22vh
-            }
-
+        /* PHONE LANDSCAPE
+           Menjaga dua media tetap berdampingan pada HP horizontal. */
+        @media (max-width: 700px) and (orientation: landscape) {
             .header {
-                top: 2vh
+                top: 1.5vh;
+                left: 3vw;
+                right: 3vw;
+                height: 10vh;
+            }
+            .logo {
+                width: clamp(125px, 22vw, 180px);
+                max-height: 8vh;
+            }
+            .live-status {
+                font-size: clamp(9px, 2vw, 13px);
+            }
+            .content-area {
+                left: 3vw;
+                right: 3vw;
+                top: 12vh;
+                bottom: 24vh;
+            }
+            .main {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.8vw;
+            }
+            .card {
+                aspect-ratio: 16 / 9;
+            }
+            .caption-container {
+                padding: 2vh 1.5vw 1vh;
+                gap: 3px;
+            }
+            .date-badge {
+                font-size: clamp(8px, 1.8vw, 11px);
+                padding: 2px 7px;
+            }
+            .caption {
+                font-size: clamp(8px, 2vw, 12px);
+            }
+            .news-ticker-container {
+                flex: 0 0 28px;
+                height: 28px;
+                min-height: 28px;
+                margin-top: 6px;
+            }
+            .ticker-badge {
+                padding: 0 7px;
+            }
+            .ticker-text {
+                font-size: clamp(7px, 1.7vw, 10px);
+            }
+            .bar {
+                height: 24vh;
+                padding: 0 3vw;
+                grid-template-columns: 16% 18% 31% 35%;
+                gap: .8vw;
+            }
+            .theme {
+                display: none;
+            }
+            .budget-widget {
+                display: flex;
+                gap: 5px;
+                padding-left: .8vw;
+            }
+            .budget-title {
+                font-size: clamp(7px, 1.5vw, 10px);
+            }
+            .budget-amount {
+                font-size: clamp(8px, 1.7vw, 11px);
+                padding: 2px 5px;
+            }
+            .budget-chart-container {
+                width: clamp(30px, 4vw, 42px);
+                height: clamp(30px, 4vw, 42px);
+            }
+            .budget-center-text {
+                font-size: clamp(7px, 1.2vw, 10px);
+            }
+            .livebox {
+                font-size: clamp(8px, 1.8vw, 11px);
+                padding: 4px 5px;
+            }
+            .time small {
+                font-size: clamp(7px, 1.6vw, 10px);
+            }
+            .time strong {
+                font-size: clamp(15px, 3.5vw, 22px);
+            }
+            .program small {
+                font-size: clamp(7px, 1.5vw, 10px);
+            }
+            .program b {
+                font-size: clamp(11px, 2.8vw, 17px);
+            }
+            .program span {
+                font-size: clamp(7px, 1.4vw, 9px);
+            }
+        }
+        /* FINAL MOBILE OVERRIDES
+           Override aturan responsive lama agar mobile tidak memotong
+           ticker/header dan widget realisasi anggaran tetap tampil. */
+        /* FINAL MOBILE/TABLET REFINEMENT */
+        /* PHONE PORTRAIT */
+        @media (max-width: 700px) and (orientation: portrait) {
+            .header {
+                top: 1.5vh;
+                left: 3.5vw;
+                right: 3.5vw;
+                height: 8vh;
+                display: flex;
+                align-items: center;
+            }
+            .logo {
+                width: clamp(105px, 34vw, 145px);
+                max-height: 6vh;
+                flex: 0 0 auto;
+            }
+            /* Hari/tanggal/jam tetap di kanan, tetapi boleh turun menjadi 2 baris */
+            .live-status {
+                margin-left: auto;
+                width: auto;
+                max-width: 58%;
+                min-width: 0;
+                font-size: clamp(7px, 2.2vw, 11px);
+                line-height: 1.2;
+                text-align: right;
+                overflow: visible;
+            }
+            .live-status h1 {
+                margin: 0;
+                white-space: normal;
+                overflow: visible;
+                text-overflow: unset;
+            }
+            #date-time-display {
+                display: block;
+            }
+            .content-area {
+                left: 3.5vw;
+                right: 3.5vw;
+                top: 10vh;
+                bottom: 25vh;
+            }
+            .main {
+                min-height: 0;
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(2, minmax(0, 1fr));
+                gap: 2vw;
+            }
+            .card {
+                aspect-ratio: auto;
+                min-height: 0;
+            }
+            .caption-container {
+                padding: 2.2vh 2vw 1vh;
+                gap: 3px;
+            }
+            .date-badge {
+                padding: 2px 7px;
+                font-size: clamp(8px, 2.25vw, 11px);
+            }
+            .caption {
+                max-width: 94%;
+                font-size: clamp(8px, 2.35vw, 12px);
+                line-height: 1.12;
+            }
+            .dots {
+                right: 7px;
+                bottom: 6px;
+            }
+            .dot {
+                width: 4px;
+                height: 4px;
+            }
+            .dot.active {
+                width: 11px;
+            }
+            /* TICKER HP */
+            .news-ticker-container {
+                flex: 0 0 clamp(30px, 6vh, 36px);
+                height: clamp(30px, 6vh, 36px);
+                min-height: 30px;
+                margin-top: 7px;
+                margin-bottom: 0;
+            }
+            .ticker-badge {
+                width: 46px;
+                min-width: 46px;
+                padding: 0 5px;
+                overflow: hidden;
+            }
+            .ticker-badge img {
+                width: 36px;
+                max-height: 17px;
+            }
+            .ticker-content {
+                min-width: 0;
+                flex: 1 1 auto;
+                padding-left: 7px;
+                padding-right: 5px;
+            }
+            .ticker-text {
+                min-width: 0;
+                width: 100%;
+                font-size: clamp(7px, 2.05vw, 10px);
+                line-height: 1.1;
+                letter-spacing: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            /* FOOTER HP — dibuat ringkas dan presisi
+               Baris 1 = LIVE + JAM + PROGRAM
+               Baris 2 = REALISASI ANGGARAN tepat di bawah JAM/PROGRAM
+               Tema & pengisi acara disembunyikan di HP. */
+            .bar {
+                height: 23vh;
+                min-height: 100px;
+                padding: 6px 3.5vw 7px;
+                display: grid;
+                /* Baris utama dibuat selebar isi agar LIVE, JAM, dan PROGRAM
+                   benar-benar berada di tengah layar HP. */
+                grid-template-columns: auto auto auto;
+                grid-template-rows: 1fr 0.78fr;
+                column-gap: clamp(8px, 2.8vw, 16px);
+                row-gap: 0;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+            }
+            #box-live-status {
+                grid-column: 1;
+                grid-row: 1;
+                min-width: 0;
+                width: max-content;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .time {
+                grid-column: 2;
+                grid-row: 1;
+                min-width: 0;
+                width: max-content;
+                padding: 0;
+                text-align: center;
+                justify-self: center;
+            }
+            .program {
+                grid-column: 3;
+                grid-row: 1;
+                min-width: 0;
+                width: min(42vw, 190px);
+                height: auto;
+                padding: 0;
+                overflow: hidden;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+            }
+            /* Tema/pengisi tidak ditampilkan pada HP */
+            .theme {
+                display: none !important;
+            }
+            /* Anggaran langsung di bawah JAM + PROGRAM,
+               sehingga jaraknya dekat dan tidak membuat footer melebar. */
+            .budget-widget {
+                display: flex;
+                /* Anggaran menjadi satu grup yang benar-benar center kiri-kanan. */
+                grid-column: 1 / -1;
+                grid-row: 2;
+                width: max-content;
+                max-width: 92vw;
+                min-width: 0;
+                height: auto;
+                margin: 0;
+                padding: 3px 0 0;
+                gap: 6px;
+                border-left: 0;
+                justify-content: center;
+                align-items: center;
+                justify-self: center;
+            }
+            .budget-info {
+                min-width: 0;
+                width: auto;
+                flex: 0 1 auto;
+                gap: 2px;
+                align-items: center;
+                text-align: center;
+            }
+            .budget-title {
+                font-size: clamp(7px, 2vw, 10px);
+                letter-spacing: 0;
+                line-height: 1;
+                white-space: nowrap;
+            }
+            .budget-amount {
+                width: max-content;
+                max-width: 100%;
+                font-size: clamp(7px, 2vw, 10px);
+                padding: 3px 7px;
+                border-radius: 4px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .budget-chart-container {
+                width: clamp(30px, 9vw, 40px);
+                height: clamp(30px, 9vw, 40px);
+                flex: 0 0 auto;
+            }
+            .budget-center-text {
+                font-size: clamp(7px, 2vw, 10px);
+            }
+            .livebox {
+                font-size: clamp(8px, 2.4vw, 12px);
+                padding: 5px 5px;
+                border-radius: 5px;
+                white-space: nowrap;
+            }
+            .time small {
+                font-size: clamp(7px, 1.9vw, 10px);
+                white-space: nowrap;
+            }
+            .time strong {
+                font-size: clamp(17px, 5vw, 24px);
+                line-height: 1;
+                white-space: nowrap;
+            }
+            .program small,
+            .program span {
+                font-size: clamp(7px, 1.9vw, 10px);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .program b {
+                font-size: clamp(11px, 3.4vw, 16px);
+                line-height: 1.05;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+        }
+        /* PHONE LANDSCAPE */
+        @media (max-width: 700px) and (orientation: landscape) {
+            .live-status {
+                max-width: 55%;
+                font-size: clamp(7px, 1.7vw, 11px);
+            }
+            .live-status h1 {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .ticker-content {
+                min-width: 0;
+            }
+            .ticker-text {
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .bar {
+                grid-template-columns: 15% 18% 32% 35%;
+                grid-template-rows: 1fr;
+                gap: 0;
+                padding: 0 3vw;
+            }
+            .theme {
+                display: none;
+            }
+            .budget-widget {
+                display: flex;
+                grid-column: 4;
+                grid-row: 1;
+                min-width: 0;
+                width: 100%;
+                gap: 4px;
+                padding-left: 5px;
+            }
+            .budget-info {
+                min-width: 0;
+                flex: 1 1 auto;
+            }
+            .budget-title,
+            .budget-amount {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+        /* TABLET — FOOTER DIPUSATKAN DALAM SATU BARIS
+           Hanya aktif 701px–1100px.
+           HP <=700px dan Full HD >=1920px tidak tersentuh. */
+        @media (min-width: 701px) and (max-width: 1100px) {
+            .bar {
+                /* Setiap grup mengikuti lebar kontennya sendiri,
+                   sehingga tidak ada kolom kosong besar di tengah. */
+                grid-template-columns: max-content max-content minmax(150px, 260px) max-content;
+                grid-template-rows: 1fr;
+                justify-content: center;
+                align-items: center;
+                column-gap: clamp(12px, 2vw, 24px);
+                row-gap: 0;
+                padding-left: 3vw;
+                padding-right: 3vw;
+            }
+            #box-live-status {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-width: max-content;
+                justify-self: center;
+            }
+            .time {
+                min-width: max-content;
+                justify-self: center;
+                text-align: center;
+            }
+            .program {
+                width: min(260px, 28vw);
+                min-width: 150px;
+                height: auto;
+                padding: 0;
+                justify-content: center;
+                text-align: center;
+                justify-self: center;
+                overflow: hidden;
+            }
+            .program small,
+            .program b,
+            .program span {
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .budget-widget {
+                width: max-content;
+                min-width: max-content;
+                max-width: none;
+                margin: 0;
+                padding-left: clamp(8px, 1vw, 12px);
+                gap: clamp(6px, 0.8vw, 10px);
+                overflow: visible;
+                justify-self: center;
+                border-left: 2px solid rgba(7, 92, 174, 0.2);
+            }
+            .budget-info {
+                min-width: max-content;
+                flex: 0 0 auto;
+                width: auto;
+                align-items: center;
+                text-align: center;
+            }
+            .budget-title {
+                white-space: nowrap;
+                font-size: clamp(9px, 1.1vw, 14px);
+            }
+            /* Biru hanya selebar isi nominal, bukan sepanjang kolom */
+            .budget-amount {
+                width: max-content !important;
+                min-width: 0;
+                max-width: none;
+                display: inline-flex;
+                white-space: nowrap;
+                font-size: clamp(10px, 1.25vw, 17px);
+                padding: 4px 9px;
+            }
+            .budget-chart-container {
+                flex: 0 0 clamp(42px, 5vw, 58px);
             }
         }
     </style>
 </head>
-
 <body>
     <div class="screen">
         <div class="batik"></div>
         <header class="header">
-            <img class="logo" id="brandLogo" alt="Logo TVRI Bengkulu" hidden>
-            <div class="header-right">
-                <div class="date-clock" id="dateClock">Memuat tanggal dan waktu…</div>
+            <img class="logo" src="{{ asset('tempHome/assets/logo.png') }}" alt="TVRI Bengkulu">
+            <div class="live-status">
+                <h1>
+                    <span id="date-time-display">
+                        {{ \Carbon\Carbon::now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }} |
+                        {{ \Carbon\Carbon::now()->format('H.i') }} WIB
+                    </span>
+                </h1>
             </div>
         </header>
-        <main class="main">
-            <section class="card video-card">
-                <video id="broadcastVideo" class="video" autoplay muted playsinline webkit-playsinline disablepictureinpicture controlslist="nodownload noplaybackrate noremoteplayback"></video>
-                <div class="video-shade"></div>
-            </section>
-            <section class="card news">
-                <div class="slides" id="slides">
-                    <div id="photoEmpty" class="photo-empty">Menunggu foto dari Google Drive…</div>
-                    <div class="caption" id="photoCaption" hidden>
-                        <div class="caption-name" id="photoCaptionName"></div>
-                        <div class="caption-date" id="photoCaptionDate"></div>
+        <!-- WRAPPER UNTUK MEDIA DAN TICKER -->
+        <div class="content-area">
+            <main class="main">
+                <!-- VIDEO SECTION -->
+                <section class="card video-card">
+                    <video id="mainVideo" class="video" autoplay muted playsinline>
+                        <source id="videoSource" src="{{ $data['videoList'][0] ?? '' }}" type="video/mp4">
+                        Browser Anda tidak mendukung tag video.
+                    </video>
+                    <div class="video-shade"></div>
+                </section>
+                <!-- SLIDESHOW KEGIATAN SECTION -->
+                <section class="card news">
+                    <div class="slides" id="slides-wrapper">
+                        <div id="slides-container">
+                            @if (!empty($data['kegiatan']))
+                                @foreach ($data['kegiatan'] as $key)
+                                    @php
+                                        $tglFormated = '5 Oktober 2026';
+                                        if (!empty($key['tanggal_kegiatan'])) {
+                                            try {
+                                                $tglFormated = \Carbon\Carbon::parse($key['tanggal_kegiatan'])
+                                                    ->locale('id')
+                                                    ->isoFormat('D MMMM YYYY');
+                                            } catch (\Exception $e) {
+                                                $tglFormated = $key['tanggal_kegiatan'];
+                                            }
+                                        }
+                                    @endphp
+                                    <img class="slide {{ $loop->first ? 'active' : '' }}"
+                                        src="{{ asset('storage/assets/img/kegiatan/' . $key['file_kegiatan']) }}"
+                                        alt="{{ $key['nama_kegiatan'] ?? 'Gambar Kegiatan' }}"
+                                        data-caption="{{ $key['keterangan_kegiatan'] ?? 'Informasi dan kegiatan terbaru TVRI Bengkulu' }}"
+                                        data-date="{{ $tglFormated }}">
+                                @endforeach
+                            @endif
+                        </div>
+                        <div class="caption-container">
+                            <span class="date-badge" id="date-badge">
+                                <i class="fas fa-calendar-alt"></i>
+                                @php
+                                    $firstTgl = '5 Oktober 2026';
+                                    if (!empty($data['kegiatan'][0]['tanggal_kegiatan'])) {
+                                        try {
+                                            $firstTgl = \Carbon\Carbon::parse($data['kegiatan'][0]['tanggal_kegiatan'])
+                                                ->locale('id')
+                                                ->isoFormat('D MMMM YYYY');
+                                        } catch (\Exception $e) {
+                                            $firstTgl = $data['kegiatan'][0]['tanggal_kegiatan'];
+                                        }
+                                    }
+                                @endphp
+                                {{ $firstTgl }}
+                            </span>
+                            <div class="caption" id="caption">
+                                {{ $data['kegiatan'][0]['keterangan_kegiatan'] ?? 'Kegiatan dan informasi terbaru TVRI Bengkulu' }}
+                            </div>
+                        </div>
+                        <div class="dots" id="dots"></div>
                     </div>
-                    <div class="dots" id="dots"></div>
+                </section>
+            </main>
+            <!-- NEWS TICKER SECTION -->
+            <div class="news-ticker-container">
+                <div class="ticker-badge">
+                    <img id="ticker-logo" class="ticker-logo" src="{{ asset('tempHome/assets/logo.png') }}"
+                        alt="TVRI Bengkulu Logo">
                 </div>
-            </section>
-        </main>
-        <footer class="bar">
-            <div class="bitem livebox" id="liveBox"><span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">SIARAN</span></div>
-            <div class="bitem time"><small id="prevTime"></small>
-                <strong id="currentStart">--:--</strong>
-                <small id="nextTime"></small>
+                <div class="ticker-content">
+                    <div class="ticker-text" id="running-text-display">
+                        INFORMASI 1: SELAMAT DATANG DI LPP TVRI STASIUN BENGKULU — MEDIA PEMERSATU BANGSA
+                    </div>
+                </div>
             </div>
-            <div class="bitem program"><small id="programLabel">PROGRAM</small><b id="programName">Menunggu data program…</b><span id="programStation">TVRI BENGKULU</span></div>
-            <div class="bitem theme"><small>DESKRIPSI PROGRAM</small><b id="programDescription">Informasi program TVRI Bengkulu.</b></div>
-            <div class="bitem weather-panel" id="weatherPanel" aria-label="Prakiraan cuaca BMKG">
-                <div class="weather-content">
-                    <div class="weather-icon" id="weatherIcon" aria-hidden="true">☁️</div>
-                    <div class="weather-main">
-                        <div class="weather-location" id="weatherLocation">BENGKULU</div>
-                        <div class="weather-temp" id="weatherTemp">--°C</div>
-                        <div class="weather-desc" id="weatherDesc">Memuat cuaca…</div>
-                        <div class="weather-meta" id="weatherMeta">--% • -- km/jam</div>
-                    </div>
+        </div>
+        <!-- FOOTER BAR -->
+        <footer class="bar">
+            <div id="box-live-status">
+                @if (isset($data['currentProgram']->live) && $data['currentProgram']->live === 'aktif')
+                    <div class="bitem livebox">● LIVE</div>
+                @endif
+            </div>
+            <div class="bitem time">
+                <small id="text-jam-prev">{{ $data['jam_prev'] }}</small>
+                <strong id="text-jam-current">{{ $data['jam_current'] }}</strong>
+                <small id="text-jam-next">{{ $data['jam_next'] }}</small>
+            </div>
+            <div class="bitem program">
+                <small
+                    id="text-prog-prev">{{ $data['prevProgram'] ? \Illuminate\Support\Str::upper($data['prevProgram']->judul_program) : 'TVRI NASIONAL' }}</small>
+                <b
+                    id="text-prog-current">{{ isset($data['currentProgram']->judul_program) ? \Illuminate\Support\Str::upper($data['currentProgram']->judul_program) : 'TVRI NASIONAL' }}</b>
+                <span
+                    id="text-prog-next">{{ $data['nextProgram'] ? \Illuminate\Support\Str::upper($data['nextProgram']->judul_program) : 'TVRI NASIONAL' }}</span>
+            </div>
+            <div class="bitem theme">
+                <small id="text-tema">{{ $data['currentProgram']->tema_program ?? '-' }}</small>
+                <br>
+                <b id="text-pengisi">{{ $data['currentProgram']->pengisi_program ?? '-' }}</b>
+            </div>
+            <!-- WIDGET REALISASI ANGGARAN -->
+            <div class="bitem budget-widget">
+                <div class="budget-info">
+                    <span class="budget-title">Realiasi Anggaran</span>
+                    <span class="budget-amount" id="budget-nominal-text">Rp. 120.000.000</span>
                 </div>
-                <div class="weather-source">Sumber: BMKG</div>
+                <div class="budget-chart-container">
+                    <svg class="budget-svg" viewBox="0 0 36 36">
+                        <path class="budget-circle-bg"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <path class="budget-circle-progress" id="budget-circle-progress"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    </svg>
+                    <div class="budget-center-text" id="budget-percent-text">30%</div>
+                </div>
             </div>
         </footer>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.7.3/dist/hls.min.js"></script>
-    <script src="./config.js"></script>
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // TVRI GitHub Pages: jadwal CSV dari Drive dan foto dari Apps Script JSONP; video HANYA dari videos.json di repo GitHub.
-        const PHOTO_MS = 8000;
-        const MAX_PHOTOS = 15;
-        const DISPLAY_CACHE_KEY = 'tvriDisplayDataCacheV1';
-        // Developer configuration: ubah hanya VIDEO_SOURCE_MODE untuk memilih sumber video.
-        // 'repo' = video dari videos.json pada repositori GitHub.
-        // 'live' = siaran OTT TVRI Bengkulu melalui HLS.
-        // Tidak ada tombol pilihan sumber pada tampilan publik.
-        const VIDEO_SOURCE_MODE = 'repo';
-        const LIVE_STREAM_URL = 'https://ott.tvri.co.id/Content/HLS/Live/Channel(TVRIBengkulu)/index.m3u8';
-        const VIDEO_MANIFEST_URL = './videos.json';
-        const state = {
-            programs: [], photos: [], videos: [],
-            videoIndex: 0, videoSignature: '', photoSignature: '', photoIndex: 0,
-            photoTimer: null, videoLoadToken: 0, dataScript: null,
-            dataLoading: false, videosLoading: false, hls: null
-        };
-        const $ = id => document.getElementById(id);
-        const pad = n => String(n).padStart(2, '0');
-        const DISPLAY_TIME_ZONE = 'Asia/Jakarta';
-
-        // BMKG: titik TVRI Bengkulu di Jl. Basuki Rahmat No. 05,
-        // Kelurahan Sawah Lebar Baru, Kecamatan Ratu Agung, Kota Bengkulu.
-        // API BMKG menggunakan kode wilayah administrasi tingkat IV.
-        const BMKG_API_URL = 'https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=17.71.06.1007';
-        const BMKG_REFRESH_MS = 30 * 60 * 1000;
-        let bmkgLoading = false;
-
-        function weatherIcon(description) {
-            const d = String(description || '').toLowerCase();
-            if (d.includes('petir') || d.includes('badai')) return '⛈️';
-            if (d.includes('hujan')) return d.includes('lebat') || d.includes('sedang') ? '🌧️' : '🌦️';
-            if (d.includes('kabut') || d.includes('asap')) return '🌫️';
-            if (d.includes('berawan')) return d.includes('tebal') ? '☁️' : '🌤️';
-            if (d.includes('cerah')) return '☀️';
-            return '🌤️';
-        }
-
-        function weatherTimeValue(item) {
-            const raw = firstText(item && item.local_datetime, item && item.datetime);
-            const time = Date.parse(raw);
-            return Number.isNaN(time) ? 0 : time;
-        }
-
-        function flattenBmkgForecast(payload) {
-            const source = payload && Array.isArray(payload.data) ? payload.data : [];
-            const result = [];
-            source.forEach(day => {
-                const groups = Array.isArray(day && day.cuaca) ? day.cuaca : [];
-                groups.forEach(group => {
-                    if (Array.isArray(group)) group.forEach(item => result.push(item));
-                    else if (group && typeof group === 'object') result.push(group);
-                });
-            });
-            return result;
-        }
-
-        async function loadWeather() {
-            if (bmkgLoading) return;
-            bmkgLoading = true;
-            $('weatherPanel').classList.add('weather-loading');
-
-            try {
-                const response = await fetch(BMKG_API_URL + '&_=' + Date.now(), {
-                    cache: 'no-store'
-                });
-                if (!response.ok) throw new Error('BMKG HTTP ' + response.status);
-
-                const payload = await response.json();
-                const forecasts = flattenBmkgForecast(payload);
-                if (!forecasts.length) throw new Error('Data prakiraan BMKG kosong.');
-
-                const now = Date.now();
-                const future = forecasts
-                    .filter(item => weatherTimeValue(item) >= now - 3 * 60 * 60 * 1000)
-                    .sort((a, b) => weatherTimeValue(a) - weatherTimeValue(b));
-                const current = future[0] || forecasts[0];
-
-                const location = payload.lokasi || {};
-                const temp = current.t;
-                const humidity = current.hu;
-                const wind = current.ws;
-                const description = firstText(current.weather_desc, current.weather, current.weather_desc_en, 'Data cuaca tersedia');
-                const city = 'BASUKI RAHMAT';
-
-                $('weatherLocation').textContent = city;
-                $('weatherTemp').textContent = (temp !== undefined && temp !== null && temp !== '') ? `${temp}°C` : '--°C';
-                $('weatherDesc').textContent = description;
-                $('weatherMeta').textContent =
-                    `${humidity !== undefined && humidity !== null ? humidity + '%' : '--%'} • ` +
-                    `${wind !== undefined && wind !== null ? wind + ' km/jam' : '-- km/jam'}`;
-                $('weatherIcon').textContent = weatherIcon(description);
-
-                const updated = current.local_datetime || current.datetime || '';
-                if (updated) $('weatherPanel').title = `Prakiraan BMKG: ${updated}`;
-            } catch (error) {
-                console.warn('Gagal mengambil prakiraan cuaca BMKG:', error);
-                $('weatherLocation').textContent = 'BASUKI RAHMAT';
-                $('weatherTemp').textContent = '--°C';
-                $('weatherDesc').textContent = 'Cuaca tidak tersedia';
-                $('weatherMeta').textContent = 'Sumber: BMKG';
-                $('weatherIcon').textContent = '☁️';
-            } finally {
-                bmkgLoading = false;
-                $('weatherPanel').classList.remove('weather-loading');
-            }
-        }
-
-        // Waktu program harus mengikuti WIB meskipun timezone komputer atau
-        // spreadsheet berbeda. Ini hanya membaca jam lokal; tidak melakukan polling.
-        function jakartaParts(d = new Date()) {
-            const parts = new Intl.DateTimeFormat('en-US', {
-                timeZone: DISPLAY_TIME_ZONE,
-                year: 'numeric', month: '2-digit', day: '2-digit',
-                hour: '2-digit', minute: '2-digit', second: '2-digit',
-                hourCycle: 'h23'
-            }).formatToParts(d);
-            const values = {};
-            parts.forEach(part => { if (part.type !== 'literal') values[part.type] = part.value; });
-            const hour = Number(values.hour) % 24;
-            return {
-                dateKey: `${values.year}-${values.month}-${values.day}`,
-                hour,
-                minute: Number(values.minute),
-                second: Number(values.second),
-                seconds: hour * 3600 + Number(values.minute) * 60 + Number(values.second)
+        document.addEventListener("DOMContentLoaded", function() {
+            // --- FUNGSI UPDATE REALISASI ANGGARAN SECARA DINAMIS ---
+            window.updateRealisasiAnggaran = function(percent, nominalStr) {
+                const percentVal = Math.max(0, Math.min(100, parseFloat(percent) || 0));
+                const progressCircle = document.getElementById('budget-circle-progress');
+                const percentText = document.getElementById('budget-percent-text');
+                const nominalText = document.getElementById('budget-nominal-text');
+                if (progressCircle) {
+                    progressCircle.style.strokeDashoffset = (100 - percentVal);
+                }
+                if (percentText) {
+                    percentText.textContent = `${Math.round(percentVal)}%`;
+                }
+                if (nominalText && nominalStr) {
+                    nominalText.textContent = nominalStr;
+                }
             };
-        }
-        function localDateKey(d = new Date()) { return jakartaParts(d).dateKey; }
-        function parseSeconds(v) {
-            const s = String(v ?? '').trim();
-            const m = s.match(/^(\d{1,3}):(\d{2})(?::(\d{2}))?$/);
-            if (m) return Number(m[1])*3600 + Number(m[2])*60 + Number(m[3] || 0);
-            const iso = s.match(/T(\d{2}):(\d{2}):(\d{2})/);
-            return iso ? Number(iso[1])*3600 + Number(iso[2])*60 + Number(iso[3]) : 0;
-        }
-        function firstText(...values) {
-            for (const value of values) {
-                const text = String(value == null ? '' : value).trim();
-                if (text) return text;
+            // Set nilai awal
+            updateRealisasiAnggaran(30, "Rp. 120.000.000");
+            // --- TICKER MULTI-INFORMASI + LOGO ---
+            // Ganti foto/logo ticker DI SINI.
+            // Jumlah logo sebaiknya sama dengan jumlah teks ticker.
+            const tickerLogos = [
+                "{{ asset('tempHome/assets/logo.png') }}",
+                "{{ asset('tempHome/assets/logo.png') }}",
+                "{{ asset('tempHome/assets/logo.png') }}",
+                "{{ asset('tempHome/assets/logo.png') }}"
+            ];
+            const dummyTickers = [
+                "INFORMASI 1: SELAMAT DATANG DI LPP TVRI STASIUN BENGKULU — MEDIA PEMERSATU BANGSA",
+                "INFORMASI 2: SAKSIKAN PROGRAM BERITA TERKINI BENGKULU HARI INI SETIAP HARI PUKUL 16.00 WIB",
+                "INFORMASI 3: DUKUNG TRADISI DAN KULTUR BUDAYA LOKAL BENGKULU BERSAMA TVRI BENGKULU",
+                "INFORMASI 4: SAKSIKAN SIARAN DIGITAL DENGAN KUALITAS GAMBAR DAN SUARA JERNIH DI CHANNEL TERDEKAT"
+            ];
+            let tickerIndex = 0;
+            const tickerDisplay = document.getElementById('running-text-display');
+            const tickerLogo = document.getElementById('ticker-logo');
+            if (tickerDisplay) {
+                const updateTicker = () => {
+                    tickerDisplay.textContent = dummyTickers[tickerIndex];
+                    if (tickerLogo && tickerLogos[tickerIndex]) {
+                        // Restart animasi logo agar berganti bersamaan dengan teks.
+                        tickerLogo.classList.remove('ticker-logo');
+                        void tickerLogo.offsetWidth;
+                        tickerLogo.src = tickerLogos[tickerIndex];
+                        tickerLogo.classList.add('ticker-logo');
+                    }
+                };
+                updateTicker();
+                setInterval(() => {
+                    tickerIndex = (tickerIndex + 1) % dummyTickers.length;
+                    updateTicker();
+                }, 4000);
             }
-            return '';
-        }
-        function programStartSeconds(p) {
-            return parseSeconds(p && (p.start_time ?? p.startTime ?? p['Start time']));
-        }
-        function todayPrograms(now = new Date()) {
-            return state.programs.filter(p => String(p.date || p.Date || '').slice(0,10) === localDateKey(now))
-                .slice().sort((a,b) => programStartSeconds(a) - programStartSeconds(b));
-        }
-        function clockText(value) {
-            const sec = typeof value === 'number' ? value : parseSeconds(value);
-            return `${pad(Math.floor(sec / 3600) % 24)}.${pad(Math.floor((sec % 3600) / 60))}`;
-        }
-        function renderClock() {
-            const d = new Date();
-            const parts = jakartaParts(d);
-            const date = d.toLocaleDateString('id-ID', {
-                weekday:'long', day:'2-digit', month:'long', year:'numeric', timeZone:DISPLAY_TIME_ZONE
-            }).toUpperCase();
-            $('dateClock').textContent = `${date} | ${pad(parts.hour)}:${pad(parts.minute)} WIB`;
-        }
-        function renderProgram() {
-            const now = new Date();
-            const nowParts = jakartaParts(now);
-            const nowSeconds = nowParts.seconds;
-            const list = todayPrograms(now);
-            if (!list.length) {
-                $('programLabel').textContent = 'PROGRAM';
-                $('programName').textContent = 'Belum ada jadwal hari ini';
-                $('programDescription').textContent = '-';
-                $('programStation').textContent = '—';
-                $('currentStart').textContent = '--:--';
-                $('prevTime').textContent = '';
-                $('nextTime').textContent = '';
-                $('liveBox').innerHTML = '<span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">SIARAN</span>';
-                $('liveBox').classList.remove('is-live');
-                return;
+            // --- SLIDESHOW LOGIC ---
+            let kegiatanData = @json($data['kegiatan'] ?? []);
+            let slideIndex = 0;
+            let slideInterval = null;
+            const defaultTitle = 'Informasi dan kegiatan terbaru TVRI Bengkulu';
+            const defaultDate = '5 Oktober 2026';
+            const slidesContainer = document.getElementById('slides-container');
+            const dotsContainer = document.getElementById('dots');
+            const caption = document.getElementById('caption');
+            const dateBadge = document.getElementById('date-badge');
+            function formatDateString(rawDate) {
+                if (!rawDate) return defaultDate;
+                const months = [
+                    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                ];
+                const parsed = new Date(rawDate);
+                if (!isNaN(parsed.getTime())) {
+                    const d = parsed.getDate();
+                    const m = months[parsed.getMonth()];
+                    const y = parsed.getFullYear();
+                    return `${d} ${m} ${y}`;
+                }
+                return rawDate;
             }
-
-            let index = -1;
-            for (let i = 0; i < list.length; i++) {
-                const startSec = programStartSeconds(list[i]);
-                const durationSec = parseSeconds(list[i].duration ?? list[i].Duration);
-                const endSec = startSec + durationSec;
-                if (durationSec > 0 && nowSeconds >= startSec && nowSeconds < endSec) {
-                    index = i;
-                    break;
+            function updateCaptionText(index) {
+                const slides = document.querySelectorAll('#slides-container .slide');
+                if (slides[index]) {
+                    const text = slides[index].getAttribute('data-caption') || defaultTitle;
+                    const dateText = slides[index].getAttribute('data-date') || defaultDate;
+                    if (caption) caption.textContent = text;
+                    if (dateBadge) {
+                        dateBadge.innerHTML = `<i class="fas fa-calendar-alt"></i> ${formatDateString(dateText)}`;
+                    }
                 }
             }
-            const active = index >= 0;
-            if (!active) {
-                index = list.findIndex(p => programStartSeconds(p) > nowSeconds);
-                if (index < 0) index = list.length - 1;
-            }
-
-            const p = list[index];
-            const startSec = programStartSeconds(p);
-            const programName = firstText(p.name, p.Name, p.program_name, p.programName, p.title);
-            // Lewati string kosong: Short description yang kosong harus bisa
-            // menggunakan description/Long description sebagai cadangan.
-            const programDescription = firstText(
-                p.short_description, p.shortDescription, p.description,
-                p.long_description, p.longDescription
-            );
-            const live = p.live === true || ['true','1','yes','live'].includes(String(p.live).toLowerCase());
-            const previousProgram = index > 0 ? list[index - 1] : null;
-            const nextProgram = index < list.length - 1 ? list[index + 1] : null;
-            const previousProgramName = previousProgram
-                ? firstText(previousProgram.name, previousProgram.Name, previousProgram.program_name, previousProgram.programName, previousProgram.title)
-                : '—';
-            const nextProgramName = nextProgram
-                ? firstText(nextProgram.name, nextProgram.Name, nextProgram.program_name, nextProgram.programName, nextProgram.title)
-                : '—';
-            $('programLabel').textContent = previousProgramName || '—';
-            $('programName').textContent = programName || 'Tanpa judul';
-            $('programDescription').textContent = programDescription || 'Tidak ada deskripsi program.';
-            $('programStation').textContent = nextProgramName || '—';
-            $('currentStart').textContent = clockText(startSec);
-            $('prevTime').textContent = index > 0 ? clockText(programStartSeconds(list[index-1])) : '';
-            $('nextTime').textContent = index < list.length-1 ? clockText(programStartSeconds(list[index+1])) : '';
-            $('liveBox').innerHTML = live ? '<span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">LIVE</span>' : '<span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">SIARAN</span>';
-            $('liveBox').classList.toggle('is-live', live);
-        }
-
-        function photoUrl(item) { return String(item.mediaUrl || item.image || '').trim(); }
-        function getPhotoList() {
-            // Urutan data mengikuti baris di Sheet: entri terbaru berada paling akhir.
-            // Tampilkan maksimal 15 foto terbaru, tanpa memfilter atau mengurutkan berdasarkan tanggal.
-            return state.photos
-                .filter(p => !!photoUrl(p))
-                .slice(-MAX_PHOTOS)
-                .reverse();
-        }
-        function photoKey(list) { return list.map(p => `${p.id || ''}|${photoUrl(p)}|${String(p.name || '').trim()}|${String(p.date || '').trim()}`).join('||'); }
-        function setPhotoCaption(item) {
-            const caption = $('photoCaption');
-            const name = String(item && item.name || '').trim();
-            const date = formatPhotoDate(item && item.date);
-            $('photoCaptionName').textContent = name;
-            $('photoCaptionDate').textContent = date;
-            caption.hidden = !(name || date);
-        }
-        function formatPhotoDate(value) {
-            const raw = String(value == null ? '' : value).trim();
-            if (!raw) return '';
-            let year, month, day;
-            let match = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-            if (match) {
-                year = Number(match[1]); month = Number(match[2]); day = Number(match[3]);
-            } else {
-                match = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-                if (match) {
-                    month = Number(match[1]); day = Number(match[2]); year = Number(match[3]);
-                }
-            }
-            if (year && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
-                const date = new Date(year, month - 1, day);
-                if (date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day) {
-                    return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-                }
-            }
-            const parsed = new Date(raw);
-            return Number.isNaN(parsed.getTime()) ? raw : parsed.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-        }
-        function renderPhotos() {
-            const list = getPhotoList();
-            const stage = $('slides');
-            const dots = $('dots');
-            stage.querySelectorAll('.slide').forEach(el => el.remove());
-            dots.replaceChildren();
-            clearInterval(state.photoTimer);
-            state.photoTimer = null;
-            state.photoIndex = 0;
-            if (!list.length) {
-                $('photoEmpty').classList.remove('hidden');
-                setPhotoCaption(null);
-                return;
-            }
-            $('photoEmpty').classList.add('hidden');
-            setPhotoCaption(list[0]);
-            list.forEach((item, i) => {
-                const img = document.createElement('img');
-                img.className = 'slide' + (i === 0 ? ' active' : '');
-                img.alt = item.name || `Foto berita ${i+1}`;
-                img.loading = i < 2 ? 'eager' : 'lazy';
-                img.decoding = 'async';
-                if (i === 0) img.setAttribute('fetchpriority', 'high');
-                img.src = photoUrl(item);
-                img.onerror = () => img.classList.add('broken');
-                stage.insertBefore(img, dots);
-                const dot = document.createElement('span');
-                dot.className = 'dot' + (i === 0 ? ' active' : '');
-                dots.appendChild(dot);
-            });
-            if (list.length > 1) state.photoTimer = setInterval(nextPhoto, PHOTO_MS);
-        }
-        function nextPhoto() {
-            const slides = [...$('slides').querySelectorAll('.slide')];
-            const dots = [...$('dots').children];
-            if (slides.length < 2) return;
-            slides[state.photoIndex].classList.remove('active');
-            dots[state.photoIndex]?.classList.remove('active');
-            state.photoIndex = (state.photoIndex + 1) % slides.length;
-            slides[state.photoIndex].classList.add('active');
-            dots[state.photoIndex]?.classList.add('active');
-            const list = getPhotoList();
-            setPhotoCaption(list[state.photoIndex]);
-        }
-
-        // Isi dengan tautan berbagi atau ID file gambar di Google Drive.
-        // Kosongkan sementara jika aset belum diunggah.
-        const DRIVE_ASSETS = {
-            logo: 'https://drive.google.com/file/d/1ojqBsaZ7h2VBY4E5GirNn4Et4elUMRw_/view?usp=drive_link',
-            background: 'https://drive.google.com/file/d/1cLDO3qyzIEs1ewb94WmUw_keUKHZdeWg/view?usp=drive_link'
-        };
-
-        function driveFileId(raw) {
-            const value = String(raw || '').trim();
-            if (!value) return '';
-            const match = value.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) ||
-                value.match(/[?&]id=([a-zA-Z0-9_-]+)/i);
-            if (match) return match[1];
-            return /^[a-zA-Z0-9_-]{20,}$/.test(value) ? value : '';
-        }
-
-        function driveImageUrl(raw) {
-            const value = String(raw || '').trim();
-            if (!value) return '';
-            const id = driveFileId(value);
-            if (!id) return value;
-            const key = value.match(/[?&]resourcekey=([^&#]+)/i);
-            return 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(id) + '&sz=w2000' +
-                (key ? '&resourcekey=' + key[1] : '');
-        }
-
-        function applyDriveAssets() {
-            const logo = $('brandLogo');
-            const logoUrl = driveImageUrl(DRIVE_ASSETS.logo);
-            if (logoUrl) {
-                logo.hidden = false;
-                logo.src = logoUrl;
-                logo.onerror = () => { logo.hidden = true; console.warn('Logo Drive tidak dapat dimuat. Periksa izin berbagi.'); };
-            } else {
-                logo.hidden = true;
-                logo.removeAttribute('src');
-            }
-
-            const backgroundUrl = driveImageUrl(DRIVE_ASSETS.background);
-            if (backgroundUrl) {
-                document.documentElement.style.setProperty('--drive-background-image', `url(${JSON.stringify(backgroundUrl)})`);
-            }
-        }
-
-        // Video lokal di GitHub Pages: gunakan path relatif agar project Pages
-        // (username.github.io/nama-repo/) dan custom domain sama-sama berfungsi.
-        function videoSource(item) {
-            const raw = typeof item === 'string'
-                ? item
-                : (item && (item.src || item.path || item.url || item.video)) || '';
-            const value = String(raw).trim();
-            if (!value) return '';
-            try { return new URL(value, document.baseURI).href; }
-            catch (e) { return ''; }
-        }
-
-        function videoKey(list) {
-            return list.map(item => `${videoSource(item)}|${typeof item === 'string' ? '' : (item.name || '')}`).join('||');
-        }
-
-        function requestVideoPlay(video, token) {
-            if (token !== state.videoLoadToken || !video.src) return;
-            video.muted = true;
-            video.defaultMuted = true;
-            video.autoplay = true;
-            video.playsInline = true;
-            video.removeAttribute('controls');
-            const result = video.play();
-            if (result && typeof result.catch === 'function') {
-                result.catch(error => {
-                    // Browser/player tertentu dapat menolak autoplay. Tetap coba
-                    // kembali saat media siap atau saat halaman kembali terlihat.
-                    console.warn('Autoplay video ditolak oleh browser:', error && error.name, error && error.message);
+            function renderSlidesDOM(dataList) {
+                if (!slidesContainer || !dotsContainer || !dataList || dataList.length === 0) return;
+                slidesContainer.innerHTML = '';
+                dotsContainer.innerHTML = '';
+                dataList.forEach((item, index) => {
+                    const img = document.createElement('img');
+                    img.className = 'slide' + (index === slideIndex ? ' active' : '');
+                    img.src = item.file_url || ('{{ asset('storage/assets/img/kegiatan/') }}/' + item
+                        .file_kegiatan);
+                    img.alt = item.nama || item.nama_kegiatan || 'Gambar Kegiatan';
+                    const rawDate = item.tanggal_kegiatan || item.tanggal || defaultDate;
+                    const captionValue = item.keterangan || item.keterangan_kegiatan || defaultTitle;
+                    img.setAttribute('data-caption', captionValue);
+                    img.setAttribute('data-date', formatDateString(rawDate));
+                    slidesContainer.appendChild(img);
+                    const dot = document.createElement('span');
+                    dot.className = 'dot' + (index === slideIndex ? ' active' : '');
+                    dotsContainer.appendChild(dot);
                 });
+                updateCaptionText(slideIndex);
             }
-        }
-
-        function playVideo(index) {
-            const video = $('broadcastVideo');
-            const list = state.videos;
-            const token = ++state.videoLoadToken;
-            video.pause();
-            video.removeAttribute('src');
-            video.removeAttribute('controls');
-            video.loop = list.length === 1;
-            if (!list.length) {
-                video.load();
-                return;
+            function startSlideshow() {
+                if (slideInterval) clearInterval(slideInterval);
+                slideInterval = setInterval(() => {
+                    const slides = document.querySelectorAll('#slides-container .slide');
+                    const dots = dotsContainer ? dotsContainer.children : [];
+                    if (slides.length === 0) return;
+                    if (slides[slideIndex]) slides[slideIndex].classList.remove('active');
+                    if (dots[slideIndex]) dots[slideIndex].classList.remove('active');
+                    slideIndex = (slideIndex + 1) % slides.length;
+                    if (slides[slideIndex]) slides[slideIndex].classList.add('active');
+                    if (dots[slideIndex]) dots[slideIndex].classList.add('active');
+                    updateCaptionText(slideIndex);
+                }, 4000);
             }
-            state.videoIndex = ((index % list.length) + list.length) % list.length;
-            const src = videoSource(list[state.videoIndex]);
-            if (!src) return;
-            video.muted = true;
-            video.defaultMuted = true;
-            video.autoplay = true;
-            video.playsInline = true;
-            video.setAttribute('muted', '');
-            video.setAttribute('autoplay', '');
-            video.setAttribute('playsinline', '');
-            video.setAttribute('webkit-playsinline', '');
-            video.src = src;
-            video.load();
-            const onReady = () => requestVideoPlay(video, token);
-            video.addEventListener('canplay', onReady, { once: true });
-            // Sebagian WebView tidak mengirim canplay tepat waktu; play() juga
-            // dicoba setelah sumber dipasang. Error tetap ditangani di atas.
-            setTimeout(onReady, 500);
-        }
-
-        function stopLiveHls() {
-            if (state.hls) {
-                try { state.hls.destroy(); } catch (error) { console.warn('Gagal menghentikan HLS:', error); }
-                state.hls = null;
-            }
-        }
-
-        function playLiveStream() {
-            const video = $('broadcastVideo');
-            const token = ++state.videoLoadToken;
-            stopLiveHls();
-            state.videos = [];
-            state.videoIndex = 0;
-            state.videoSignature = '';
-            video.pause();
-            video.removeAttribute('src');
-            video.removeAttribute('controls');
-            video.loop = true;
-            video.muted = true;
-            video.defaultMuted = true;
-            video.autoplay = true;
-            video.playsInline = true;
-            video.setAttribute('muted', '');
-            video.setAttribute('autoplay', '');
-            video.setAttribute('playsinline', '');
-            video.setAttribute('webkit-playsinline', '');
-            video.load();
-
-            if (!LIVE_STREAM_URL || !/^https:\/\//i.test(LIVE_STREAM_URL)) {
-                console.error('LIVE_STREAM_URL harus menggunakan HTTPS pada halaman GitHub Pages.');
-                return;
-            }
-
-            // Safari dan browser tertentu dapat memutar HLS secara native.
-            if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = LIVE_STREAM_URL;
-                video.load();
-                const tryPlay = () => requestVideoPlay(video, token);
-                video.addEventListener('canplay', tryPlay, { once: true });
-                setTimeout(tryPlay, 700);
-                return;
-            }
-
-            // Chrome/Edge menggunakan HLS.js. Server OTT harus mengizinkan CORS.
-            if (window.Hls && window.Hls.isSupported()) {
-                const hls = new window.Hls({
-                    enableWorker: true,
-                    lowLatencyMode: true,
-                    liveSyncDurationCount: 3
-                });
-                state.hls = hls;
-                hls.loadSource(LIVE_STREAM_URL);
-                hls.attachMedia(video);
-                hls.on(window.Hls.Events.MANIFEST_PARSED, () => requestVideoPlay(video, token));
-                hls.on(window.Hls.Events.ERROR, (_event, data) => {
-                    if (!data || !data.fatal || state.hls !== hls) return;
-                    console.error('Gangguan siaran OTT TVRI Bengkulu:', data.type, data.details);
-                    if (data.type === window.Hls.ErrorTypes.NETWORK_ERROR) {
-                        hls.startLoad();
-                    } else if (data.type === window.Hls.ErrorTypes.MEDIA_ERROR) {
-                        hls.recoverMediaError();
-                    } else {
-                        stopLiveHls();
+            updateCaptionText(0);
+            startSlideshow();
+            window.syncRealtimeKegiatan = function(newList) {
+                if (!newList || newList.length === 0) return;
+                const isDataChanged = JSON.stringify(newList) !== JSON.stringify(kegiatanData);
+                if (isDataChanged) {
+                    kegiatanData = newList;
+                    if (slideIndex >= kegiatanData.length) slideIndex = 0;
+                    renderSlidesDOM(kegiatanData);
+                    startSlideshow();
+                }
+            };
+            const videoElement = document.getElementById("mainVideo");
+            let playlist = @json($data['videoList'] ?? []);
+            let currentTrack = 0;
+            if (videoElement && playlist.length > 0) {
+                videoElement.src = playlist[currentTrack];
+                videoElement.addEventListener("ended", function() {
+                    if (playlist.length > 0) {
+                        currentTrack = (currentTrack + 1) % playlist.length;
+                        videoElement.src = playlist[currentTrack];
+                        videoElement.load();
+                        videoElement.play().catch(err => console.log("Gagal play:", err));
                     }
                 });
-                return;
+                videoElement.play().catch(err => console.log("Autoplay blocked:", err));
             }
-
-            console.error('Browser ini tidak mendukung HLS. Pastikan HLS.js berhasil dimuat atau gunakan browser dengan dukungan HLS native.');
-        }
-
-        function initializeVideoSource() {
-            if (VIDEO_SOURCE_MODE === 'live') {
-                playLiveStream();
-            } else if (VIDEO_SOURCE_MODE === 'repo') {
-                loadVideoManifest();
-            } else {
-                console.error('VIDEO_SOURCE_MODE tidak valid. Gunakan "repo" atau "live".');
-                loadVideoManifest();
+            function updateRealtime() {
+                fetch("{{ route('api.realtime') }}")
+                    .then(response => response.json())
+                    .then(data => {
+                        const liveContainer = document.getElementById('box-live-status');
+                        if (liveContainer) {
+                            liveContainer.innerHTML = data.is_live ? '<div class="bitem livebox">● LIVE</div>' :
+                                '';
+                        }
+                        if (document.getElementById('text-jam-prev')) document.getElementById('text-jam-prev')
+                            .textContent = data.jam_prev;
+                        if (document.getElementById('text-jam-current')) document.getElementById(
+                            'text-jam-current').textContent = data.jam_current;
+                        if (document.getElementById('text-jam-next')) document.getElementById('text-jam-next')
+                            .textContent = data.jam_next;
+                        if (document.getElementById('text-prog-prev')) document.getElementById('text-prog-prev')
+                            .textContent = data.prog_prev;
+                        if (document.getElementById('text-prog-current')) document.getElementById(
+                            'text-prog-current').textContent = data.prog_current;
+                        if (document.getElementById('text-prog-next')) document.getElementById('text-prog-next')
+                            .textContent = data.prog_next;
+                        if (document.getElementById('text-tema')) document.getElementById('text-tema')
+                            .textContent = data.tema;
+                        if (document.getElementById('text-pengisi')) document.getElementById('text-pengisi')
+                            .textContent = data.pengisi;
+                        if (data.persen_anggaran !== undefined && data.nominal_anggaran !== undefined) {
+                            updateRealisasiAnggaran(data.persen_anggaran, data.nominal_anggaran);
+                        }
+                        if (data.videoList && data.videoList.length > 0) {
+                            const isPlaylistChanged = JSON.stringify(data.videoList) !== JSON.stringify(
+                                playlist);
+                            if (isPlaylistChanged) {
+                                playlist = data.videoList;
+                                currentTrack = 0;
+                                if (videoElement) {
+                                    videoElement.src = playlist[currentTrack];
+                                    videoElement.load();
+                                    videoElement.play().catch(err => console.log("Autoplay error:", err));
+                                }
+                            }
+                        }
+                        if (data.kegiatanList) {
+                            syncRealtimeKegiatan(data.kegiatanList);
+                        }
+                    })
+                    .catch(error => console.error("Error polling data realtime:", error));
             }
-        }
-
-        function setVideoPlaylist(entries) {
-            const next = (Array.isArray(entries) ? entries : [])
-                .filter(item => !!videoSource(item));
-            const newKey = videoKey(next);
-            if (newKey === state.videoSignature) return;
-            const oldCurrent = state.videos[state.videoIndex];
-            const oldSrc = oldCurrent ? videoSource(oldCurrent) : '';
-            const keep = oldSrc ? next.findIndex(item => videoSource(item) === oldSrc) : -1;
-            state.videos = next;
-            state.videoSignature = newKey;
-            if (!next.length) {
-                playVideo(0);
-            } else if (keep >= 0) {
-                state.videoIndex = keep;
-                const video = $('broadcastVideo');
-                video.loop = next.length === 1;
-                if (video.paused) requestVideoPlay(video, state.videoLoadToken);
-            } else {
-                playVideo(0);
+            setInterval(updateRealtime, 3000);
+            // --- FUNGSI UPDATE HARI, TANGGAL & JAM REALTIME (POJOK KANAN ATAS) ---
+            function updateRealtimeHeaderDate() {
+                const dateTimeEl = document.getElementById('date-time-display');
+                if (!dateTimeEl) return;
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus',
+                    'September', 'Oktober', 'November', 'Desember'
+                ];
+                const now = new Date();
+                const dayName = days[now.getDay()];
+                const dayDate = now.getDate();
+                const monthName = months[now.getMonth()];
+                const year = now.getFullYear();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                dateTimeEl.textContent = `${dayName}, ${dayDate} ${monthName} ${year} | ${hours}.${minutes} WIB`;
             }
-        }
-
-        async function loadVideoManifest() {
-            if (state.videosLoading) return;
-            state.videosLoading = true;
-            try {
-                const response = await fetch(VIDEO_MANIFEST_URL + '?_=' + Date.now(), { cache: 'no-store' });
-                if (!response.ok) throw new Error('videos.json HTTP ' + response.status);
-                const data = await response.json();
-                const entries = Array.isArray(data) ? data : (Array.isArray(data.videos) ? data.videos : []);
-                setVideoPlaylist(entries);
-            } catch (error) {
-                console.error('Gagal membaca videos.json:', error);
-            } finally {
-                state.videosLoading = false;
-            }
-        }
-
-        $('broadcastVideo').addEventListener('ended', () => {
-            if (VIDEO_SOURCE_MODE === 'repo' && state.videos.length > 1) {
-                playVideo((state.videoIndex + 1) % state.videos.length);
-            }
+            updateRealtimeHeaderDate();
+            setInterval(updateRealtimeHeaderDate, 1000);
         });
-        $('broadcastVideo').addEventListener('error', () => {
-            const video = $('broadcastVideo');
-            const code = video.error && video.error.code;
-            console.error('Media video gagal dimuat:', code, video.currentSrc);
-            if (VIDEO_SOURCE_MODE === 'repo') {
-                console.warn('Jika file video >100 MB dan disimpan sebagai file Git biasa di GitHub, file tersebut tidak dapat dilayani oleh repositori GitHub Pages. Gunakan versi <100 MB atau sumber eksternal seperti GitHub Release asset / object storage.');
-            }
-        });
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) requestVideoPlay($('broadcastVideo'), state.videoLoadToken);
-        });
-
-        function updateData(payload, persistCache = true) {
-            if (!payload || !payload.success) {
-                console.warn('Data display tidak berhasil diambil:', payload && payload.error);
-                return;
-            }
-            state.programs = (Array.isArray(payload.programs) ? payload.programs : []).map(p => ({
-                ...p,
-                date: firstText(p.date, p.Date, payload.today).slice(0, 10),
-                start_time: firstText(p.start_time, p.startTime, p['Start time']),
-                duration: firstText(p.duration, p.Duration),
-                name: firstText(p.name, p.Name, p.program_name, p.programName, p.title),
-                short_description: firstText(p.short_description, p.shortDescription),
-                description: firstText(p.short_description, p.shortDescription, p.description, p.long_description, p.longDescription)
-            }));
-            state.photos = Array.isArray(payload.photos) ? payload.photos : [];
-            // Simpan hasil terakhir agar foto dan jadwal bisa langsung ditampilkan
-            // pada pembukaan berikutnya, sambil tetap mengambil data terbaru dari server.
-            if (persistCache) {
-                try {
-                    localStorage.setItem(DISPLAY_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), payload }));
-                } catch (cacheError) {
-                    console.warn('Cache data Display tidak dapat disimpan:', cacheError);
-                }
-            }
-            if (payload.programCsvError) console.warn('Jadwal CSV tidak dapat dibaca:', payload.programCsvError);
-            // Jangan mengambil video dari Apps Script/Google Drive.
-            // Playlist video tetap sepenuhnya dikendalikan oleh videos.json di repo GitHub.
-            const photosKey = photoKey(getPhotoList());
-            if (photosKey !== state.photoSignature) {
-                state.photoSignature = photosKey;
-                renderPhotos();
-            }
-            renderProgram();
-        }
-
-        // GitHub Pages memakai endpoint JSONP dari Apps Script.
-        // endpoint JSONP hanya untuk data display yang memang boleh ditampilkan publik.
-        const APPS_SCRIPT_URL = (window.TVRI_CONFIG && window.TVRI_CONFIG.APPS_SCRIPT_URL || '').trim();
-        function restoreCachedData() {
-            try {
-                const raw = localStorage.getItem(DISPLAY_CACHE_KEY);
-                if (!raw) return false;
-                const cached = JSON.parse(raw);
-                if (!cached || !cached.payload || cached.payload.success !== true) return false;
-                updateData(cached.payload, false);
-                return true;
-            } catch (error) {
-                console.warn('Cache data Display tidak dapat dibaca:', error);
-                return false;
-            }
-        }
-
-        function loadData() {
-            if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('PASTE_WEB_APP_EXEC_URL_HERE')) {
-                console.warn('Isi APPS_SCRIPT_URL pada config.js dengan URL Web App Apps Script.');
-                return;
-            }
-            if (state.dataLoading) return;
-            state.dataLoading = true;
-            const callbackName = '__tvriGithubDisplayCallback';
-            const script = document.createElement('script');
-            let finished = false;
-            const cleanup = () => {
-                if (finished) return;
-                finished = true;
-                state.dataLoading = false;
-                if (state.dataScript === script) state.dataScript = null;
-                script.remove();
-                try { delete window[callbackName]; } catch (_) { window[callbackName] = undefined; }
-            };
-            window[callbackName] = payload => {
-                try { updateData(payload); }
-                finally { cleanup(); }
-            };
-            script.onerror = () => {
-                console.error('Gagal mengambil data dari Apps Script. Periksa URL dan izin Web App.');
-                cleanup();
-            };
-            const url = new URL(APPS_SCRIPT_URL);
-            url.searchParams.set('page', 'data');
-            url.searchParams.set('callback', callbackName);
-            url.searchParams.set('_', String(Date.now()));
-            script.src = url.toString();
-            state.dataScript = script;
-            document.head.appendChild(script);
-            setTimeout(cleanup, 20000);
-        }
-
-        applyDriveAssets();
-        restoreCachedData();
-        renderClock(); renderProgram();
-        // Hanya hitung waktu secara lokal. Tidak ada polling ke Apps Script/GitHub.
-        // Data jadwal untuk hari ini dan besok sudah dimuat saat halaman dibuka.
-        setInterval(() => {
-            renderClock();
-            renderProgram();
-        }, 1000);
-        loadData();
-        initializeVideoSource();
-        loadWeather();
-        setInterval(loadWeather, BMKG_REFRESH_MS);
     </script>
 </body>
-
 </html>
