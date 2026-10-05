@@ -660,11 +660,19 @@
         .weather-panel .budget-view {
             min-width: 0;
             height: 100%;
+            width: 50%;
+        }
+
+        .weather-panel .weather-view {
+            justify-content: center;
+            padding-right: 1vw;
         }
 
         .weather-panel .budget-view {
             border-left: 1px solid rgba(7,92,174,.15);
-            padding-left: 1.2vw;
+            padding: 0 1vw;
+            justify-content: center;
+            gap: clamp(6px, 1vw, 14px);
         }
 
         /* Running text - layout only. Data source/JS tetap tidak diubah. */
@@ -727,9 +735,9 @@
             height: 100%;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            padding-right: 4px;
+            justify-content: center;
+            gap: clamp(6px, 1vw, 14px);
+            padding: 0;
         }
 
         .budget-info {
@@ -1130,14 +1138,14 @@
                 <div class="budget-view footer-info-view" id="budgetView" hidden>
                     <div class="budget-info">
                         <span class="budget-title">REALISASI ANGGARAN</span>
-                        <span class="budget-amount">--</span>
+                        <span class="budget-amount" id="budgetAmount">--</span>
                     </div>
                     <div class="budget-chart-container" aria-hidden="true">
                         <svg class="budget-svg" viewBox="0 0 36 36">
                             <path class="budget-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                             <path class="budget-circle-progress" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                         </svg>
-                        <div class="budget-center-text">--%</div>
+                        <div class="budget-center-text" id="budgetPercent">--%</div>
                     </div>
                 </div>
             </div>
@@ -1158,7 +1166,7 @@
         const LIVE_STREAM_URL = 'https://ott.tvri.co.id/Content/HLS/Live/Channel(TVRIBengkulu)/index.m3u8';
         const VIDEO_MANIFEST_URL = './videos.json';
         const state = {
-            programs: [], photos: [], videos: [],
+            programs: [], photos: [], videos: [], budget: null, runningTexts: [],
             videoIndex: 0, videoSignature: '', photoSignature: '', photoIndex: 0,
             photoTimer: null, videoLoadToken: 0, dataScript: null,
             dataLoading: false, videosLoading: false, hls: null
@@ -1704,6 +1712,63 @@
             if (!document.hidden) requestVideoPlay($('broadcastVideo'), state.videoLoadToken);
         });
 
+        function renderBudget() {
+            const budget = state.budget || {};
+            const realisasi = Number(budget.realisasi ?? budget.amount ?? budget.nominal ?? 0);
+            const percentageRaw = Number(budget.percentage ?? budget.persentase ?? budget.percent ?? 0);
+            const percentage = Number.isFinite(percentageRaw) ? Math.max(0, Math.min(100, percentageRaw)) : 0;
+            const amountEl = $('budgetAmount');
+            const percentEl = $('budgetPercent');
+            const progressEl = $('budgetProgress');
+
+            if (amountEl) {
+                amountEl.textContent = Number.isFinite(realisasi)
+                    ? 'Rp ' + Math.round(realisasi).toLocaleString('id-ID')
+                    : '--';
+            }
+            if (percentEl) {
+                percentEl.textContent = `${percentage.toFixed(percentage % 1 ? 2 : 0)}%`;
+            }
+            if (progressEl) {
+                progressEl.style.strokeDasharray = `${percentage}, 100`;
+                progressEl.style.strokeDashoffset = '0';
+            }
+        }
+
+        function normalizeRunningTexts(value) {
+            const list = Array.isArray(value) ? value : (value ? [value] : []);
+            return list.map(item => {
+                if (typeof item === 'string') return item.trim();
+                return firstText(item && item.text, item && item.message, item && item.title, item && item.teks);
+            }).filter(Boolean);
+        }
+
+        function renderRunningText() {
+            const el = $('runningTextDisplay');
+            if (!el) return;
+            const list = state.runningTexts.length
+                ? state.runningTexts
+                : ['INFORMASI TVRI BENGKULU'];
+            const index = Number(el.dataset.runningIndex || 0) % list.length;
+            el.textContent = list[index];
+            el.dataset.runningIndex = String(index);
+        }
+
+        function startRunningText() {
+            renderRunningText();
+            clearInterval(window.__tvriRunningTextTimer);
+            window.__tvriRunningTextTimer = setInterval(() => {
+                if (state.runningTexts.length > 1) {
+                    const el = $('runningTextDisplay');
+                    const next = ((Number(el?.dataset.runningIndex || 0) + 1) % state.runningTexts.length);
+                    if (el) {
+                        el.dataset.runningIndex = String(next);
+                        el.textContent = state.runningTexts[next];
+                    }
+                }
+            }, 5000);
+        }
+
         function updateData(payload, persistCache = true) {
             if (!payload || !payload.success) {
                 console.warn('Data display tidak berhasil diambil:', payload && payload.error);
@@ -1719,6 +1784,10 @@
                 description: firstText(p.short_description, p.shortDescription, p.description, p.long_description, p.longDescription)
             }));
             state.photos = Array.isArray(payload.photos) ? payload.photos : [];
+            state.runningTexts = normalizeRunningTexts(payload.runningTexts);
+            startRunningText();
+            state.budget = payload.budget && typeof payload.budget === 'object' ? payload.budget : null;
+            renderBudget();
             // Simpan hasil terakhir agar foto dan jadwal bisa langsung ditampilkan
             // pada pembukaan berikutnya, sambil tetap mengambil data terbaru dari server.
             if (persistCache) {
