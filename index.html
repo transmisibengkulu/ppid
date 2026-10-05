@@ -116,18 +116,6 @@
             white-space: nowrap
         }
 
-        .date-clock::before {
-            content: "";
-            display: inline-block;
-            flex: 0 0 auto;
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: var(--red);
-            box-shadow: 0 0 0 5px rgba(238, 32, 41, .10);
-            animation: pulse 1.5s infinite
-        }
-
         .pulse {
             width: 9px;
             height: 9px;
@@ -187,6 +175,22 @@
             inset: 0;
             background: linear-gradient(180deg, rgba(3, 33, 64, .02) 45%, rgba(3, 28, 57, .8))
         }
+
+        .video-live-dot {
+            position: absolute;
+            left: 18px;
+            bottom: 18px;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: var(--red);
+            box-shadow: 0 0 0 5px rgba(238, 32, 41, .14), 0 0 14px rgba(238, 32, 41, .55);
+            animation: pulse 1.5s infinite;
+            z-index: 3;
+            pointer-events: none
+        }
+
+        .video-live-dot[hidden] { display: none !important; }
 
         .live {
             position: absolute;
@@ -421,7 +425,20 @@
             padding: 8px 11px;
             border-radius: 6px;
             font-size: clamp(14px, 1.25vw, 20px);
-            width: max-content
+            width: max-content;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .live-dot-inline {
+            width: 9px;
+            height: 9px;
+            flex: 0 0 9px;
+            border-radius: 50%;
+            background: var(--red);
+            box-shadow: 0 0 0 3px rgba(238, 32, 41, .14), 0 0 9px rgba(238, 32, 41, .45);
+            animation: pulse 1.5s infinite;
         }
 
         .livebox.is-live { background: var(--red); }
@@ -549,10 +566,11 @@
                 gap: 5px
             }
 
-            .date-clock::before {
-                width: 7px;
-                height: 7px;
-                box-shadow: 0 0 0 3px rgba(238, 32, 41, .10)
+            .video-live-dot {
+                left: 10px;
+                bottom: 10px;
+                width: 8px;
+                height: 8px
             }
 
             .main {
@@ -763,7 +781,7 @@
         </header>
         <main class="main">
             <section class="card video-card">
-                <video id="broadcastVideo" class="video" autoplay muted playsinline webkit-playsinline preload="auto" disablepictureinpicture controlslist="nodownload noplaybackrate noremoteplayback"></video>
+                <video id="broadcastVideo" class="video" autoplay muted playsinline webkit-playsinline preload="metadata" disablepictureinpicture controlslist="nodownload noplaybackrate noremoteplayback"></video>
                 <div class="video-shade"></div>
             </section>
             <section class="card news">
@@ -778,7 +796,7 @@
             </section>
         </main>
         <footer class="bar">
-            <div class="bitem livebox" id="liveBox">● SIARAN</div>
+            <div class="bitem livebox" id="liveBox"><span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">SIARAN</span></div>
             <div class="bitem time"><small id="prevTime"></small>
                 <strong id="currentStart">--:--</strong>
                 <small id="nextTime"></small>
@@ -799,8 +817,8 @@
         // 'repo' = video dari videos.json pada repositori GitHub.
         // 'live' = siaran OTT TVRI Bengkulu melalui HLS.
         // Tidak ada tombol pilihan sumber pada tampilan publik.
-        const VIDEO_SOURCE_MODE = 'live';
-        const LIVE_STREAM_URL = 'https://ott-balancer.tvri.go.id/live/eds/Bengkulu/hls/Bengkulu.m3u8';
+        const VIDEO_SOURCE_MODE = 'repo';
+        const LIVE_STREAM_URL = 'https://ott.tvri.co.id/Content/HLS/Live/Channel(TVRIBengkulu)/index.m3u8';
         const VIDEO_MANIFEST_URL = './videos.json';
         const state = {
             programs: [], photos: [], videos: [],
@@ -879,7 +897,7 @@
                 $('currentStart').textContent = '--:--';
                 $('prevTime').textContent = '';
                 $('nextTime').textContent = '';
-                $('liveBox').textContent = '● SIARAN';
+                $('liveBox').innerHTML = '<span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">SIARAN</span>';
                 $('liveBox').classList.remove('is-live');
                 return;
             }
@@ -925,7 +943,7 @@
             $('currentStart').textContent = clockText(startSec);
             $('prevTime').textContent = index > 0 ? clockText(programStartSeconds(list[index-1])) : '';
             $('nextTime').textContent = index < list.length-1 ? clockText(programStartSeconds(list[index+1])) : '';
-            $('liveBox').textContent = live ? '● LIVE' : '● SIARAN';
+            $('liveBox').innerHTML = live ? '<span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">LIVE</span>' : '<span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">SIARAN</span>';
             $('liveBox').classList.toggle('is-live', live);
         }
 
@@ -1110,6 +1128,7 @@
             video.defaultMuted = true;
             video.autoplay = true;
             video.playsInline = true;
+            video.preload = 'metadata';
             video.setAttribute('muted', '');
             video.setAttribute('autoplay', '');
             video.setAttribute('playsinline', '');
@@ -1145,6 +1164,7 @@
             video.defaultMuted = true;
             video.autoplay = true;
             video.playsInline = true;
+            video.preload = 'metadata';
             video.setAttribute('muted', '');
             video.setAttribute('autoplay', '');
             video.setAttribute('playsinline', '');
@@ -1250,7 +1270,11 @@
         });
         $('broadcastVideo').addEventListener('error', () => {
             const video = $('broadcastVideo');
-            console.error('Media video gagal dimuat:', video.error && video.error.code, video.currentSrc);
+            const code = video.error && video.error.code;
+            console.error('Media video gagal dimuat:', code, video.currentSrc);
+            if (VIDEO_SOURCE_MODE === 'repo') {
+                console.warn('Jika file video >100 MB dan disimpan sebagai file Git biasa di GitHub, file tersebut tidak dapat dilayani oleh repositori GitHub Pages. Gunakan versi <100 MB atau sumber eksternal seperti GitHub Release asset / object storage.');
+            }
         });
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) requestVideoPlay($('broadcastVideo'), state.videoLoadToken);
