@@ -1873,7 +1873,7 @@
                 p.short_description, p.shortDescription, p.description,
                 p.long_description, p.longDescription
             );
-            const liveValue = String(p.live == null ? '' : p.live).trim().toLowerCase();
+            const liveValue = String(p.live ?? p.Live ?? p.LIVE ?? p['Live'] ?? p['LIVE'] ?? '').trim().toLowerCase();
             const live = ['ya'].includes(liveValue);
             const previousProgram = index > 0 ? list[index - 1] : null;
             const nextProgram = index < list.length - 1 ? list[index + 1] : null;
@@ -2886,6 +2886,52 @@
     margin: 0 !important;
 }
 </style>
+
+
+
+
+<style id="FINAL-DESCRIPTION-WIDE-FIX">
+/* Area DESKRIPSI PROGRAM dibuat lebar agar teks panjang tidak dipersempit.
+   Garis pemisah tetap tepat sebelum area REALISASI ANGGARAN. */
+.screen .bar {
+    grid-template-columns: 9% 13% 26% 35% minmax(0, 17%) !important;
+    gap: 1vw !important;
+}
+
+/* Area anggaran tetap paling kanan. */
+.screen .bar .weather-panel {
+    grid-column: 5 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+}
+
+/* Deskripsi memakai seluruh kolomnya. */
+.screen .bar .theme {
+    min-width: 0 !important;
+    width: 100% !important;
+    overflow: hidden !important;
+}
+.screen .bar .theme > b,
+.screen #programDescription {
+    width: 100% !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+}
+
+/* Garis hanya menjadi batas antara deskripsi dan anggaran. */
+.screen .weather-panel .budget-view {
+    border-left: 1px solid rgba(7,92,174,.15) !important;
+}
+
+/* Judul realisasi tetap satu baris tanpa mengubah ukuran font. */
+.screen .weather-panel .budget-title {
+    white-space: nowrap !important;
+    width: max-content !important;
+    max-width: none !important;
+}
+</style>
+
 </body>
 
 
@@ -3686,3 +3732,59 @@ body {
 }
 </style>
 
+
+
+<style id="ABSOLUTE-USER-FINAL-LAYOUT">
+/* DESKRIPSI: area dibuat paling lebar. Garis hanya berada di sisi kiri area anggaran. */
+.screen .bar {
+  grid-template-columns: 9% 11% 14% minmax(0, 1fr) minmax(220px, 18%) !important;
+  gap: 1vw !important;
+}
+.screen .bar .theme {
+  grid-column: 4 !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  overflow: hidden !important;
+}
+.screen .bar .theme > small,
+.screen .bar .theme > b,
+.screen #programDescription {
+  width: 100% !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+.screen .bar .weather-panel {
+  grid-column: 5 !important;
+  min-width: 0 !important;
+  width: 100% !important;
+}
+.screen .weather-panel .budget-view {
+  border-left: 1px solid rgba(7,92,174,.15) !important;
+}
+.screen .weather-panel .budget-title {
+  white-space: nowrap !important;
+  width: max-content !important;
+  max-width: none !important;
+}
+
+/* Media diturunkan sedikit; lebar/rasio tetap. */
+.screen .main {
+  top: 16.2% !important;
+  bottom: 32.4% !important;
+}
+
+/* LIVE hanya terlihat ketika kolom Live pada baris program bernilai YA. */
+.screen .bar .livebox {
+  display: inline-flex !important;
+}
+.screen .bar .livebox:not(.is-live) {
+  visibility: hidden !important;
+}
+.screen .bar .livebox.is-live {
+  visibility: visible !important;
+  display: inline-flex !important;
+  background: var(--red) !important;
+  color: #fff !important;
+}
+</style>
