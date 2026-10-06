@@ -732,7 +732,7 @@
         }
 
         .ticker-content.is-scrolling .ticker-text {
-            animation: tickerScroll 14s linear infinite;
+            animation: tickerScroll var(--ticker-duration, 12s) linear 1 forwards !important;
             padding-right: 8vw;
         }
 
@@ -1471,6 +1471,83 @@
     92%, 100% { transform: translateX(calc(-1 * var(--ticker-overflow, 0px))); }
 }
 </style>
+
+<style id="FINAL-TICKER-PROGRAM-FIX">
+/* FINAL: judul dan jam kecil, sejajar, dan tidak saling menimpa */
+.screen .bar .time, .screen .bar .program {
+    align-self: stretch !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+.screen .bar .time {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.screen .bar .program {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    position: relative !important;
+    overflow: hidden !important;
+    text-align: left !important;
+    padding: 0 !important;
+}
+.screen .bar .program > small,
+.screen .bar .program > b,
+.screen .bar .program > span {
+    position: static !important;
+    transform: none !important;
+    left: auto !important; right: auto !important; top: auto !important; bottom: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+}
+.screen .bar .time > strong,
+.screen .bar .program > b {
+    font-size: clamp(20px, 1.65vw, 30px) !important;
+    line-height: 1.08 !important;
+}
+.screen .bar .program > b {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: normal !important;
+}
+.screen .bar .program > small {
+    line-height: 1 !important;
+    margin-bottom: 2px !important;
+}
+.screen .bar .program > span {
+    line-height: 1 !important;
+    margin-top: 2px !important;
+}
+
+/* FINAL: running text panjang benar-benar berjalan sampai ujung sebelum berganti */
+.news-ticker-container .ticker-content {
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
+.news-ticker-container .ticker-text {
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: nowrap !important;
+}
+.news-ticker-container .ticker-content.is-scrolling .ticker-text {
+    animation: tickerScroll var(--ticker-duration, 12s) linear 1 forwards !important;
+}
+@keyframes tickerScroll {
+    0%, 5% { transform: translateX(0); }
+    95%, 100% { transform: translateX(calc(-1 * var(--ticker-overflow, 0px))); }
+}
+</style>
+
 </head>
 
 <body>
@@ -2111,39 +2188,65 @@
             }).filter(Boolean);
         }
 
-        function updateTickerOverflow() {
+        function measureTickerOverflow() {
             const content = document.querySelector('.ticker-content');
             const text = $('runningTextDisplay');
             if (!content || !text) return 0;
 
             content.classList.remove('is-scrolling');
             text.style.removeProperty('--ticker-overflow');
+            text.style.removeProperty('--ticker-duration');
             text.style.transform = 'translateX(0)';
 
-            // Ukur setelah browser menyelesaikan layout.
-            return requestAnimationFrame(() => {
-                const overflow = Math.max(0, Math.ceil(text.scrollWidth - content.clientWidth));
-                if (overflow > 2) {
-                    text.style.setProperty('--ticker-overflow', overflow + 'px');
-                    content.classList.add('is-scrolling');
-                }
-                return overflow;
-            });
+            const overflow = Math.max(0, Math.ceil(text.scrollWidth - content.clientWidth));
+            if (overflow > 2) {
+                // Kecepatan tetap, sehingga teks yang semakin panjang mendapat waktu
+                // berjalan yang semakin lama dan tidak langsung diganti.
+                const duration = Math.max(8, (overflow / 90) + 2);
+                text.style.setProperty('--ticker-overflow', overflow + 'px');
+                text.style.setProperty('--ticker-duration', duration.toFixed(2) + 's');
+                content.classList.add('is-scrolling');
+                return duration * 1000;
+            }
+            return 8000;
         }
 
         let runningTextTimer = null;
         let runningTextChanging = false;
 
-        function renderRunningText() {
+        function renderRunningText(index, animateEnter = false) {
             const el = $('runningTextDisplay');
-            if (!el) return;
+            if (!el) return 8000;
             const list = state.runningTexts.length ? state.runningTexts : ['INFORMASI TVRI BENGKULU'];
-            const index = Number(el.dataset.runningIndex || 0) % list.length;
+            const safeIndex = ((Number(index) || 0) % list.length + list.length) % list.length;
+
             el.classList.remove('ticker-enter', 'ticker-leave');
-            el.textContent = list[index];
-            el.dataset.runningIndex = String(index);
+            el.textContent = list[safeIndex];
+            el.dataset.runningIndex = String(safeIndex);
+            el.style.animation = 'none';
             void el.offsetWidth;
-            updateTickerOverflow();
+            el.style.animation = '';
+
+            if (animateEnter) {
+                el.classList.add('ticker-enter');
+                setTimeout(() => el.classList.remove('ticker-enter'), 800);
+            }
+
+            return measureTickerOverflow();
+        }
+
+        function scheduleNextRunningText() {
+            clearTimeout(runningTextTimer);
+            const list = state.runningTexts.length ? state.runningTexts : ['INFORMASI TVRI BENGKULU'];
+            if (list.length < 2) return;
+
+            const el = $('runningTextDisplay');
+            const index = Number(el?.dataset.runningIndex || 0);
+            const durationMs = measureTickerOverflow();
+
+            runningTextTimer = setTimeout(() => {
+                changeRunningText();
+            }, durationMs);
         }
 
         function changeRunningText() {
@@ -2153,33 +2256,27 @@
             if (list.length < 2) return;
 
             runningTextChanging = true;
-            el.classList.remove('ticker-enter', 'ticker-leave');
-            void el.offsetWidth;
+            clearTimeout(runningTextTimer);
+            el.classList.remove('ticker-enter');
             el.classList.add('ticker-leave');
 
             setTimeout(() => {
                 const next = (Number(el.dataset.runningIndex || 0) + 1) % list.length;
-                el.dataset.runningIndex = String(next);
-                el.textContent = list[next];
-                el.classList.remove('ticker-leave');
-                void el.offsetWidth;
-                el.classList.add('ticker-enter');
-                updateTickerOverflow();
+                const durationMs = renderRunningText(next, true);
+                runningTextChanging = false;
 
-                setTimeout(() => {
-                    el.classList.remove('ticker-enter');
-                    runningTextChanging = false;
-                }, 800);
-            }, 750);
+                // Tunggu sampai teks baru selesai berjalan sebelum mengganti lagi.
+                clearTimeout(runningTextTimer);
+                runningTextTimer = setTimeout(changeRunningText, durationMs);
+            }, 800);
         }
 
         function startRunningText() {
-            clearInterval(runningTextTimer);
-            renderRunningText();
+            clearTimeout(runningTextTimer);
+            runningTextChanging = false;
+            const durationMs = renderRunningText(0, false);
             if (state.runningTexts.length > 1) {
-                // Siklus tetap 8 detik. Teks panjang bergerak selama ±7 detik,
-                // lalu berganti dengan animasi masuk dari bawah.
-                runningTextTimer = setInterval(changeRunningText, 8000);
+                runningTextTimer = setTimeout(changeRunningText, durationMs);
             }
         }
 
