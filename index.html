@@ -2616,3 +2616,43 @@
 .news-ticker-container { position: fixed !important; left: 0 !important; right: 0 !important; bottom: 0 !important; top: auto !important; width: 100vw !important; height: 5vh !important; min-height: 38px !important; z-index: 9999 !important; }
 .main { padding-bottom: 5vh !important; }
 </style>
+
+<style id="final-program-title-alignment">
+/* FINAL: area judul program diperpanjang dan disejajarkan dengan jam */
+.bar {
+    grid-template-columns: 9% 13% minmax(0, 28%) minmax(0, 18%) minmax(0, 1fr) !important;
+    align-items: center !important;
+}
+.bar .time,
+.bar .program {
+    align-self: stretch !important;
+    height: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+}
+.bar .time {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+}
+.bar .program {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
+.bar .program b,
+.bar .program small,
+.bar .program span {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+.bar .program b {
+    width: 100% !important;
+}
+</style>
