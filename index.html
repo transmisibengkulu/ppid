@@ -1879,7 +1879,7 @@
             const liveValue = String(
                 liveEntry ? liveEntry[1] : (p.live ?? p.Live ?? p.LIVE ?? p['Live'] ?? p['LIVE'] ?? '')
             ).trim().toLowerCase();
-            const live = ['ya', 'true', '1', 'yes', 'live'].includes(liveValue);
+            const live = liveValue === 'ya';
             const previousProgram = index > 0 ? list[index - 1] : null;
             const nextProgram = index < list.length - 1 ? list[index + 1] : null;
             const previousProgramName = previousProgram
