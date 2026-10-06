@@ -497,8 +497,8 @@
 
         .program b {
             display: block;
-            /* font-size: clamp(14px, 1.55vw, 26px); */
-            font-size: clamp(22px, 2.15vw, 38px);
+            /* Ukuran judul disamakan dengan jam */
+            font-size: clamp(23px, 2.2vw, 40px);
             /* line-height: 1.05 */
             line-height: 1.1;
             /* Sedikit penyesuaian spasi antar baris */
@@ -1013,7 +1013,7 @@
             }
 
             .program b {
-                font-size: 15px;
+                font-size: 26px;
                 line-height: 1.1;
                 /* Menyesuaikan jarak antar baris agar lebih simetris */
                 margin: 1px 0;
@@ -1435,6 +1435,40 @@
   border:1px solid rgba(6,54,108,.70) !important;
   box-shadow:0 2px 8px rgba(0,35,90,.45) !important;
   text-shadow:0 2px 5px rgba(0,35,90,.95) !important;
+}
+</style>
+
+<style id="final-program-running-fix">
+/* Judul program mengikuti ukuran jam dan memanfaatkan ruang yang tersedia. */
+.bar .program {
+    min-width: 0 !important;
+    overflow: visible !important;
+}
+.bar .program b {
+    font-size: clamp(23px, 2.2vw, 40px) !important;
+    line-height: 1.1 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: normal !important;
+}
+
+/* Running text: teks panjang berjalan, bukan dipotong menjadi ... */
+.ticker-text {
+    animation: none !important;
+    white-space: nowrap !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+.ticker-content.is-scrolling .ticker-text {
+    animation: tickerScroll 7.2s linear 1 forwards !important;
+}
+@keyframes tickerScroll {
+    0%, 8% { transform: translateX(0); }
+    92%, 100% { transform: translateX(calc(-1 * var(--ticker-overflow, 0px))); }
 }
 </style>
 </head>
@@ -2081,41 +2115,57 @@
             const content = document.querySelector('.ticker-content');
             const text = $('runningTextDisplay');
             if (!content || !text) return;
+
             content.classList.remove('is-scrolling');
             text.style.removeProperty('--ticker-overflow');
+
+            // Ukur setelah teks baru masuk. Jika terlalu panjang, jalankan
+            // scrolling horizontal; jika cukup, tampilkan normal.
+            requestAnimationFrame(() => {
+                const overflow = Math.max(0, text.scrollWidth - content.clientWidth);
+                if (overflow > 2) {
+                    text.style.setProperty('--ticker-overflow', overflow + 'px');
+                    content.classList.add('is-scrolling');
+                }
+            });
         }
 
         function restartTickerAnimation() {
             const text = $('runningTextDisplay');
-            const logo = $('tickerLogo');
-            [text, logo].forEach(el => {
-                if (!el) return;
-                el.style.animation = 'none';
-                void el.offsetWidth;
-                el.style.animation = '';
-            });
+            if (!text) return;
+            text.style.animation = 'none';
+            void text.offsetWidth;
+            text.style.animation = '';
+            updateTickerOverflow();
         }
 
         let runningTextTimer = null;
+        let runningTextChanging = false;
+
         function renderRunningText() {
             const el = $('runningTextDisplay');
             if (!el) return;
             const list = state.runningTexts.length ? state.runningTexts : ['INFORMASI TVRI BENGKULU'];
             const index = Number(el.dataset.runningIndex || 0) % list.length;
+            el.classList.remove('ticker-enter', 'ticker-leave');
             el.textContent = list[index];
             el.dataset.runningIndex = String(index);
+            void el.offsetWidth;
+            el.classList.add('ticker-enter');
             updateTickerOverflow();
-            restartTickerAnimation();
         }
 
         function changeRunningText() {
             const el = $('runningTextDisplay');
-            if (!el) return;
+            if (!el || runningTextChanging) return;
             const list = state.runningTexts.length ? state.runningTexts : ['INFORMASI TVRI BENGKULU'];
             if (list.length < 2) return;
 
-            // Keluar dulu dengan animasi, baru ganti isi setelah animasi selesai.
-            el.classList.remove('ticker-enter', 'ticker-leave');
+            runningTextChanging = true;
+
+            // Teks lama turun/keluar terlebih dahulu.
+            el.classList.remove('ticker-enter');
+            el.classList.remove('ticker-leave');
             void el.offsetWidth;
             el.classList.add('ticker-leave');
 
@@ -2123,19 +2173,26 @@
                 const next = (Number(el.dataset.runningIndex || 0) + 1) % list.length;
                 el.dataset.runningIndex = String(next);
                 el.textContent = list[next];
-                updateTickerOverflow();
 
                 el.classList.remove('ticker-leave');
                 void el.offsetWidth;
                 el.classList.add('ticker-enter');
-            }, 850);
+
+                updateTickerOverflow();
+
+                setTimeout(() => {
+                    runningTextChanging = false;
+                }, 100);
+            }, 800);
         }
 
         function startRunningText() {
             clearInterval(runningTextTimer);
             renderRunningText();
             if (state.runningTexts.length > 1) {
-                runningTextTimer = setInterval(changeRunningText, 4000);
+                // Setiap 8 detik: teks panjang selesai bergeser, lalu
+                // teks berikutnya masuk dari bawah.
+                runningTextTimer = setInterval(changeRunningText, 8000);
             }
         }
 
