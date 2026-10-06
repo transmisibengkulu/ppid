@@ -387,7 +387,7 @@
             min-height: 80px;
             display: grid;
             /* grid-template-columns: 10% 16% 32% 20% 1fr; */
-            grid-template-columns: 9% 13% 20% 20% 21% 17%;
+            grid-template-columns: 9% 11% 19% 20% 24% 17%;
             align-items: center;
             gap: 1.2vw;
             padding: 0 3.4vw;
@@ -1426,7 +1426,7 @@
   display:block !important; max-width:100% !important; overflow:hidden !important;
   white-space:normal !important; overflow-wrap:anywhere !important;
   line-height:1.12 !important;
-  font-size:clamp(10px, 1vw, 19px) !important;
+  font-size:clamp(11px, 1.1vw, 20px) !important;
   max-height:calc(100% - 8px) !important;
 }
 /* Tanggal foto transparan, bukan kotak solid */
@@ -1873,7 +1873,7 @@
                 p.short_description, p.shortDescription, p.description,
                 p.long_description, p.longDescription
             );
-            const live = p.live === true || ['true','1','yes','live'].includes(String(p.live).toLowerCase());
+            const live = active || p.live === true || ['true','1','yes','live'].includes(String(p.live).toLowerCase());
             const previousProgram = index > 0 ? list[index - 1] : null;
             const nextProgram = index < list.length - 1 ? list[index + 1] : null;
             const previousProgramName = previousProgram
@@ -2524,6 +2524,25 @@
   setInterval(run,1000);
 })();
 </script>
+
+<style id="FINAL-SMALL-PROGRAM-DESCRIPTION-FIX">
+/* Permintaan terakhir: deskripsi sedikit digeser ke kiri dan font diperbesar tipis. */
+.screen .bar {
+    grid-template-columns: 9% 11% 19% 20% 24% 17% !important;
+}
+.screen .bar .program > b {
+    font-size: clamp(22px, 1.65vw, 32px) !important;
+}
+.screen .bar .theme > b,
+#programDescription {
+    font-size: clamp(11px, 1.1vw, 20px) !important;
+    line-height: 1.12 !important;
+}
+.screen .bar .livebox.is-live {
+    visibility: visible !important;
+    display: inline-flex !important;
+}
+</style>
 </body>
 
 </html><style>
@@ -3135,7 +3154,7 @@ body {
 /* Ukuran sengaja lebih kecil agar judul 2 baris tidak menimpa label */
 .screen .bar .time > strong,
 .screen .bar .program > b {
-    font-size: clamp(20px, 1.45vw, 28px) !important;
+    font-size: clamp(22px, 1.65vw, 32px) !important;
     line-height: 1.08 !important;
 }
 
