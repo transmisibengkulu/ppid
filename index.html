@@ -1873,8 +1873,13 @@
                 p.short_description, p.shortDescription, p.description,
                 p.long_description, p.longDescription
             );
-            const liveValue = String(p.live ?? p.Live ?? p.LIVE ?? p['Live'] ?? p['LIVE'] ?? '').trim().toLowerCase();
-            const live = ['ya'].includes(liveValue);
+            // Baca kolom LIVE/LIVE secara fleksibel dari CSV, tanpa bergantung
+            // pada kapitalisasi nama header atau posisi kolom.
+            const liveEntry = Object.entries(p).find(([key]) => String(key).trim().toLowerCase() === 'live');
+            const liveValue = String(
+                liveEntry ? liveEntry[1] : (p.live ?? p.Live ?? p.LIVE ?? p['Live'] ?? p['LIVE'] ?? '')
+            ).trim().toLowerCase();
+            const live = liveValue === 'ya';
             const previousProgram = index > 0 ? list[index - 1] : null;
             const nextProgram = index < list.length - 1 ? list[index + 1] : null;
             const previousProgramName = previousProgram
@@ -2932,6 +2937,18 @@
 }
 </style>
 
+
+<style id="FINAL-LIVE-VISIBILITY-FIX">
+/* LIVE mengikuti nilai kolom Live pada baris program aktif. */
+.screen .bar .livebox.is-live {
+    display: inline-flex !important;
+    visibility: visible !important;
+}
+.screen .bar .livebox:not(.is-live) {
+    display: inline-flex !important;
+    visibility: hidden !important;
+}
+</style>
 </body>
 
 
