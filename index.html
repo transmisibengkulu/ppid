@@ -1567,6 +1567,35 @@
     will-change: transform, opacity !important;
 }
 </style>
+    <style id="RUNNING-TEXT-SIMPLE-UP-FINAL">
+        /* Running text sederhana: tidak ada text berjalan horizontal.
+           Logo tetap diam. Saat ganti, teks lama naik dan teks baru masuk dari bawah. */
+        .news-ticker-container .ticker-logo,
+        .news-ticker-container .ticker-badge {
+            animation: none !important;
+            transform: none !important;
+        }
+
+        .news-ticker-container .ticker-content {
+            overflow: hidden !important;
+            position: relative !important;
+        }
+
+        .news-ticker-container #runningTextDisplay {
+            position: relative !important;
+            display: inline-block !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: clip !important;
+            animation: none !important;
+            transform: translateX(0) !important;
+            opacity: 1 !important;
+            will-change: top !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -2224,74 +2253,11 @@
                 runningTextFrame = null;
             }
             const { text } = getTickerElements();
-            if (text) text.style.setProperty('transform', 'translate3d(0,0,0)');
+            if (text) text.style.setProperty('transform', 'translate3d(0,0,0)', 'important');
         }
 
         function measureTickerOverflow() {
-            const { content, text } = getTickerElements();
-            if (!content || !text) return { overflow: 0, duration: 8000 };
-
-            if (runningTextFrame) {
-                cancelAnimationFrame(runningTextFrame);
-                runningTextFrame = null;
-            }
-
-            text.style.setProperty('width', 'max-content', 'important');
-            text.style.setProperty('min-width', 'max-content', 'important');
-            text.style.setProperty('max-width', 'none', 'important');
-            text.style.setProperty('white-space', 'nowrap', 'important');
-            text.style.setProperty('overflow', 'visible', 'important');
-            text.style.setProperty('text-overflow', 'clip', 'important');
-            text.style.setProperty('transform', 'translate3d(0,0,0)');
-            void text.offsetWidth;
-
-            const overflow = Math.max(0, Math.ceil(text.scrollWidth - content.clientWidth));
-            if (overflow > 2) {
-                // Kecepatan tetap agar teks mudah dibaca.
-                const duration = Math.max(9000, Math.round((overflow / 75) * 1000));
-                text.style.setProperty('--ticker-overflow', overflow + 'px');
-                text.style.setProperty('--ticker-duration', duration + 'ms');
-                return { overflow, duration };
-            }
-
-            text.style.removeProperty('--ticker-overflow');
-            text.style.removeProperty('--ticker-duration');
-            return { overflow: 0, duration: 8000 };
-        }
-
-        function animateTickerScroll(duration) {
-            const { text } = getTickerElements();
-            if (!text) return Promise.resolve();
-
-            const overflow = parseFloat(text.style.getPropertyValue('--ticker-overflow')) || 0;
-            if (overflow <= 2) {
-                return new Promise(resolve => setTimeout(resolve, 8000));
-            }
-
-            if (runningTextFrame) {
-                cancelAnimationFrame(runningTextFrame);
-                runningTextFrame = null;
-            }
-
-            // Gunakan requestAnimationFrame agar tidak ada CSS animation lama
-            // yang dapat mengambil alih transform.
-            const started = performance.now();
-            return new Promise(resolve => {
-                function frame(now) {
-                    const progress = Math.min(1, (now - started) / duration);
-                    const x = -overflow * progress;
-                    text.style.setProperty('transform', `translate3d(${x}px,0,0)`);
-
-                    if (progress < 1) {
-                        runningTextFrame = requestAnimationFrame(frame);
-                    } else {
-                        runningTextFrame = null;
-                        text.style.setProperty('transform', `translate3d(${-overflow}px,0,0)`);
-                        resolve();
-                    }
-                }
-                runningTextFrame = requestAnimationFrame(frame);
-            });
+            return { overflow: 0, duration: 0 };
         }
 
         function animateTickerLeave() {
@@ -2303,20 +2269,19 @@
                 runningTextFrame = null;
             }
 
-            text.style.setProperty('opacity', '1');
-            text.style.setProperty('transform', 'translate3d(0,0,0)');
+            text.style.top = '0';
 
             return new Promise(resolve => {
                 const animation = text.animate(
                     [
-                        { opacity: 1, transform: 'translate3d(0,0,0)' },
-                        { opacity: 0, transform: 'translate3d(0,-100%,0)' }
+                        { top: '0', opacity: 1 },
+                        { top: '-100%', opacity: 1 }
                     ],
-                    { duration: 750, easing: 'ease-in', fill: 'forwards' }
+                    { duration: 700, easing: 'ease-in', fill: 'forwards' }
                 );
+
                 animation.finished.then(() => {
-                    text.style.setProperty('opacity', '0');
-                    text.style.setProperty('transform', 'translate3d(0,-100%,0)');
+                    text.style.top = '-100%';
                     resolve();
                 }).catch(resolve);
             });
@@ -2326,20 +2291,19 @@
             const { text } = getTickerElements();
             if (!text) return Promise.resolve();
 
-            text.style.setProperty('opacity', '0');
-            text.style.setProperty('transform', 'translate3d(0,100%,0)');
+            text.style.top = '100%';
 
             return new Promise(resolve => {
                 const animation = text.animate(
                     [
-                        { opacity: 0, transform: 'translate3d(0,100%,0)' },
-                        { opacity: 1, transform: 'translate3d(0,0,0)' }
+                        { top: '100%', opacity: 1 },
+                        { top: '0', opacity: 1 }
                     ],
-                    { duration: 750, easing: 'ease-out', fill: 'forwards' }
+                    { duration: 700, easing: 'ease-out', fill: 'forwards' }
                 );
+
                 animation.finished.then(() => {
-                    text.style.setProperty('opacity', '1');
-                    text.style.setProperty('transform', 'translate3d(0,0,0)');
+                    text.style.top = '0';
                     resolve();
                 }).catch(resolve);
             });
@@ -2347,16 +2311,14 @@
 
         function renderRunningText(index) {
             const el = $('runningTextDisplay');
-            if (!el) return { overflow: 0, duration: 8000 };
+            if (!el) return;
 
             const list = state.runningTexts.length ? state.runningTexts : ['INFORMASI TVRI BENGKULU'];
             const safeIndex = ((Number(index) || 0) % list.length + list.length) % list.length;
 
             el.textContent = list[safeIndex];
             el.dataset.runningIndex = String(safeIndex);
-            el.style.setProperty('opacity', '1', 'important');
-            el.style.setProperty('transform', 'translate3d(0,0,0)', 'important');
-            return measureTickerOverflow();
+            el.style.top = '100%';
         }
 
         async function changeRunningText() {
@@ -2369,25 +2331,17 @@
             runningTextChanging = true;
             clearTimeout(runningTextTimer);
 
-            // 1. Teks yang sedang tampil keluar ke ATAS.
+            // Teks lama bergerak ke ATAS.
             await animateTickerLeave();
 
-            // 2. Ganti teks setelah teks lama selesai keluar.
+            // Ganti teks setelah teks lama keluar.
             const next = (Number(el.dataset.runningIndex || 0) + 1) % list.length;
-            const result = renderRunningText(next);
+            renderRunningText(next);
 
-            // 3. Teks baru masuk dari BAWAH.
+            // Teks baru masuk dari BAWAH ke posisi normal.
             await animateTickerEnter();
 
-            // 4. Setelah masuk, baru jalankan gerakan horizontal jika panjang.
-            if (result.overflow > 2) {
-                await new Promise(resolve => setTimeout(resolve, 250));
-                await animateTickerScroll(result.duration);
-                runningTextTimer = setTimeout(changeRunningText, 300);
-            } else {
-                runningTextTimer = setTimeout(changeRunningText, 8000);
-            }
-
+            runningTextTimer = setTimeout(changeRunningText, 4000);
             runningTextChanging = false;
         }
 
@@ -2395,21 +2349,12 @@
             clearTimeout(runningTextTimer);
             runningTextChanging = false;
 
-            const result = renderRunningText(0);
-
-            if (state.runningTexts.length > 1) {
-                // Teks pertama masuk normal. Setelah itu:
-                // pendek = tunggu 8 detik,
-                // panjang = berjalan sampai selesai.
-                runningTextTimer = setTimeout(async () => {
-                    if (result.overflow > 2) {
-                        await animateTickerScroll(result.duration);
-                        runningTextTimer = setTimeout(changeRunningText, 300);
-                    } else {
-                        runningTextTimer = setTimeout(changeRunningText, 8000);
-                    }
-                }, 8000);
-            }
+            renderRunningText(0);
+            animateTickerEnter().then(() => {
+                if (state.runningTexts.length > 1) {
+                    runningTextTimer = setTimeout(changeRunningText, 4000);
+                }
+            });
         }
 
         function formatRupiah(value) {
