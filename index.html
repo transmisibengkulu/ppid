@@ -2605,8 +2605,322 @@
 }
 </style>
 
+
+<style id="FINAL-LIVE-BUDGET-REQUEST">
+/* LIVE: background merah, teks putih, titik berkedip putih. */
+.screen .bar .livebox.is-live {
+    background: var(--red) !important;
+    color: #fff !important;
+}
+
+.screen .bar .livebox.is-live .live-dot-inline {
+    background: #fff !important;
+    box-shadow:
+        0 0 0 3px rgba(255,255,255,.20),
+        0 0 10px rgba(255,255,255,.60) !important;
+    animation: liveWhiteBlink 1s ease-in-out infinite !important;
+}
+
+@keyframes liveWhiteBlink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .35; transform: scale(.72); }
+}
+
+/* Area anggaran tetap menjadi area paling kanan. */
+.screen .bar {
+    grid-template-columns: 9% 11% 19% 20% minmax(0, 1fr) !important;
+}
+
+.screen .bar .weather-panel {
+    grid-column: 5 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    justify-self: stretch !important;
+    margin-left: 0 !important;
+}
+
+/* Kolom anggaran tetap terbagi: teks kiri, pie chart paling kanan. */
+.screen .weather-panel .budget-view {
+    grid-template-columns: minmax(0, 1fr) clamp(72px, 6vw, 92px) !important;
+    gap: clamp(10px, 1.2vw, 18px) !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    padding: 0 clamp(8px, 1vw, 16px) !important;
+    box-sizing: border-box !important;
+}
+
+/* Anggaran dan pagu diperbesar, tetapi tetap di sisi kanan. */
+.screen .weather-panel .budget-info {
+    min-width: 0 !important;
+    width: 100% !important;
+    overflow: visible !important;
+}
+
+.screen .weather-panel .budget-title {
+    font-size: clamp(10px, .78vw, 14px) !important;
+    line-height: 1.05 !important;
+    font-weight: 900 !important;
+}
+
+.screen .weather-panel .budget-amount {
+    font-size: clamp(15px, 1.18vw, 23px) !important;
+    line-height: 1.08 !important;
+    font-weight: 900 !important;
+    white-space: nowrap !important;
+}
+
+.screen .weather-panel .budget-pagu {
+    font-size: clamp(10px, .70vw, 13px) !important;
+    line-height: 1.05 !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+}
+
+/* Pie chart diperbesar dan tetap berada paling kanan. */
+.screen .weather-panel .budget-chart-container {
+    width: clamp(72px, 6vw, 92px) !important;
+    height: clamp(72px, 6vw, 92px) !important;
+    flex: 0 0 auto !important;
+    justify-self: end !important;
+    position: relative !important;
+}
+
+.screen .weather-panel .budget-center-text {
+    font-size: clamp(11px, .82vw, 16px) !important;
+    font-weight: 900 !important;
+}
+</style>
+
+
+<style id="FINAL-BUDGET-RIGHTER-LARGER">
+/* Deskripsi diberi ruang lebih luas; blok anggaran dipindahkan lebih ke kanan. */
+.screen .bar {
+    grid-template-columns: 9% 11% 19% 17% minmax(0, 1fr) !important;
+}
+
+/* Anggaran tetap berada pada kolom paling kanan. */
+.screen .bar .weather-panel {
+    grid-column: 5 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    justify-self: stretch !important;
+    margin-left: 0 !important;
+}
+
+/* Geser isi anggaran ke kanan tanpa menggeser pie chart keluar area. */
+.screen .weather-panel .budget-view {
+    grid-template-columns: minmax(0, 1fr) clamp(72px, 6vw, 92px) !important;
+    gap: clamp(8px, 1vw, 14px) !important;
+    padding-left: clamp(24px, 2.2vw, 36px) !important;
+    padding-right: clamp(4px, .5vw, 8px) !important;
+}
+
+/* Font REALISASI ANGGARAN diperbesar lagi. */
+.screen .weather-panel .budget-title {
+    font-size: clamp(11px, .88vw, 16px) !important;
+    font-weight: 900 !important;
+}
+
+/* Nominal anggaran diperbesar lagi. */
+.screen .weather-panel .budget-amount {
+    font-size: clamp(17px, 1.30vw, 25px) !important;
+    font-weight: 900 !important;
+    white-space: nowrap !important;
+}
+
+/* Pagu diperbesar lagi. */
+.screen .weather-panel .budget-pagu {
+    font-size: clamp(11px, .78vw, 14px) !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+}
+</style>
+
+
+<style id="FINAL-BUDGET-TEXT-CLOSER">
+/* Teks anggaran didekatkan ke pie chart.
+   Pie chart tetap di posisi paling kanan. */
+.screen .weather-panel .budget-view {
+    grid-template-columns: minmax(0, 1fr) clamp(72px, 6vw, 92px) !important;
+    gap: 2px !important;
+    padding-left: 0 !important;
+    padding-right: 4px !important;
+}
+
+/* Teks mengikuti sisi kanan kolom teks sehingga dekat dengan pie chart. */
+.screen .weather-panel .budget-info {
+    width: max-content !important;
+    max-width: 100% !important;
+    justify-self: end !important;
+    margin-right: 0 !important;
+}
+</style>
+
+
+<style id="FINAL-DESCRIPTION-MORE-SPACE">
+/* Beri area deskripsi lebih lebar.
+   Garis pemisah sebelum area anggaran ikut bergeser ke kanan. */
+.screen .bar {
+    grid-template-columns: 9% 11% 19% 22% minmax(0, 1fr) !important;
+}
+
+/* Area anggaran tetap paling kanan dan pie chart tidak berubah posisinya. */
+.screen .bar .weather-panel {
+    grid-column: 5 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* Garis pemisah antara deskripsi dan anggaran berada di batas area anggaran. */
+.screen .weather-panel .budget-view {
+    border-left: 1px solid rgba(7,92,174,.15) !important;
+}
+
+/* Deskripsi boleh menggunakan seluruh lebar kolomnya. */
+.screen .bar .theme {
+    min-width: 0 !important;
+    width: 100% !important;
+    overflow: hidden !important;
+}
+
+.screen .bar .theme > b,
+.screen #programDescription {
+    width: 100% !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+}
+</style>
+
+
+<style id="FINAL-USER-REQUEST-FOOTER-MEDIA">
+/* Garis deskripsi digeser mendekati tulisan ANGGARAN. */
+.screen .bar {
+    grid-template-columns: 8% 12% 26% 37% minmax(170px, 17%) !important;
+    gap: 1vw !important;
+}
+
+/* Garis pemisah hanya menjadi batas awal area anggaran. */
+.screen .weather-panel .budget-view {
+    border-left: 1px solid rgba(7,92,174,.15) !important;
+    padding-left: 0 !important;
+}
+
+/* Tulisan anggaran tetap dekat dengan pie chart. */
+.screen .weather-panel .budget-view {
+    grid-template-columns: minmax(0, 1fr) clamp(72px, 6vw, 92px) !important;
+    gap: 2px !important;
+    padding-right: 4px !important;
+}
+.screen .weather-panel .budget-info {
+    width: max-content !important;
+    max-width: 100% !important;
+    justify-self: end !important;
+    margin-right: 0 !important;
+}
+
+/* VIDEO dan FOTO harus benar-benar memiliki tinggi dan frame yang sama. */
+.screen .main {
+    grid-template-columns: 1.05fr .95fr !important;
+    align-items: stretch !important;
+}
+.screen .main .video-card,
+.screen .main .news {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    align-self: stretch !important;
+    aspect-ratio: auto !important;
+    overflow: hidden !important;
+}
+.screen .main .video-card .video,
+.screen .main .news .slides {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+.screen .main .video-card .video {
+    object-fit: cover !important;
+    object-position: center center !important;
+}
+.screen .main .news .slide {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+}
+</style>
+
+<style id="FINAL-USER-BUDGET-LINE-FIX">
+/* Permintaan terakhir: garis dan area realisasi anggaran digeser sedikit ke kiri.
+   Judul REALISASI ANGGARAN harus tetap satu baris. */
+.screen .bar {
+    grid-template-columns: 9% 11% 19% 19.5% minmax(0, 1fr) !important;
+}
+
+.screen .bar .weather-panel {
+    grid-column: 5 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* Garis pemisah mengikuti awal area anggaran yang baru. */
+.screen .weather-panel .budget-view {
+    border-left: 1px solid rgba(7,92,174,.15) !important;
+}
+
+/* Cukup lebar untuk membuat judul anggaran selalu satu baris. */
+.screen .weather-panel .budget-title {
+    white-space: nowrap !important;
+    width: max-content !important;
+    max-width: none !important;
+    font-size: clamp(9px, .68vw, 13px) !important;
+    line-height: 1.1 !important;
+}
+
+/* Teks anggaran tetap dekat dengan pie chart. */
+.screen .weather-panel .budget-info {
+    min-width: 0 !important;
+    justify-self: end !important;
+    margin: 0 !important;
+}
+</style>
 </body>
 
+
+<style id="FINAL-USER-REQUEST-LINE-BESIDE-BUDGET-MEDIA-DOWN">
+/* Garis dipindahkan ke tepat di sisi kiri area REALISASI ANGGARAN.
+   Area deskripsi diperbesar tanpa mengubah ukuran font anggaran. */
+.screen .bar {
+    grid-template-columns: 9% 13% minmax(0, 38%) minmax(0, 22.5%) minmax(0, 17.5%) !important;
+    gap: 1vw !important;
+}
+
+/* Judul REALISASI ANGGARAN tetap satu baris dan ukuran font tetap. */
+.screen .weather-panel .budget-title {
+    white-space: nowrap !important;
+    width: max-content !important;
+    max-width: none !important;
+}
+
+/* Video dan foto diturunkan sedikit, tanpa mengubah ukuran/rasionya. */
+.screen .main {
+    transform: translateY(1.2vh) !important;
+}
+
+/* Running text langsung menyatu dengan batas bawah area program, tanpa celah. */
+.screen .bar {
+    bottom: 5% !important;
+    margin-bottom: 0 !important;
+}
+.screen .news-ticker-container {
+    bottom: 0 !important;
+    height: 5% !important;
+    margin-top: 0 !important;
+    border-top: 0 !important;
+}
+</style>
 </html><style>
 /* Final fix: gunakan seluruh area footer untuk panel cuaca + anggaran */
 .weather-panel {
@@ -3345,3 +3659,30 @@ body {
     animation: none !important;
 }
 </style>
+
+<style id="FINAL-USER-REQUEST-LINE-TINY-LEFT-TICKER-NO-GAP">
+/* Geser garis pemisah sedikit saja ke kiri.
+   Ukuran font tidak diubah. */
+.screen .bar {
+    grid-template-columns: 9% 13% minmax(0, 38%) minmax(0, 10.5%) minmax(0, 29.5%) !important;
+}
+
+/* REALISASI ANGGARAN tetap satu baris tanpa mengubah ukuran font. */
+.screen .weather-panel .budget-title {
+    white-space: nowrap !important;
+    width: max-content !important;
+    max-width: none !important;
+}
+
+/* Running text menempel langsung dengan footer program,
+   tidak ada celah di antaranya. */
+.screen .bar {
+    bottom: 5% !important;
+}
+
+.screen .news-ticker-container {
+    bottom: 0 !important;
+    height: 5% !important;
+}
+</style>
+
