@@ -1401,6 +1401,17 @@
 .news-ticker-container + .news-ticker-container { display:none !important; }
 .ticker-content.is-scrolling .ticker-text { animation: swapDissolveUp 4s ease-in-out infinite !important; }
 .ticker-text { animation: swapDissolveUp 4s ease-in-out infinite !important; }
+/* Final display alignment: program title/time + media centered and full-fill */
+.bar .time, .bar .program { align-self: center !important; }
+.bar .time { display:flex !important; flex-direction:column !important; justify-content:center !important; align-items:center !important; height:100% !important; }
+.bar .program { justify-content:center !important; }
+.video-card, .news { display:flex !important; align-items:center !important; justify-content:center !important; }
+.video-card .video { position:absolute !important; inset:0 !important; width:100% !important; height:100% !important; object-fit:cover !important; object-position:center center !important; }
+.news .slides { position:absolute !important; inset:0 !important; }
+.news .slide { object-fit:cover !important; object-position:center center !important; }
+.livebox[hidden] { display:none !important; }
+.livebox.is-live { background:var(--red) !important; color:#fff !important; }
+
 /* Sisakan ruang ticker pada footer/deskripsi */
 .program { padding-bottom: clamp(44px, 5.5vh, 68px) !important; box-sizing:border-box !important; }
 #programDescription {
@@ -1462,7 +1473,7 @@
             <div class="ticker-content"><div class="ticker-text" id="runningTextDisplay">INFORMASI TVRI BENGKULU</div></div>
         </div>
         <footer class="bar">
-            <div class="bitem livebox" id="liveBox"><span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">SIARAN</span></div>
+            <div class="bitem livebox" id="liveBox" hidden><span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">LIVE</span></div>
             <div class="bitem time"><small id="prevTime"></small>
                 <strong id="currentStart">--:--</strong>
                 <small id="nextTime"></small>
@@ -1664,8 +1675,9 @@
                 $('currentStart').textContent = '--:--';
                 $('prevTime').textContent = '';
                 $('nextTime').textContent = '';
-                $('liveBox').innerHTML = '<span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">SIARAN</span>';
+                $('liveBox').innerHTML = '<span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">LIVE</span>';
                 $('liveBox').classList.remove('is-live');
+                $('liveBox').hidden = true;
                 return;
             }
 
@@ -1710,8 +1722,9 @@
             $('currentStart').textContent = clockText(startSec);
             $('prevTime').textContent = index > 0 ? clockText(programStartSeconds(list[index-1])) : '';
             $('nextTime').textContent = index < list.length-1 ? clockText(programStartSeconds(list[index+1])) : '';
-            $('liveBox').innerHTML = live ? '<span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">LIVE</span>' : '<span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">SIARAN</span>';
+            $('liveBox').innerHTML = '<span class="live-dot-inline" aria-hidden="true"></span><span class="live-text">LIVE</span>';
             $('liveBox').classList.toggle('is-live', live);
+            $('liveBox').hidden = !live;
         }
 
         function photoUrl(item) { return String(item.mediaUrl || item.image || '').trim(); }
