@@ -1873,7 +1873,8 @@
                 p.short_description, p.shortDescription, p.description,
                 p.long_description, p.longDescription
             );
-            const live = active || p.live === true || ['true','1','yes','live'].includes(String(p.live).toLowerCase());
+            const liveValue = String(p.live == null ? '' : p.live).trim().toLowerCase();
+            const live = ['ya'].includes(liveValue);
             const previousProgram = index > 0 ? list[index - 1] : null;
             const nextProgram = index < list.length - 1 ? list[index + 1] : null;
             const previousProgramName = previousProgram
@@ -2543,6 +2544,67 @@
     display: inline-flex !important;
 }
 </style>
+
+<style id="FINAL-LIVE-BUDGET-FIX">
+/* Titik LIVE putih, tanpa mengubah kotak LIVE merah. */
+.screen .live-dot-inline {
+    background: #fff !important;
+    box-shadow: 0 0 0 3px rgba(255,255,255,.18), 0 0 9px rgba(255,255,255,.45) !important;
+}
+
+/* Deskripsi boleh lebih leluasa, tetapi area anggaran tetap terkunci di sisi kanan. */
+.screen .bar {
+    grid-template-columns: 9% 11% 19% 20% minmax(0, 1fr) !important;
+}
+
+.screen .bar .theme {
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
+
+.screen .bar .theme > b,
+.screen #programDescription {
+    font-size: clamp(11px, 1.1vw, 20px) !important;
+    line-height: 1.12 !important;
+}
+
+/* Anggaran tetap berada di kolom paling kanan dan tidak ikut bergeser. */
+.screen .bar .weather-panel {
+    grid-column: 5 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    justify-self: stretch !important;
+    margin-left: 0 !important;
+}
+
+.screen .weather-panel .budget-view {
+    min-width: 0 !important;
+    width: 100% !important;
+}
+
+/* Font anggaran dan pagu diperbesar sedikit. */
+.screen .weather-panel .budget-title {
+    font-size: clamp(9px, .72vw, 13px) !important;
+    line-height: 1.05 !important;
+}
+
+.screen .weather-panel .budget-amount {
+    font-size: clamp(13px, 1.05vw, 20px) !important;
+    line-height: 1.08 !important;
+}
+
+.screen .weather-panel .budget-pagu {
+    font-size: clamp(8px, .58vw, 11px) !important;
+    line-height: 1.05 !important;
+}
+
+/* Persentase di tengah lingkaran diperbesar sedikit. */
+.screen .weather-panel .budget-center-text {
+    font-size: clamp(9px, .72vw, 14px) !important;
+    font-weight: 900 !important;
+}
+</style>
+
 </body>
 
 </html><style>
