@@ -1409,8 +1409,16 @@
 .video-card .video { position:absolute !important; inset:0 !important; width:100% !important; height:100% !important; object-fit:cover !important; object-position:center center !important; }
 .news .slides { position:absolute !important; inset:0 !important; }
 .news .slide { object-fit:cover !important; object-position:center center !important; }
-.livebox[hidden] { display:none !important; }
-.livebox.is-live { background:var(--red) !important; color:#fff !important; }
+/* LIVE tetap mempertahankan slot SIARAN agar jam dan judul tidak bergeser */
+.livebox[hidden] {
+  display:inline-flex !important;
+  visibility:hidden !important;
+}
+.livebox.is-live {
+  background:var(--red) !important;
+  color:#fff !important;
+}
+.livebox.is-live .live-text { color:#fff !important; }
 
 /* Sisakan ruang ticker pada footer/deskripsi */
 .program { padding-bottom: clamp(44px, 5.5vh, 68px) !important; box-sizing:border-box !important; }
@@ -2620,7 +2628,7 @@
 <style id="final-program-title-alignment">
 /* FINAL: area judul program diperpanjang dan disejajarkan dengan jam */
 .bar {
-    grid-template-columns: 9% 13% minmax(0, 28%) minmax(0, 18%) minmax(0, 1fr) !important;
+    grid-template-columns: 9% 13% minmax(0, 38%) minmax(0, 12%) minmax(0, 28%) !important;
     align-items: center !important;
 }
 .bar .time,
@@ -2649,10 +2657,14 @@
     max-width: 100% !important;
     min-width: 0 !important;
     overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
 }
 .bar .program b {
     width: 100% !important;
+    font-size: clamp(23px, 2.2vw, 40px) !important;
+    line-height: 1.1 !important;
+    margin: 2px 0 !important;
 }
 </style>
