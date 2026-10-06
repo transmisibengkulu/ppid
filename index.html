@@ -1548,6 +1548,25 @@
 }
 </style>
 
+
+<style id="RUNNING-TEXT-WA-FINAL">
+.news-ticker-container .ticker-content {
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    min-width: 0 !important;
+}
+.news-ticker-container #runningTextDisplay {
+    display: inline-block !important;
+    width: max-content !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    animation: none !important;
+    will-change: transform, opacity !important;
+}
+</style>
 </head>
 
 <body>
@@ -2188,78 +2207,111 @@
             }).filter(Boolean);
         }
 
-        function measureTickerOverflow() {
-            const content = document.querySelector('.news-ticker-container .ticker-content');
-            const text = $('runningTextDisplay');
-            if (!content || !text) return 8000;
+        let runningTextTimer = null;
+        let runningTextChanging = false;
+        let runningTextAnimation = null;
 
+        function getTickerElements() {
+            return {
+                content: document.querySelector('.news-ticker-container .ticker-content'),
+                text: $('runningTextDisplay')
+            };
+        }
+
+        function stopRunningTextAnimation() {
+            if (runningTextAnimation) {
+                try { runningTextAnimation.cancel(); } catch (e) {}
+                runningTextAnimation = null;
+            }
+        }
+
+        function measureTickerOverflow() {
+            const { content, text } = getTickerElements();
+            if (!content || !text) return { overflow: 0, duration: 8000 };
+
+            stopRunningTextAnimation();
             content.classList.remove('is-scrolling');
             text.classList.remove('ticker-enter', 'ticker-leave');
             text.style.animation = 'none';
-            text.style.setProperty('width', 'max-content', 'important');
-            text.style.setProperty('min-width', 'max-content', 'important');
-            text.style.setProperty('max-width', 'none', 'important');
-            text.style.setProperty('overflow', 'visible', 'important');
-            text.style.setProperty('text-overflow', 'clip', 'important');
-            text.style.transform = 'translateX(0)';
+            text.style.transform = 'translate3d(0,0,0)';
+            text.style.display = 'inline-block';
+            text.style.width = 'max-content';
+            text.style.minWidth = 'max-content';
+            text.style.maxWidth = 'none';
+            text.style.whiteSpace = 'nowrap';
+            text.style.overflow = 'visible';
+            text.style.textOverflow = 'clip';
             void text.offsetWidth;
 
-            const overflow = Math.max(0, Math.ceil(text.scrollWidth - content.clientWidth));
+            const available = content.getBoundingClientRect().width;
+            const textWidth = text.getBoundingClientRect().width;
+            const overflow = Math.max(0, Math.ceil(textWidth - available));
+
             if (overflow > 2) {
-                // Kecepatan sekitar 100 px/detik. Teks yang lebih panjang
-                // otomatis mendapat waktu lebih lama sebelum berganti.
-                const duration = Math.max(10, (overflow / 100) + 2);
+                const duration = Math.max(9000, Math.round((overflow / 80 + 3) * 1000));
                 text.style.setProperty('--ticker-overflow', overflow + 'px');
-                text.style.setProperty('--ticker-duration', duration.toFixed(2) + 's');
+                text.style.setProperty('--ticker-duration', duration + 'ms');
                 content.classList.add('is-scrolling');
-                return duration * 1000;
+                return { overflow, duration };
             }
 
             text.style.removeProperty('--ticker-overflow');
             text.style.removeProperty('--ticker-duration');
-            text.style.animation = 'none';
-            return 8000;
+            return { overflow: 0, duration: 8000 };
         }
 
-        let runningTextTimer = null;
-        let runningTextChanging = false;
+        function animateTickerScroll(duration) {
+            const { text } = getTickerElements();
+            if (!text) return Promise.resolve();
+            const overflow = parseFloat(getComputedStyle(text).getPropertyValue('--ticker-overflow')) || 0;
+            if (overflow <= 2) return new Promise(resolve => setTimeout(resolve, duration));
+
+            stopRunningTextAnimation();
+            text.style.transform = 'translate3d(0,0,0)';
+            runningTextAnimation = text.animate(
+                [
+                    { transform: 'translate3d(0,0,0)' },
+                    { transform: 'translate3d(0,0,0)', offset: 0.06 },
+                    { transform: `translate3d(-${overflow}px,0,0)`, offset: 0.96 },
+                    { transform: `translate3d(-${overflow}px,0,0)` }
+                ],
+                { duration, easing: 'linear', fill: 'forwards' }
+            );
+            return runningTextAnimation.finished.catch(() => {});
+        }
 
         function renderRunningText(index, animateEnter = false) {
             const el = $('runningTextDisplay');
-            if (!el) return 8000;
+            if (!el) return { overflow: 0, duration: 8000 };
             const list = state.runningTexts.length ? state.runningTexts : ['INFORMASI TVRI BENGKULU'];
             const safeIndex = ((Number(index) || 0) % list.length + list.length) % list.length;
 
+            stopRunningTextAnimation();
             el.classList.remove('ticker-enter', 'ticker-leave');
             el.textContent = list[safeIndex];
             el.dataset.runningIndex = String(safeIndex);
             el.style.animation = 'none';
+            el.style.transform = 'translate3d(0,0,0)';
             void el.offsetWidth;
-            el.style.animation = '';
 
+            const result = measureTickerOverflow();
             if (animateEnter) {
-                el.classList.add('ticker-enter');
-                setTimeout(() => el.classList.remove('ticker-enter'), 800);
+                el.style.opacity = '0';
+                el.style.transform = 'translate3d(0,100%,0)';
+                el.animate(
+                    [
+                        { opacity: 0, transform: 'translate3d(0,100%,0)' },
+                        { opacity: 1, transform: 'translate3d(0,0,0)' }
+                    ],
+                    { duration: 750, easing: 'ease-out', fill: 'forwards' }
+                );
+            } else {
+                el.style.opacity = '1';
             }
-
-            return measureTickerOverflow();
+            return result;
         }
 
-        function scheduleNextRunningText() {
-            clearTimeout(runningTextTimer);
-            const list = state.runningTexts.length ? state.runningTexts : ['INFORMASI TVRI BENGKULU'];
-            if (list.length < 2) return;
-
-            const el = $('runningTextDisplay');
-            const index = Number(el?.dataset.runningIndex || 0);
-            const durationMs = measureTickerOverflow();
-
-            runningTextTimer = setTimeout(() => {
-                changeRunningText();
-            }, durationMs);
-        }
-
-        function changeRunningText() {
+        async function changeRunningText() {
             const el = $('runningTextDisplay');
             if (!el || runningTextChanging) return;
             const list = state.runningTexts.length ? state.runningTexts : ['INFORMASI TVRI BENGKULU'];
@@ -2267,26 +2319,49 @@
 
             runningTextChanging = true;
             clearTimeout(runningTextTimer);
-            el.classList.remove('ticker-enter');
-            el.classList.add('ticker-leave');
+            stopRunningTextAnimation();
 
-            setTimeout(() => {
-                const next = (Number(el.dataset.runningIndex || 0) + 1) % list.length;
-                const durationMs = renderRunningText(next, true);
-                runningTextChanging = false;
+            await new Promise(resolve => {
+                const leave = el.animate(
+                    [
+                        { opacity: 1, transform: 'translate3d(0,0,0)' },
+                        { opacity: 0, transform: 'translate3d(0,-100%,0)' }
+                    ],
+                    { duration: 650, easing: 'ease-in', fill: 'forwards' }
+                );
+                leave.finished.then(resolve).catch(resolve);
+            });
 
-                // Tunggu sampai teks baru selesai berjalan sebelum mengganti lagi.
-                clearTimeout(runningTextTimer);
-                runningTextTimer = setTimeout(changeRunningText, durationMs);
-            }, 800);
+            const next = (Number(el.dataset.runningIndex || 0) + 1) % list.length;
+            const result = renderRunningText(next, true);
+            runningTextChanging = false;
+
+            clearTimeout(runningTextTimer);
+            runningTextTimer = setTimeout(async () => {
+                if (result.overflow > 2) {
+                    await animateTickerScroll(result.duration);
+                    runningTextTimer = setTimeout(changeRunningText, 300);
+                } else {
+                    runningTextTimer = setTimeout(changeRunningText, 8000);
+                }
+            }, result.overflow > 2 ? 800 : 8000);
         }
 
         function startRunningText() {
             clearTimeout(runningTextTimer);
             runningTextChanging = false;
-            const durationMs = renderRunningText(0, false);
+            stopRunningTextAnimation();
+
+            const result = renderRunningText(0, false);
             if (state.runningTexts.length > 1) {
-                runningTextTimer = setTimeout(changeRunningText, durationMs);
+                runningTextTimer = setTimeout(async () => {
+                    if (result.overflow > 2) {
+                        await animateTickerScroll(result.duration);
+                        runningTextTimer = setTimeout(changeRunningText, 300);
+                    } else {
+                        runningTextTimer = setTimeout(changeRunningText, 8000);
+                    }
+                }, result.overflow > 2 ? 300 : 8000);
             }
         }
 
