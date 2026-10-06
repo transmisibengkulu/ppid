@@ -2209,7 +2209,7 @@
 
         let runningTextTimer = null;
         let runningTextChanging = false;
-        let runningTextAnimation = null;
+        let runningTextFrame = null;
 
         function getTickerElements() {
             return {
@@ -2219,10 +2219,12 @@
         }
 
         function stopRunningTextAnimation() {
-            if (runningTextAnimation) {
-                try { runningTextAnimation.cancel(); } catch (e) {}
-                runningTextAnimation = null;
+            if (runningTextFrame) {
+                cancelAnimationFrame(runningTextFrame);
+                runningTextFrame = null;
             }
+            const { text } = getTickerElements();
+            if (text) text.style.setProperty('transform', 'translate3d(0,0,0)', 'important');
         }
 
         function measureTickerOverflow() {
@@ -2232,23 +2234,22 @@
             stopRunningTextAnimation();
             content.classList.remove('is-scrolling');
             text.classList.remove('ticker-enter', 'ticker-leave');
-            text.style.animation = 'none';
-            text.style.transform = 'translate3d(0,0,0)';
-            text.style.display = 'inline-block';
-            text.style.width = 'max-content';
-            text.style.minWidth = 'max-content';
-            text.style.maxWidth = 'none';
-            text.style.whiteSpace = 'nowrap';
-            text.style.overflow = 'visible';
-            text.style.textOverflow = 'clip';
+            text.style.setProperty('width', 'max-content', 'important');
+            text.style.setProperty('min-width', 'max-content', 'important');
+            text.style.setProperty('max-width', 'none', 'important');
+            text.style.setProperty('white-space', 'nowrap', 'important');
+            text.style.setProperty('overflow', 'visible', 'important');
+            text.style.setProperty('text-overflow', 'clip', 'important');
+            text.style.setProperty('transform', 'translate3d(0,0,0)', 'important');
             void text.offsetWidth;
 
-            const available = content.getBoundingClientRect().width;
-            const textWidth = text.getBoundingClientRect().width;
+            const available = content.clientWidth;
+            const textWidth = text.scrollWidth;
             const overflow = Math.max(0, Math.ceil(textWidth - available));
 
             if (overflow > 2) {
-                const duration = Math.max(9000, Math.round((overflow / 80 + 3) * 1000));
+                // Kecepatan tetap dan mudah dibaca: sekitar 75 px/detik.
+                const duration = Math.max(9000, Math.round((overflow / 75) * 1000));
                 text.style.setProperty('--ticker-overflow', overflow + 'px');
                 text.style.setProperty('--ticker-duration', duration + 'ms');
                 content.classList.add('is-scrolling');
@@ -2263,21 +2264,32 @@
         function animateTickerScroll(duration) {
             const { text } = getTickerElements();
             if (!text) return Promise.resolve();
-            const overflow = parseFloat(getComputedStyle(text).getPropertyValue('--ticker-overflow')) || 0;
-            if (overflow <= 2) return new Promise(resolve => setTimeout(resolve, duration));
+            const overflow = parseFloat(text.style.getPropertyValue('--ticker-overflow')) || 0;
+            if (overflow <= 2) return new Promise(resolve => setTimeout(resolve, 8000));
 
             stopRunningTextAnimation();
-            text.style.transform = 'translate3d(0,0,0)';
-            runningTextAnimation = text.animate(
-                [
-                    { transform: 'translate3d(0,0,0)' },
-                    { transform: 'translate3d(0,0,0)', offset: 0.06 },
-                    { transform: `translate3d(-${overflow}px,0,0)`, offset: 0.96 },
-                    { transform: `translate3d(-${overflow}px,0,0)` }
-                ],
-                { duration, easing: 'linear', fill: 'forwards' }
-            );
-            return runningTextAnimation.finished.catch(() => {});
+            const started = performance.now();
+
+            return new Promise(resolve => {
+                function frame(now) {
+                    const progress = Math.min(1, (now - started) / duration);
+                    // Sedikit jeda di awal dan akhir agar teks terbaca.
+                    const easedProgress = progress < 0.06
+                        ? 0
+                        : progress > 0.94
+                            ? 1
+                            : (progress - 0.06) / 0.88;
+                    const x = -overflow * Math.max(0, Math.min(1, easedProgress));
+                    text.style.setProperty('transform', `translate3d(${x}px,0,0)`, 'important');
+                    if (progress < 1) {
+                        runningTextFrame = requestAnimationFrame(frame);
+                    } else {
+                        runningTextFrame = null;
+                        resolve();
+                    }
+                }
+                runningTextFrame = requestAnimationFrame(frame);
+            });
         }
 
         function renderRunningText(index, animateEnter = false) {
@@ -2290,23 +2302,25 @@
             el.classList.remove('ticker-enter', 'ticker-leave');
             el.textContent = list[safeIndex];
             el.dataset.runningIndex = String(safeIndex);
-            el.style.animation = 'none';
-            el.style.transform = 'translate3d(0,0,0)';
+            el.style.setProperty('transform', 'translate3d(0,0,0)', 'important');
+            el.style.setProperty('opacity', '1', 'important');
             void el.offsetWidth;
 
             const result = measureTickerOverflow();
             if (animateEnter) {
-                el.style.opacity = '0';
-                el.style.transform = 'translate3d(0,100%,0)';
-                el.animate(
+                el.style.setProperty('opacity', '0', 'important');
+                el.style.setProperty('transform', 'translate3d(0,100%,0)', 'important');
+                const enter = el.animate(
                     [
                         { opacity: 0, transform: 'translate3d(0,100%,0)' },
                         { opacity: 1, transform: 'translate3d(0,0,0)' }
                     ],
                     { duration: 750, easing: 'ease-out', fill: 'forwards' }
                 );
-            } else {
-                el.style.opacity = '1';
+                enter.finished.finally(() => {
+                    el.style.setProperty('opacity', '1', 'important');
+                    el.style.setProperty('transform', 'translate3d(0,0,0)', 'important');
+                });
             }
             return result;
         }
@@ -3247,5 +3261,28 @@ body {
 @keyframes tickerEnterReal {
     from { opacity: 0; transform: translateY(100%); }
     to { opacity: 1; transform: translateY(0); }
+}
+/* FINAL RUNNING TEXT ONLY: logo remains completely static. */
+.screen .news-ticker-container .ticker-badge,
+.screen .news-ticker-container .ticker-logo {
+    transform: none !important;
+    animation: none !important;
+}
+.screen .news-ticker-container .ticker-content {
+    overflow: hidden !important;
+}
+.screen .news-ticker-container .ticker-text {
+    width: max-content !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    animation: none !important;
+    will-change: transform !important;
+}
+/* JavaScript moves the text with inline !important transform so older CSS cannot block it. */
+.screen .news-ticker-container .ticker-content.is-scrolling .ticker-text {
+    animation: none !important;
 }
 </style>
