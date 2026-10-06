@@ -2189,25 +2189,35 @@
         }
 
         function measureTickerOverflow() {
-            const content = document.querySelector('.ticker-content');
+            const content = document.querySelector('.news-ticker-container .ticker-content');
             const text = $('runningTextDisplay');
-            if (!content || !text) return 0;
+            if (!content || !text) return 8000;
 
             content.classList.remove('is-scrolling');
-            text.style.removeProperty('--ticker-overflow');
-            text.style.removeProperty('--ticker-duration');
+            text.classList.remove('ticker-enter', 'ticker-leave');
+            text.style.animation = 'none';
+            text.style.setProperty('width', 'max-content', 'important');
+            text.style.setProperty('min-width', 'max-content', 'important');
+            text.style.setProperty('max-width', 'none', 'important');
+            text.style.setProperty('overflow', 'visible', 'important');
+            text.style.setProperty('text-overflow', 'clip', 'important');
             text.style.transform = 'translateX(0)';
+            void text.offsetWidth;
 
             const overflow = Math.max(0, Math.ceil(text.scrollWidth - content.clientWidth));
             if (overflow > 2) {
-                // Kecepatan tetap, sehingga teks yang semakin panjang mendapat waktu
-                // berjalan yang semakin lama dan tidak langsung diganti.
-                const duration = Math.max(8, (overflow / 90) + 2);
+                // Kecepatan sekitar 100 px/detik. Teks yang lebih panjang
+                // otomatis mendapat waktu lebih lama sebelum berganti.
+                const duration = Math.max(10, (overflow / 100) + 2);
                 text.style.setProperty('--ticker-overflow', overflow + 'px');
                 text.style.setProperty('--ticker-duration', duration.toFixed(2) + 's');
                 content.classList.add('is-scrolling');
                 return duration * 1000;
             }
+
+            text.style.removeProperty('--ticker-overflow');
+            text.style.removeProperty('--ticker-duration');
+            text.style.animation = 'none';
             return 8000;
         }
 
@@ -3021,5 +3031,146 @@ body {
 }
 .screen .bar .time > strong {
     text-align: center !important;
+}
+</style>
+
+
+<style id="ABSOLUTE-FINAL-TICKER-PROGRAM-FIX">
+/* ==========================================================
+   ABSOLUTE FINAL OVERRIDE
+   Hanya memperbaiki judul program + running text.
+   Tidak mengubah media/header/background/layout 16:9.
+   ========================================================== */
+
+/* ---------- JAM + JUDUL ---------- */
+.screen .bar .time,
+.screen .bar .program {
+    position: relative !important;
+    display: block !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Nilai utama sama-sama tepat di tengah vertikal */
+.screen .bar .time > strong,
+.screen .bar .program > b {
+    position: absolute !important;
+    top: 50% !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    transform: translateY(-50%) !important;
+    box-sizing: border-box !important;
+}
+
+/* Ukuran sengaja lebih kecil agar judul 2 baris tidak menimpa label */
+.screen .bar .time > strong,
+.screen .bar .program > b {
+    font-size: clamp(20px, 1.45vw, 28px) !important;
+    line-height: 1.08 !important;
+}
+
+.screen .bar .program > b {
+    text-align: left !important;
+    padding: 0 .4vw !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+}
+
+/* Label atas dan stasiun bawah tidak lagi dihitung dari tinggi judul */
+.screen .bar .time > small:first-child,
+.screen .bar .program > small {
+    position: absolute !important;
+    top: 18% !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+}
+.screen .bar .program > small {
+    text-align: left !important;
+    padding-left: .4vw !important;
+}
+
+.screen .bar .time > small:last-child,
+.screen .bar .program > span {
+    position: absolute !important;
+    bottom: 18% !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+}
+.screen .bar .program > span {
+    text-align: left !important;
+    padding-left: .4vw !important;
+}
+
+/* ---------- RUNNING TEXT ---------- */
+.screen .ticker-content {
+    display: block !important;
+    position: relative !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: auto !important;
+    height: 100% !important;
+    padding: 0 1.5vw !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+}
+
+.screen .ticker-text,
+.screen .news-ticker-container .ticker-text {
+    display: block !important;
+    position: relative !important;
+    width: max-content !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    height: 100% !important;
+    line-height: 5vh !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    animation: none !important;
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+    will-change: transform !important;
+}
+
+/* Scroll hanya aktif bila JS menemukan overflow */
+.screen .ticker-content.is-scrolling .ticker-text,
+.screen .news-ticker-container .ticker-content.is-scrolling .ticker-text {
+    animation: tickerScrollReal var(--ticker-duration, 10s) linear 1 forwards !important;
+}
+
+@keyframes tickerScrollReal {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(-1 * var(--ticker-overflow, 0px))); }
+}
+
+/* Saat berganti, masuk dari bawah / keluar ke atas.
+   Selector ini sengaja lebih spesifik daripada selector scroll. */
+.screen .news-ticker-container .ticker-content .ticker-text.ticker-leave {
+    animation: tickerLeaveReal .75s ease-in forwards !important;
+}
+.screen .news-ticker-container .ticker-content .ticker-text.ticker-enter {
+    animation: tickerEnterReal .75s ease-out forwards !important;
+}
+@keyframes tickerLeaveReal {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-100%); }
+}
+@keyframes tickerEnterReal {
+    from { opacity: 0; transform: translateY(100%); }
+    to { opacity: 1; transform: translateY(0); }
 }
 </style>
