@@ -1596,6 +1596,452 @@
             will-change: top !important;
         }
     </style>
+
+    <style id="targeted-full-width-background-fix">
+        /* Perbaikan terarah: kanvas utama selebar layar, sama dengan running text.
+           Elemen dan proporsi isi lainnya tidak diubah. */
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+        body {
+            display: block !important;
+            background: #eef6fc !important;
+        }
+        .screen {
+            position: fixed !important;
+            inset: 0 !important;
+            width: 100vw !important;
+            max-width: none !important;
+            min-width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            max-height: none !important;
+            margin: 0 !important;
+            transform: none !important;
+            border-radius: 0 !important;
+            background-size: auto, auto, cover, auto !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+        }
+        .news-ticker-container {
+            left: 0 !important;
+            right: 0 !important;
+            width: 100vw !important;
+            max-width: none !important;
+        }
+    </style>
+
+
+<style id="TARGETED-TITLE-DESCRIPTION-BUDGET-FIX">
+/* Hanya merapikan judul/deskripsi dan area anggaran; latar penuh dipertahankan. */
+.screen .bar .program {
+  gap: clamp(4px, .45vh, 8px) !important;
+}
+.screen .bar .program > b {
+  margin: 0 0 clamp(3px, .35vh, 6px) 0 !important;
+  font-size: clamp(18px, 1.45vw, 28px) !important;
+  line-height: 1.08 !important;
+}
+.screen .bar .theme {
+  min-width: 0 !important;
+  padding-left: clamp(4px, .45vw, 8px) !important;
+  padding-right: clamp(4px, .45vw, 8px) !important;
+}
+.screen .bar .theme > b,
+.screen #programDescription {
+  display: block !important;
+  margin-top: clamp(4px, .45vh, 8px) !important;
+  font-size: clamp(13px, 1.18vw, 22px) !important;
+  line-height: 1.18 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  max-width: 100% !important;
+}
+/* Tiga baris anggaran tersusun vertikal; lingkaran persentase mendapat kolom sendiri. */
+.screen .weather-panel .budget-view {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+.screen .weather-panel .budget-info {
+  position: absolute !important;
+  left: clamp(7px, .7vw, 12px) !important;
+  right: clamp(66px, 6.4vw, 82px) !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: clamp(2px, .28vh, 5px) !important;
+  min-width: 0 !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+  box-sizing: border-box !important;
+}
+.screen .weather-panel .budget-title {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  overflow: hidden !important;
+  overflow-wrap: anywhere !important;
+  font-size: clamp(8px, .62vw, 12px) !important;
+  line-height: 1.08 !important;
+}
+.screen .weather-panel .budget-amount {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  font-size: clamp(10px, .82vw, 16px) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -.25px !important;
+}
+.screen .weather-panel .budget-pagu {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  font-size: clamp(8px, .58vw, 11px) !important;
+  line-height: 1.08 !important;
+}
+.screen .weather-panel .budget-chart-container {
+  position: absolute !important;
+  right: clamp(4px, .45vw, 8px) !important;
+  left: auto !important;
+  top: 50% !important;
+  width: clamp(48px, 4.4vw, 64px) !important;
+  height: clamp(48px, 4.4vw, 64px) !important;
+  transform: translateY(-50%) !important;
+  margin: 0 !important;
+}
+.screen .weather-panel .budget-center-text {
+  white-space: nowrap !important;
+  font-size: clamp(8px, .62vw, 12px) !important;
+  font-weight: 900 !important;
+}
+</style>
+
+<style id="LATEST-REQUEST-VIDEO-PROGRAM-BUDGET-FIX">
+/* Hilangkan lapisan gradasi di atas video; video tetap utuh. */
+.screen .video-shade,
+.screen .vinfo::before {
+  background: transparent !important;
+  background-image: none !important;
+  opacity: 0 !important;
+}
+
+/* Judul dan deskripsi punya jarak; deskripsi sedikit lebih besar agar teks panjang terbaca. */
+.screen .bar .program {
+  gap: clamp(5px, .55vh, 9px) !important;
+}
+.screen .bar .program > b {
+  margin: 0 0 clamp(4px, .4vh, 7px) 0 !important;
+  font-size: clamp(17px, 1.25vw, 25px) !important;
+  line-height: 1.12 !important;
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+}
+.screen .bar .theme {
+  min-width: 0 !important;
+  padding-left: clamp(5px, .5vw, 9px) !important;
+  padding-right: clamp(5px, .5vw, 9px) !important;
+  overflow: hidden !important;
+}
+.screen .bar .theme > b,
+.screen #programDescription {
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 3 !important;
+  overflow: hidden !important;
+  margin-top: clamp(5px, .5vh, 9px) !important;
+  font-size: clamp(19px, 1.42vw, 27px) !important;
+  line-height: 1.18 !important;
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+  max-width: 100% !important;
+}
+
+/* Pisahkan kolom teks anggaran dan lingkaran persentase supaya nominal/pagu
+   tidak pernah menutupi angka persentase di tengah lingkaran. */
+.screen .weather-panel .budget-view {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+.screen .weather-panel .budget-info {
+  position: absolute !important;
+  left: clamp(5px, .5vw, 9px) !important;
+  right: clamp(76px, 6.8vw, 96px) !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: clamp(2px, .25vh, 4px) !important;
+  min-width: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+.screen .weather-panel .budget-title,
+.screen .weather-panel .budget-pagu {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.1 !important;
+}
+.screen .weather-panel .budget-title {
+  font-size: clamp(8px, .62vw, 12px) !important;
+}
+.screen .weather-panel .budget-amount {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  font-size: clamp(10px, .8vw, 15px) !important;
+  line-height: 1.08 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  overflow: hidden !important;
+}
+.screen .weather-panel .budget-pagu {
+  font-size: clamp(8px, .56vw, 11px) !important;
+}
+.screen .weather-panel .budget-chart-container {
+  position: absolute !important;
+  right: clamp(4px, .45vw, 8px) !important;
+  left: auto !important;
+  top: 50% !important;
+  width: clamp(52px, 4.3vw, 64px) !important;
+  height: clamp(52px, 4.3vw, 64px) !important;
+  transform: translateY(-50%) !important;
+  margin: 0 !important;
+  z-index: 2 !important;
+}
+.screen .weather-panel .budget-center-text {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  font-size: clamp(9px, .68vw, 13px) !important;
+  font-weight: 900 !important;
+}
+</style>
+
+
+<style id="FINAL-PROGRAM-TITLE-CLOCK-ALIGNMENT">
+/* Perbaikan terarah: judul program lebih kecil dan satu garis tengah dengan jam. */
+.screen .bar .time {
+  align-self: stretch !important;
+  height: 100% !important;
+  justify-content: center !important;
+}
+.screen .bar .program {
+  align-self: stretch !important;
+  height: 100% !important;
+  justify-content: center !important;
+  gap: clamp(3px, .35vh, 6px) !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+.screen .bar .program > b,
+.screen #programName {
+  font-size: clamp(14px, 1.15vw, 22px) !important;
+  line-height: 1.12 !important;
+  font-weight: 800 !important;
+  margin: 0 0 clamp(3px, .3vh, 5px) 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+}
+.screen .bar .program > small { line-height: 1.05 !important; }
+.screen .bar .program > span { line-height: 1.05 !important; }
+</style>
+
+<style id="FINAL-BUDGET-WIDER-DESCRIPTION-SPACING">
+/* Anggaran diberi kolom lebih lebar agar nominal tidak menyentuh persentase. */
+.screen .bar {
+  grid-template-columns: 9% 11% 14% minmax(0, 1fr) minmax(260px, 22%) !important;
+  column-gap: .65vw !important;
+}
+.screen .bar .theme {
+  grid-column: 4 !important;
+  min-width: 0 !important;
+  padding-right: clamp(8px, .8vw, 16px) !important;
+  box-sizing: border-box !important;
+}
+.screen #programDescription {
+  margin-top: clamp(7px, .65vw, 12px) !important;
+  line-height: 1.28 !important;
+  padding-right: clamp(4px, .45vw, 9px) !important;
+  box-sizing: border-box !important;
+}
+.screen .bar .weather-panel {
+  grid-column: 5 !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  overflow: hidden !important;
+}
+.screen .weather-panel .budget-view {
+  grid-template-columns: minmax(0, 1fr) clamp(62px, 5vw, 78px) !important;
+  gap: clamp(7px, .6vw, 11px) !important;
+  padding-left: clamp(8px, .7vw, 13px) !important;
+  padding-right: 3px !important;
+  overflow: hidden !important;
+}
+.screen .weather-panel .budget-info {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+.screen .weather-panel .budget-title {
+  max-width: 100% !important;
+  font-size: clamp(8px, .62vw, 12px) !important;
+  line-height: 1.12 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+.screen .weather-panel .budget-amount {
+  max-width: 100% !important;
+  font-size: clamp(10px, .82vw, 16px) !important;
+  line-height: 1.08 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  font-variant-numeric: tabular-nums !important;
+}
+.screen .weather-panel .budget-pagu {
+  max-width: 100% !important;
+  font-size: clamp(7px, .48vw, 9px) !important;
+  white-space: nowrap !important;
+}
+.screen .weather-panel .budget-chart-container {
+  width: clamp(62px, 5vw, 78px) !important;
+  height: clamp(62px, 5vw, 78px) !important;
+  flex-shrink: 0 !important;
+  justify-self: end !important;
+}
+</style>
+
+<style id="FINAL-BUDGET-DESCRIPTION-NONOVERLAP">
+/* Final koreksi: teks realisasi dibatasi di kiri lingkaran; deskripsi sedikit digeser ke kanan. */
+.screen .bar {
+  grid-template-columns: 9% 10% 12% minmax(0, 1fr) minmax(300px, 27%) !important;
+  column-gap: .35vw !important;
+}
+.screen .bar .theme {
+  padding-left: clamp(10px, 1vw, 18px) !important;
+  padding-right: clamp(2px, .25vw, 5px) !important;
+  min-width: 0 !important;
+}
+.screen #programDescription {
+  margin-top: clamp(9px, .8vh, 14px) !important;
+  padding-left: clamp(2px, .25vw, 5px) !important;
+  padding-right: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+.screen .bar .weather-panel {
+  min-width: 0 !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+.screen .weather-panel .budget-view {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+.screen .weather-panel .budget-info {
+  position: absolute !important;
+  left: clamp(4px, .35vw, 7px) !important;
+  right: clamp(70px, 6.2vw, 84px) !important;
+  top: 50% !important;
+  width: auto !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  transform: translateY(-50%) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: clamp(2px, .22vh, 4px) !important;
+  overflow: hidden !important;
+  white-space: normal !important;
+  box-sizing: border-box !important;
+}
+.screen .weather-panel .budget-title,
+.screen .weather-panel .budget-amount,
+.screen .weather-panel .budget-pagu {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+.screen .weather-panel .budget-title { font-size: clamp(7px, .54vw, 10px) !important; line-height: 1.1 !important; }
+.screen .weather-panel .budget-amount { font-size: clamp(9px, .68vw, 13px) !important; line-height: 1.08 !important; font-weight: 800 !important; }
+.screen .weather-panel .budget-pagu { font-size: clamp(7px, .48vw, 9px) !important; line-height: 1.08 !important; }
+.screen .weather-panel .budget-chart-container {
+  position: absolute !important;
+  left: auto !important;
+  right: clamp(3px, .3vw, 6px) !important;
+  top: 50% !important;
+  width: clamp(52px, 4.2vw, 62px) !important;
+  height: clamp(52px, 4.2vw, 62px) !important;
+  margin: 0 !important;
+  transform: translateY(-50%) !important;
+  z-index: 3 !important;
+}
+.screen .weather-panel .budget-center-text {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  font-size: clamp(8px, .58vw, 11px) !important;
+  z-index: 4 !important;
+}
+</style>
 </head>
 
 <body>
@@ -1624,7 +2070,7 @@
             </section>
             <section class="card news">
                 <div class="slides" id="slides">
-                    <div id="photoEmpty" class="photo-empty">Menunggu foto dari Google Drive…</div>
+                    <div id="photoEmpty" class="photo-empty">Menunggu foto…</div>
                     <div class="caption" id="photoCaption" hidden>
                         <div class="caption-name" id="photoCaptionName"></div>
                         <div class="caption-date" id="photoCaptionDate"></div>
@@ -1900,7 +2346,67 @@
             $('liveBox').hidden = !live;
         }
 
-        function photoUrl(item) { return String(item.mediaUrl || item.image || '').trim(); }
+        // Foto dapat berasal dari URL gambar langsung atau tautan publik dari beberapa host.
+        // Google Drive tetap didukung; tautan GitHub /blob dan Dropbox share dinormalisasi.
+        function normalizePhotoUrl(raw) {
+            const value = String(raw == null ? '' : raw).trim();
+            if (!value) return '';
+
+            let url;
+            try {
+                url = new URL(value, window.location.href);
+            } catch (_) {
+                return value;
+            }
+
+            const host = url.hostname.toLowerCase();
+
+            // Google Drive: ubah tautan berbagi menjadi URL gambar yang bisa dimuat <img>.
+            if ((host === 'drive.google.com' || host === 'docs.google.com') && driveFileId(value)) {
+                return driveImageUrl(value);
+            }
+
+            // Dropbox: tautan berbagi menjadi endpoint pratinjau file langsung.
+            if (host === 'dropbox.com' || host.endsWith('.dropbox.com')) {
+                url.searchParams.delete('dl');
+                url.searchParams.set('raw', '1');
+                return url.toString();
+            }
+
+            // GitHub file page (/blob/) menjadi raw file URL; URL GitHub Pages biasa dibiarkan.
+            if (host === 'github.com') {
+                const parts = url.pathname.split('/').filter(Boolean);
+                const blobIndex = parts.indexOf('blob');
+                if (parts.length >= 4 && blobIndex === 2) {
+                    const owner = parts[0];
+                    const repo = parts[1];
+                    const branchAndPath = parts.slice(3).join('/');
+                    return `https://raw.githubusercontent.com/${owner}/${repo}/${branchAndPath}${url.search}`;
+                }
+            }
+
+            // URL gambar langsung dari host lain (mis. Imgur, Cloudinary, server sendiri)
+            // dan path relatif GitHub Pages digunakan tanpa perubahan.
+            return value;
+        }
+
+        function photoUrl(item) {
+            const raw = typeof item === 'string' ? item : firstText(
+                item && item.mediaUrl,
+                item && item.media_url,
+                item && item.image,
+                item && item.imageUrl,
+                item && item.image_url,
+                item && item.photoUrl,
+                item && item.photo_url,
+                item && item.photo,
+                item && item.foto,
+                item && item.url,
+                item && item.link,
+                item && item.src
+            );
+            return normalizePhotoUrl(raw);
+        }
         function getPhotoList() {
             // Urutan data mengikuti baris di Sheet: entri terbaru berada paling akhir.
             // Tampilkan maksimal 15 foto terbaru, tanpa memfilter atau mengurutkan berdasarkan tanggal.
@@ -1989,7 +2495,7 @@
         // Kosongkan sementara jika aset belum diunggah.
         const DRIVE_ASSETS = {
             logo: 'https://drive.google.com/file/d/1ojqBsaZ7h2VBY4E5GirNn4Et4elUMRw_/view?usp=drive_link',
-            background: 'https://drive.google.com/file/d/1cLDO3qyzIEs1ewb94WmUw_keUKHZdeWg/view?usp=drive_link'
+            background: 'https://drive.google.com/file/d/1DRTwPaVW478VHMcLiPO_8izLtF1OpbfH/view?usp=drive_link'
         };
 
         function driveFileId(raw) {
@@ -2949,6 +3455,37 @@
     visibility: hidden !important;
 }
 </style>
+
+
+<style id="FOOTER-ONLY-TEXT-NEAR-DIVIDER-PIE-RIGHT">
+/* Perbaikan footer saja: judul anggaran dekat garis pemisah; pie chart tetap di kanan. */
+.screen .bar .weather-panel .budget-view {
+    position: relative !important;
+    overflow: hidden !important;
+}
+.screen .bar .weather-panel .budget-info {
+    position: absolute !important;
+    left: 2px !important;
+    right: calc(clamp(52px, 4.2vw, 62px) + 24px) !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    justify-self: start !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+.screen .bar .weather-panel .budget-title {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+}
+</style>
+
 </body>
 
 
@@ -3754,7 +4291,7 @@ body {
 <style id="ABSOLUTE-USER-FINAL-LAYOUT">
 /* DESKRIPSI: area dibuat paling lebar. Garis hanya berada di sisi kiri area anggaran. */
 .screen .bar {
-  grid-template-columns: 9% 11% 14% minmax(0, 1fr) minmax(220px, 18%) !important;
+  grid-template-columns: 9% 11% 18% minmax(0, 1fr) minmax(260px, 22%) !important;
   gap: 1vw !important;
 }
 .screen .bar .theme {
