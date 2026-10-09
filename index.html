@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-    <title>TVRI Bengkulu — Modern Broadcast</title>
+    <title>TVRI Bengkulu — PPID</title>
     <style>
         :root {
             --blue: #075cae;
@@ -2349,14 +2349,22 @@
         // Foto dapat berasal dari URL gambar langsung atau tautan publik dari beberapa host.
         // Google Drive tetap didukung; tautan GitHub /blob dan Dropbox share dinormalisasi.
         function normalizePhotoUrl(raw) {
-            const value = String(raw == null ? '' : raw).trim();
+            let value = String(raw == null ? '' : raw).trim();
+            if (!value) return '';
+
+            // Boleh menerima URL langsung, formula HYPERLINK, dan Markdown [judul](URL).
+            const markdownLink = value.match(/^\s*\[[^\]]*\]\((https?:\/\/[^)]+)\)\s*$/i);
+            if (markdownLink) value = markdownLink[1].trim();
+            const hyperlinkFormula = value.match(/^\s*=HYPERLINK\s*\(\s*["']([^"']+)["']/i);
+            if (hyperlinkFormula) value = hyperlinkFormula[1].trim();
+            value = value.replace(/^['"]|['"]$/g, '').trim();
             if (!value) return '';
 
             let url;
             try {
                 url = new URL(value, window.location.href);
             } catch (_) {
-                return value;
+                return '';
             }
 
             const host = url.hostname.toLowerCase();
@@ -2395,14 +2403,31 @@
                 item && item.mediaUrl,
                 item && item.media_url,
                 item && item.image,
+                item && item.Image,
                 item && item.imageUrl,
                 item && item.image_url,
+                item && item['Image URL'],
+                item && item['Image Link'],
                 item && item.photoUrl,
                 item && item.photo_url,
+                item && item.foto_url,
+                item && item.url_foto,
+                item && item.link_foto,
+                item && item['Photo URL'],
+                item && item['Photo Link'],
+                item && item['Link Foto'],
+                item && item['URL Foto'],
+                item && item['Tautan Foto'],
                 item && item.photo,
+                item && item.Photo,
                 item && item.foto,
+                item && item.Foto,
+                item && item.gambar,
+                item && item.Gambar,
                 item && item.url,
+                item && item.URL,
                 item && item.link,
+                item && item.Link,
                 item && item.src
             );
             return normalizePhotoUrl(raw);
@@ -2469,8 +2494,30 @@
                 img.loading = i < 2 ? 'eager' : 'lazy';
                 img.decoding = 'async';
                 if (i === 0) img.setAttribute('fetchpriority', 'high');
-                img.src = photoUrl(item);
-                img.onerror = () => img.classList.add('broken');
+                img.referrerPolicy = 'no-referrer';
+                const originalPhotoUrl = photoUrl(item);
+                img.dataset.originalPhotoUrl = originalPhotoUrl;
+                img.onerror = () => {
+                    const original = img.dataset.originalPhotoUrl || '';
+                    // Beberapa gambar berita TVRI dapat menolak hotlink langsung.
+                    // Jika URL langsung gagal, coba sekali melalui image cache proxy.
+                    if (!img.dataset.proxyTried) {
+                        try {
+                            const failedUrl = new URL(original);
+                            const cleanHost = failedUrl.hostname.toLowerCase().replace(/^www\./, '');
+                            if (cleanHost === 'tvri.go.id' && /^\/storage\/news\//i.test(failedUrl.pathname)) {
+                                img.dataset.proxyTried = '1';
+                                const proxy = new URL('https://images.weserv.nl/');
+                                proxy.searchParams.set('url', 'ssl:' + failedUrl.host + failedUrl.pathname + failedUrl.search);
+                                img.src = proxy.toString();
+                                return;
+                            }
+                        } catch (_) {}
+                    }
+                    img.classList.add('broken');
+                    console.warn('Foto gagal dimuat:', original);
+                };
+                img.src = originalPhotoUrl;
                 stage.insertBefore(img, dots);
                 const dot = document.createElement('span');
                 dot.className = 'dot' + (i === 0 ? ' active' : '');
