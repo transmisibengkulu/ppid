@@ -2499,23 +2499,27 @@
                 img.dataset.originalPhotoUrl = originalPhotoUrl;
                 img.onerror = () => {
                     const original = img.dataset.originalPhotoUrl || '';
-                    // Beberapa gambar berita TVRI dapat menolak hotlink langsung.
-                    // Jika URL langsung gagal, coba sekali melalui image cache proxy.
-                    if (!img.dataset.proxyTried) {
-                        try {
-                            const failedUrl = new URL(original);
-                            const cleanHost = failedUrl.hostname.toLowerCase().replace(/^www\./, '');
-                            if (cleanHost === 'tvri.go.id' && /^\/storage\/news\//i.test(failedUrl.pathname)) {
-                                img.dataset.proxyTried = '1';
-                                const proxy = new URL('https://images.weserv.nl/');
-                                proxy.searchParams.set('url', 'ssl:' + failedUrl.host + failedUrl.pathname + failedUrl.search);
-                                img.src = proxy.toString();
-                                return;
-                            }
-                        } catch (_) {}
-                    }
+                    // Sebagian tautan foto TVRI menolak hotlink langsung.
+                    // Coba dua format URL upstream melalui proxy gambar, tanpa mengubah URL data di Sheet.
+                    try {
+                        const failedUrl = new URL(original);
+                        const cleanHost = failedUrl.hostname.toLowerCase().replace(/^www\./, '');
+                        const isTvriNewsImage = cleanHost === 'tvri.go.id' && /^\/storage\/news\//i.test(failedUrl.pathname);
+                        const attempt = Number(img.dataset.tvriProxyAttempt || '0');
+                        if (isTvriNewsImage && attempt < 2) {
+                            img.dataset.tvriProxyAttempt = String(attempt + 1);
+                            const proxy = new URL('https://images.weserv.nl/');
+                            const upstream = attempt === 0
+                                ? failedUrl.origin + failedUrl.pathname + failedUrl.search
+                                : 'ssl:' + failedUrl.host + failedUrl.pathname + failedUrl.search;
+                            proxy.searchParams.set('url', upstream);
+                            img.src = proxy.toString();
+                            return;
+                        }
+                    } catch (_) {}
+
                     img.classList.add('broken');
-                    console.warn('Foto gagal dimuat:', original);
+                    console.warn('Foto gagal dimuat:', original, 'Sumber percobaan terakhir:', img.currentSrc || img.src);
                 };
                 img.src = originalPhotoUrl;
                 stage.insertBefore(img, dots);
