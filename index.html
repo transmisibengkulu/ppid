@@ -2489,6 +2489,9 @@
             setPhotoCaption(list[0]);
             list.forEach((item, i) => {
                 const img = document.createElement('img');
+                // Explicitly send a referrer origin for direct image requests; no proxy is used.
+                // This tests whether the source blocks requests made with no-referrer policy.
+                img.referrerPolicy = 'strict-origin-when-cross-origin';
                 img.className = 'slide' + (i === 0 ? ' active' : '');
                 img.alt = item.name || `Foto berita ${i+1}`;
                 img.loading = i < 2 ? 'eager' : 'lazy';
