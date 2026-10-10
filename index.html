@@ -2489,9 +2489,6 @@
             setPhotoCaption(list[0]);
             list.forEach((item, i) => {
                 const img = document.createElement('img');
-                // Explicitly send a referrer origin for direct image requests; no proxy is used.
-                // This tests whether the source blocks requests made with no-referrer policy.
-                img.referrerPolicy = 'strict-origin-when-cross-origin';
                 img.className = 'slide' + (i === 0 ? ' active' : '');
                 img.alt = item.name || `Foto berita ${i+1}`;
                 img.loading = i < 2 ? 'eager' : 'lazy';
@@ -2502,29 +2499,47 @@
                 // menerapkan kebijakan akses normalnya.
                 const originalPhotoUrl = photoUrl(item);
                 img.dataset.originalPhotoUrl = originalPhotoUrl;
+                img.dataset.photoFallbackIndex = '0';
                 img.onerror = () => {
                     const original = img.dataset.originalPhotoUrl || '';
+                    const candidates = [];
+                    const id = driveFileId(original);
 
-                    // Proxy hanya dicoba sebagai fallback untuk gambar dari domain TVRI.
-                    // Google Drive dan seluruh sumber lain tetap memakai URL normalnya.
+                    // Fallback Google Drive tetap sama seperti sebelumnya.
+                    if (id) {
+                        const key = original.match(/[?&]resourcekey=([^&#]+)/i);
+                        const resourceKey = key ? '&resourcekey=' + key[1] : '';
+                        candidates.push(
+                            'https://drive.google.com/thumbnail?id=' + encodeURIComponent(id) + '&sz=w2000' + resourceKey,
+                            'https://drive.google.com/uc?export=download&id=' + encodeURIComponent(id) + (resourceKey ? '&resourcekey=' + key[1] : '')
+                        );
+                    }
+
+                    // Proxy hanya ditambahkan untuk sumber dari domain TVRI.
+                    // Tautan Google Drive dan semua host lain tidak diarahkan ke proxy.
                     let sourceUrl = null;
                     try { sourceUrl = new URL(original); } catch (_) {}
                     const host = sourceUrl ? sourceUrl.hostname.toLowerCase() : '';
                     const isTvriSource = host === 'tvri.go.id' || host.endsWith('.tvri.go.id');
-
-                    if (isTvriSource && img.dataset.tvriProxyAttempted !== '1' && sourceUrl) {
-                        img.dataset.tvriProxyAttempted = '1';
+                    if (isTvriSource && sourceUrl) {
                         const proxy = new URL('https://images.weserv.nl/');
-                        const sourceForProxy = (sourceUrl.protocol === 'https:' ? 'ssl:' : '') +
-                            sourceUrl.host + sourceUrl.pathname + sourceUrl.search;
-                        proxy.searchParams.set('url', sourceForProxy);
-                        console.warn('Foto TVRI gagal dimuat langsung; mencoba proxy khusus TVRI:', proxy.toString());
-                        img.src = proxy.toString();
+                        proxy.searchParams.set('url', sourceUrl.href);
+                        candidates.push(proxy.toString());
+                    }
+
+                    const nextIndex = Number(img.dataset.photoFallbackIndex || '0');
+                    if (nextIndex < candidates.length) {
+                        img.dataset.photoFallbackIndex = String(nextIndex + 1);
+                        console.warn(
+                            isTvriSource ? 'Foto TVRI gagal dimuat langsung; mencoba proxy TVRI:' : 'Mencoba sumber cadangan foto:',
+                            candidates[nextIndex]
+                        );
+                        img.src = candidates[nextIndex];
                         return;
                     }
 
                     img.classList.add('broken');
-                    console.warn('Foto gagal dimuat setelah percobaan sumber:', original, 'Sumber terakhir:', img.currentSrc || img.src);
+                    console.warn('Foto gagal dimuat setelah percobaan sumber yang diizinkan. URL asli:', original, 'URL terakhir:', img.currentSrc || img.src);
                 };
                 img.src = originalPhotoUrl;
                 stage.insertBefore(img, dots);
@@ -2568,8 +2583,10 @@
             if (!value) return '';
             const id = driveFileId(value);
             if (!id) return value;
+
+            // Prioritaskan endpoint gambar langsung Google Drive untuk file yang dibagikan publik.
             const key = value.match(/[?&]resourcekey=([^&#]+)/i);
-            return 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(id) + '&sz=w2000' +
+            return 'https://drive.google.com/uc?export=view&id=' + encodeURIComponent(id) +
                 (key ? '&resourcekey=' + key[1] : '');
         }
 
