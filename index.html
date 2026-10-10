@@ -2504,8 +2504,27 @@
                 img.dataset.originalPhotoUrl = originalPhotoUrl;
                 img.onerror = () => {
                     const original = img.dataset.originalPhotoUrl || '';
+
+                    // Proxy hanya dicoba sebagai fallback untuk gambar dari domain TVRI.
+                    // Google Drive dan seluruh sumber lain tetap memakai URL normalnya.
+                    let sourceUrl = null;
+                    try { sourceUrl = new URL(original); } catch (_) {}
+                    const host = sourceUrl ? sourceUrl.hostname.toLowerCase() : '';
+                    const isTvriSource = host === 'tvri.go.id' || host.endsWith('.tvri.go.id');
+
+                    if (isTvriSource && img.dataset.tvriProxyAttempted !== '1' && sourceUrl) {
+                        img.dataset.tvriProxyAttempted = '1';
+                        const proxy = new URL('https://images.weserv.nl/');
+                        const sourceForProxy = (sourceUrl.protocol === 'https:' ? 'ssl:' : '') +
+                            sourceUrl.host + sourceUrl.pathname + sourceUrl.search;
+                        proxy.searchParams.set('url', sourceForProxy);
+                        console.warn('Foto TVRI gagal dimuat langsung; mencoba proxy khusus TVRI:', proxy.toString());
+                        img.src = proxy.toString();
+                        return;
+                    }
+
                     img.classList.add('broken');
-                    console.warn('Foto gagal dimuat dari URL asli:', original, 'Sumber:', img.currentSrc || img.src);
+                    console.warn('Foto gagal dimuat setelah percobaan sumber:', original, 'Sumber terakhir:', img.currentSrc || img.src);
                 };
                 img.src = originalPhotoUrl;
                 stage.insertBefore(img, dots);
