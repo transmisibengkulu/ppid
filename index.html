@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-    <title>TVRI Bengkulu — PPID</title>
+    <title>TVRI Bengkulu — Modern Broadcast</title>
     <style>
         :root {
             --blue: #075cae;
@@ -2499,24 +2499,30 @@
                 img.dataset.originalPhotoUrl = originalPhotoUrl;
                 img.onerror = () => {
                     const original = img.dataset.originalPhotoUrl || '';
-                    // Sebagian tautan foto TVRI menolak hotlink langsung.
-                    // Coba dua format URL upstream melalui proxy gambar, tanpa mengubah URL data di Sheet.
+                    // Coba fallback hanya untuk foto berita TVRI yang gagal dimuat langsung.
+                    // wsrv.nl memakai format HTTPS origin pada parameter url; bila gagal,
+                    // lanjutkan ke format ssl: pada endpoint lama images.weserv.nl.
                     try {
                         const failedUrl = new URL(original);
                         const cleanHost = failedUrl.hostname.toLowerCase().replace(/^www\./, '');
                         const isTvriNewsImage = cleanHost === 'tvri.go.id' && /^\/storage\/news\//i.test(failedUrl.pathname);
                         const attempt = Number(img.dataset.tvriProxyAttempt || '0');
-                        if (isTvriNewsImage && attempt < 2) {
-                            img.dataset.tvriProxyAttempt = String(attempt + 1);
-                            const proxy = new URL('https://images.weserv.nl/');
-                            const upstream = attempt === 0
-                                ? failedUrl.origin + failedUrl.pathname + failedUrl.search
-                                : 'ssl:' + failedUrl.host + failedUrl.pathname + failedUrl.search;
-                            proxy.searchParams.set('url', upstream);
-                            img.src = proxy.toString();
-                            return;
+                        if (isTvriNewsImage) {
+                            const encodedOriginal = encodeURIComponent(failedUrl.href);
+                            const legacyUpstream = 'ssl:' + failedUrl.host + failedUrl.pathname + failedUrl.search;
+                            const fallbackSources = [
+                                'https://wsrv.nl/?url=' + encodedOriginal,
+                                'https://images.weserv.nl/?url=' + encodeURIComponent(legacyUpstream)
+                            ];
+                            if (attempt < fallbackSources.length) {
+                                img.dataset.tvriProxyAttempt = String(attempt + 1);
+                                img.src = fallbackSources[attempt];
+                                return;
+                            }
                         }
-                    } catch (_) {}
+                    } catch (error) {
+                        console.warn('URL foto tidak valid:', original, error);
+                    }
 
                     img.classList.add('broken');
                     console.warn('Foto gagal dimuat:', original, 'Sumber percobaan terakhir:', img.currentSrc || img.src);
