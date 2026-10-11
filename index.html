@@ -4393,3 +4393,34 @@ body {
   color: #fff !important;
 }
 </style>
+
+<style id="FINAL-USER-TITLE-DESCRIPTION-ONLY-FIX">
+/* Hanya judul program dan deskripsi: kolom judul sedikit dilebarkan.
+   Lebar kolom anggaran tetap sama. */
+.screen .bar {
+    grid-template-columns: 9% 11% 20% minmax(0, 1fr) minmax(260px, 22%) !important;
+}
+
+/* Judul sedikit lebih besar dan boleh membungkus baris agar tidak terpotong. */
+.screen .bar .program > b {
+    font-size: clamp(23px, 1.75vw, 34px) !important;
+    line-height: 1.08 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+}
+
+/* Deskripsi sedikit lebih besar; posisi bergeser sedikit ke kanan mengikuti kolom judul. */
+.screen .bar .theme > b,
+.screen #programDescription {
+    font-size: clamp(12px, 1.2vw, 22px) !important;
+    line-height: 1.16 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    max-width: 100% !important;
+}
+</style>
+
