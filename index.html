@@ -4630,3 +4630,70 @@ body {
 }
 </style>
 
+
+
+<style id="FINAL-FIX-TITLE-CLOCK-EQUAL-AND-SHORT-DESC-GROUPED">
+/* Judul program dan jam memakai ukuran font yang sama persis; ukuran dinaikkan untuk layar TV. */
+.screen .bar .time > strong,
+.screen .bar .program > b {
+    font-size: clamp(28px, 2vw, 40px) !important;
+    line-height: 1.08 !important;
+    font-family: inherit !important;
+    font-weight: 800 !important;
+}
+
+/* SHORT description: label dan isi diperlakukan sebagai satu kelompok,
+   lalu kelompoknya dipusatkan vertikal agar label tepat berada di atas isi. */
+.screen .bar .theme.has-short-description {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: clamp(3px, .35vh, 6px) !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    box-sizing: border-box !important;
+}
+.screen .bar .theme.has-short-description > small {
+    position: static !important;
+    display: block !important;
+    flex: 0 0 auto !important;
+    align-self: stretch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    transform: none !important;
+    text-align: center !important;
+}
+.screen .bar .theme.has-short-description #programDescription {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    display: block !important;
+    flex: 0 1 auto !important;
+    align-self: stretch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+}
+
+/* LONG description remains in normal flow underneath its label. */
+.screen .bar .theme:not(.has-short-description) > small {
+    position: static !important;
+    transform: none !important;
+    display: block !important;
+}
+.screen .bar .theme:not(.has-short-description) #programDescription {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    display: block !important;
+    flex: 0 1 auto !important;
+    margin-top: clamp(4px, .45vh, 8px) !important;
+    text-align: left !important;
+}
+</style>
