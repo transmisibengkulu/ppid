@@ -2279,6 +2279,8 @@
                 $('programLabel').textContent = 'PROGRAM';
                 $('programName').textContent = 'Belum ada jadwal hari ini';
                 $('programDescription').textContent = '-';
+                $('programDescription').classList.remove('is-short-description');
+                document.querySelector('.screen .bar .theme')?.classList.remove('has-short-description');
                 $('programStation').textContent = '—';
                 $('currentStart').textContent = '--:--';
                 $('prevTime').textContent = '';
@@ -2308,11 +2310,21 @@
             const p = list[index];
             const startSec = programStartSeconds(p);
             const programName = firstText(p.name, p.Name, p.program_name, p.programName, p.title);
-            // Lewati string kosong: Short description yang kosong harus bisa
-            // menggunakan description/Long description sebagai cadangan.
+            // Short description diprioritaskan; jika kosong, gunakan description/long description.
+            // Header CSV dengan spasi atau kapitalisasi umum juga diterima.
+            const shortDescription = firstText(
+                p.short_description, p.shortDescription,
+                p['short description'], p['Short Description'], p['SHORT DESCRIPTION']
+            );
+            const longDescription = firstText(
+                p.long_description, p.longDescription,
+                p['long description'], p['Long Description'], p['LONG DESCRIPTION']
+            );
             const programDescription = firstText(
-                p.short_description, p.shortDescription, p.description,
-                p.long_description, p.longDescription
+                shortDescription, p.description, longDescription
+            );
+            const usesShortDescription = Boolean(
+                shortDescription && programDescription === shortDescription
             );
             // Baca kolom LIVE/LIVE secara fleksibel dari CSV, tanpa bergantung
             // pada kapitalisasi nama header atau posisi kolom.
@@ -2332,6 +2344,8 @@
             $('programLabel').textContent = previousProgramName || '—';
             $('programName').textContent = programName || 'Tanpa judul';
             $('programDescription').textContent = programDescription || 'Tidak ada deskripsi program.';
+            $('programDescription').classList.toggle('is-short-description', usesShortDescription);
+            document.querySelector('.screen .bar .theme')?.classList.toggle('has-short-description', usesShortDescription);
             $('programStation').textContent = nextProgramName || '—';
             $('currentStart').textContent = clockText(startSec);
             $('prevTime').textContent = index > 0 ? clockText(programStartSeconds(list[index-1])) : '';
@@ -3536,6 +3550,35 @@
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: clip !important;
+}
+</style>
+
+
+
+<style id="USER-FINAL-PROGRAM-CLOCK-FONT-SHORT-DESCRIPTION-CENTER">
+/* Judul program menggunakan ukuran font yang persis sama dengan angka jam. */
+.screen .bar .time > strong,
+.screen .bar .program > b {
+    font-size: clamp(22px, 1.65vw, 32px) !important;
+    line-height: 1.08 !important;
+}
+
+/* Hanya ketika teks diambil dari kolom Short Description:
+   pusatkan deskripsi di dalam kolomnya. Deskripsi panjang tetap memakai layout lama. */
+.screen .bar .theme.has-short-description {
+    position: relative !important;
+    height: 100% !important;
+    min-height: 0 !important;
+}
+.screen .bar .theme.has-short-description #programDescription {
+    position: absolute !important;
+    top: 50% !important;
+    left: 0 !important;
+    right: 0 !important;
+    transform: translateY(-50%) !important;
+    margin-top: 0 !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
 }
 </style>
 
