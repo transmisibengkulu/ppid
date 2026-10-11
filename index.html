@@ -490,27 +490,27 @@
         .theme small {
             display: block;
             color: var(--blue2);
-            font-size: clamp(15px, 1.05vw, 20px);
+            font-size: clamp(15px, 1.05vw, 19px);
             font-weight: 900;
             letter-spacing: .6px;
         }
         
         .program b {
             display: block;
-            font-size: clamp(30px, 2.3vw, 50px);
+            font-size: clamp(27px, 2.3vw, 44px);
             line-height: 1.1;
             margin: 2px 0;
         }
         
         .program span {
-            font-size: clamp(15px, 1.05vw, 20px);
+            font-size: clamp(15px, 1.05vw, 19px);
             color: var(--blue2);
             font-weight: 800;
         }
         
         .theme b {
             display: block;
-            font-size: clamp(20px, 1.4vw, 30px);
+            font-size: clamp(18px, 1.4vw, 26px);
         }
         .corner {
             height: 100%;
@@ -773,7 +773,7 @@
 
         .budget-title {
             color: var(--blue2);
-            font-size: clamp(10px, .62vw, 15px);
+            font-size: clamp(8px, .62vw, 12px);
             font-weight: 900;
             letter-spacing: .5px;
             white-space: normal;
@@ -783,7 +783,7 @@
 
         .budget-amount {
             color: var(--navy);
-            font-size: clamp(15px, 1.05vw, 25px);
+            font-size: clamp(11px, 1.05vw, 20px);
             font-weight: 900;
             line-height: 1.1;
             white-space: normal;
@@ -2548,6 +2548,9 @@
             logo: 'https://drive.google.com/file/d/1ojqBsaZ7h2VBY4E5GirNn4Et4elUMRw_/view?usp=drive_link',
             background: 'https://drive.google.com/file/d/1DRTwPaVW478VHMcLiPO_8izLtF1OpbfH/view?usp=drive_link'
         };
+        // Aset khusus running text: tidak mengubah logo utama/header.
+        const TICKER_LOGO_ASSET = 'https://drive.google.com/file/d/1ueEqrLYS_cZRjtpcXP0LuVXrrmX0zuZ2/view?usp=drive_link';
+        const TICKER_FONT_URL = 'https://drive.google.com/uc?export=download&id=16spSKn4-g3KcWqs8WASXCVS8Q8mItrUW';
 
         function driveFileId(raw) {
             const value = String(raw || '').trim();
@@ -2581,6 +2584,13 @@
                 logo.hidden = true;
                 logo.removeAttribute('src');
                 if (tickerLogo) tickerLogo.removeAttribute('src');
+            }
+
+            // Logo running text berasal dari Drive terpisah; logo header tetap memakai aset lama.
+            const tickerImageUrl = driveImageUrl(TICKER_LOGO_ASSET);
+            if (tickerLogo && tickerImageUrl) {
+                tickerLogo.src = tickerImageUrl;
+                tickerLogo.onerror = () => console.warn('Logo running text dari Drive gagal dimuat. Periksa izin berbagi file.');
             }
 
             const backgroundUrl = driveImageUrl(DRIVE_ASSETS.background);
@@ -2802,6 +2812,7 @@
         let runningTextTimer = null;
         let runningTextChanging = false;
         let runningTextFrame = null;
+        let runningTextGeneration = 0;
 
         function getTickerElements() {
             return {
@@ -2811,6 +2822,9 @@
         }
 
         function stopRunningTextAnimation() {
+            clearTimeout(runningTextTimer);
+            runningTextGeneration++;
+            runningTextChanging = false;
             if (runningTextFrame) {
                 cancelAnimationFrame(runningTextFrame);
                 runningTextFrame = null;
@@ -2820,56 +2834,51 @@
         }
 
         function measureTickerOverflow() {
-            return { overflow: 0, duration: 0 };
+            const { content, text } = getTickerElements();
+            if (!content || !text) return { overflow: 0, duration: 0 };
+            const distance = content.getBoundingClientRect().width + text.getBoundingClientRect().width;
+            return { overflow: distance, duration: Math.max(8000, Math.round(distance / 90 * 1000)) };
         }
 
-        function animateTickerLeave() {
-            const { text } = getTickerElements();
-            if (!text) return Promise.resolve();
-
+        // Teks masuk dari kanan, bergerak ke kiri, lalu melintas di belakang logo yang tetap diam.
+        function animateTickerEnter() {
+            const { content, text } = getTickerElements();
+            if (!content || !text) return Promise.resolve();
             if (runningTextFrame) {
                 cancelAnimationFrame(runningTextFrame);
                 runningTextFrame = null;
             }
 
-            text.style.top = '0';
+            text.style.setProperty('top', '0', 'important');
+            text.style.setProperty('left', '0', 'important');
+            const tickerWidth = Math.ceil(content.parentElement?.getBoundingClientRect().width || window.innerWidth);
+            const textWidth = Math.ceil(text.getBoundingClientRect().width);
+            const distance = tickerWidth + textWidth;
+            const duration = Math.max(8000, Math.min(60000, Math.round(distance / 90 * 1000)));
+            const startTime = performance.now();
 
             return new Promise(resolve => {
-                const animation = text.animate(
-                    [
-                        { top: '0', opacity: 1 },
-                        { top: '-100%', opacity: 1 }
-                    ],
-                    { duration: 700, easing: 'ease-in', fill: 'forwards' }
-                );
+                const step = now => {
+                    const elapsed = Math.max(0, now - startTime);
+                    const progress = Math.min(1, elapsed / duration);
+                    const x = tickerWidth - distance * progress;
+                    text.style.setProperty('transform', `translate3d(${x}px,0,0)`, 'important');
 
-                animation.finished.then(() => {
-                    text.style.top = '-100%';
-                    resolve();
-                }).catch(resolve);
+                    if (progress >= 1) {
+                        runningTextFrame = null;
+                        resolve();
+                    } else {
+                        runningTextFrame = requestAnimationFrame(step);
+                    }
+                };
+                text.style.setProperty('transform', `translate3d(${tickerWidth}px,0,0)`, 'important');
+                runningTextFrame = requestAnimationFrame(step);
             });
         }
 
-        function animateTickerEnter() {
-            const { text } = getTickerElements();
-            if (!text) return Promise.resolve();
-
-            text.style.top = '100%';
-
-            return new Promise(resolve => {
-                const animation = text.animate(
-                    [
-                        { top: '100%', opacity: 1 },
-                        { top: '0', opacity: 1 }
-                    ],
-                    { duration: 700, easing: 'ease-out', fill: 'forwards' }
-                );
-
-                animation.finished.then(() => {
-                    text.style.top = '0';
-                    resolve();
-                }).catch(resolve);
-            });
+        // Tidak ada lagi animasi vertikal: teks berikutnya dimulai dari kanan setelah teks sebelumnya lewat.
+        function animateTickerLeave() {
+            return Promise.resolve();
         }
 
         function renderRunningText(index) {
@@ -2878,46 +2887,39 @@
 
             const list = state.runningTexts.length ? state.runningTexts : ['INFORMASI TVRI BENGKULU'];
             const safeIndex = ((Number(index) || 0) % list.length + list.length) % list.length;
-
             el.textContent = list[safeIndex];
             el.dataset.runningIndex = String(safeIndex);
-            el.style.top = '100%';
+            el.style.setProperty('top', '0', 'important');
+            el.style.setProperty('left', '0', 'important');
         }
 
         async function changeRunningText() {
             const el = $('runningTextDisplay');
             if (!el || runningTextChanging) return;
 
-            const list = state.runningTexts.length ? state.runningTexts : ['INFORMASI TVRI BENGKULU'];
-            if (list.length < 2) return;
-
             runningTextChanging = true;
             clearTimeout(runningTextTimer);
+            const generation = runningTextGeneration;
+            await animateTickerEnter();
+            if (generation !== runningTextGeneration) return;
 
-            // Teks lama bergerak ke ATAS.
-            await animateTickerLeave();
-
-            // Ganti teks setelah teks lama keluar.
+            const list = state.runningTexts.length ? state.runningTexts : ['INFORMASI TVRI BENGKULU'];
             const next = (Number(el.dataset.runningIndex || 0) + 1) % list.length;
             renderRunningText(next);
-
-            // Teks baru masuk dari BAWAH ke posisi normal.
-            await animateTickerEnter();
-
-            runningTextTimer = setTimeout(changeRunningText, 4000);
             runningTextChanging = false;
+            runningTextTimer = setTimeout(changeRunningText, 80);
         }
 
         function startRunningText() {
             clearTimeout(runningTextTimer);
+            runningTextGeneration++;
             runningTextChanging = false;
-
+            if (runningTextFrame) {
+                cancelAnimationFrame(runningTextFrame);
+                runningTextFrame = null;
+            }
             renderRunningText(0);
-            animateTickerEnter().then(() => {
-                if (state.runningTexts.length > 1) {
-                    runningTextTimer = setTimeout(changeRunningText, 4000);
-                }
-            });
+            runningTextTimer = setTimeout(changeRunningText, 100);
         }
 
         function formatRupiah(value) {
@@ -4401,9 +4403,9 @@ body {
     grid-template-columns: 9% 11% 20% minmax(0, 1fr) minmax(260px, 22%) !important;
 }
 
-/* Judul sedikit lebih besar dan boleh membungkus baris agar tidak terpotong. */
+/* Judul lebih terbaca pada TV besar; tetap responsif dan boleh membungkus baris. */
 .screen .bar .program > b {
-    font-size: clamp(23px, 1.75vw, 34px) !important;
+    font-size: clamp(28px, 2vw, 46px) !important;
     line-height: 1.08 !important;
     white-space: normal !important;
     overflow: visible !important;
@@ -4412,15 +4414,87 @@ body {
     word-break: normal !important;
 }
 
-/* Deskripsi sedikit lebih besar; posisi bergeser sedikit ke kanan mengikuti kolom judul. */
+/* Deskripsi lebih terbaca pada TV besar; kolom dan bagian anggaran tetap. */
 .screen .bar .theme > b,
 .screen #programDescription {
-    font-size: clamp(12px, 1.2vw, 22px) !important;
+    font-size: clamp(15px, 1.4vw, 28px) !important;
     line-height: 1.16 !important;
     white-space: normal !important;
     overflow-wrap: anywhere !important;
     word-break: normal !important;
     max-width: 100% !important;
+}
+</style>
+
+<style id="USER-TICKER-DRIVE-LOGO-FONT-LEFT-SCROLL">
+@font-face {
+    font-family: "TVRIBengkuluTickerCustom";
+    src: url("https://drive.google.com/uc?export=download&id=16spSKn4-g3KcWqs8WASXCVS8Q8mItrUW");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+/* Logo tetap diam di atas lintasan teks, sehingga teks yang bergerak ke kiri lewat di belakang logo. */
+.news-ticker-container {
+    position: fixed !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+}
+.news-ticker-container .ticker-badge {
+    position: relative !important;
+    z-index: 10 !important;
+    flex: 0 0 auto !important;
+    align-self: stretch !important;
+}
+.news-ticker-container .ticker-logo {
+    animation: none !important;
+    transform: none !important;
+    position: relative !important;
+    z-index: 11 !important;
+    object-fit: contain !important;
+}
+.news-ticker-container .ticker-content {
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    z-index: 1 !important;
+    text-align: left !important;
+}
+.news-ticker-container #runningTextDisplay {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    width: max-content !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    height: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    color: #fff !important;
+    font-family: "TVRIBengkuluTickerCustom", Arial, sans-serif !important;
+    font-size: clamp(14px, 1.3vw, 22px) !important;
+    font-weight: 800 !important;
+    letter-spacing: .8px !important;
+    line-height: 1.15 !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    opacity: 1 !important;
+    animation: none !important;
+    will-change: transform !important;
+}
+.news-ticker-container .ticker-text.ticker-enter,
+.news-ticker-container .ticker-text.ticker-leave {
+    animation: none !important;
+    opacity: 1 !important;
 }
 </style>
 
